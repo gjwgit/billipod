@@ -73,6 +73,11 @@ class ScheduledScreen extends StatelessWidget {
           onDelete: () => _confirmDelete(context, bill, provider),
           actions: [
             IconButton(
+              icon: const Icon(Icons.copy_outlined, size: 18),
+              tooltip: 'Duplicate',
+              onPressed: () => _duplicateBill(context, bill, provider),
+            ),
+            IconButton(
               icon: const Icon(Icons.check_circle_outline, size: 18),
               tooltip: 'Mark as Paid',
               onPressed: () async {
@@ -116,6 +121,43 @@ class ScheduledScreen extends StatelessWidget {
         );
       },
     );
+  }
+
+
+  Future<void> _duplicateBill(
+    BuildContext context,
+    Bill bill,
+    AppProvider provider,
+  ) async {
+    // Advance all dates by one payment cycle.
+    DateTime? advanceDate(DateTime? d) {
+      if (d == null) return null;
+      return bill.nextDueDate(d) ?? d;
+    }
+
+    final copy = Bill(
+      title: bill.title,
+      amount: bill.amount,
+      dueDate: advanceDate(bill.dueDate),
+      frequency: bill.frequency,
+      status: BillStatus.future,
+      notifiedDate: advanceDate(bill.notifiedDate),
+      notificationMethod: bill.notificationMethod,
+      paymentMethod: bill.paymentMethod,
+      scheduledDate: advanceDate(bill.scheduledDate),
+      confirmedPaidDate: advanceDate(bill.confirmedPaidDate),
+      note: bill.note,
+      isTemplate: false,
+    );
+    final edited = await showDialog<Bill>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => BillEdit(bill: copy),
+    );
+    if (edited != null && context.mounted) {
+      provider.addBill(edited);
+      await provider.saveToPod();
+    }
   }
 
   Future<void> _editBill(

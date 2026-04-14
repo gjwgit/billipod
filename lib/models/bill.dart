@@ -8,6 +8,7 @@
 
 library;
 
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
@@ -212,8 +213,9 @@ class Bill {
   }
 
   /// Formatted amount string.
-  String get amountStr =>
-      amount != null ? '\$${amount!.toStringAsFixed(2)}' : '';
+  String get amountStr => amount != null
+      ? '\$${NumberFormat('#,##0.00').format(amount!)}'
+      : '';
 
   /// Compute the next due date for a recurring bill given a base date.
   DateTime? nextDueDate(DateTime base) => switch (frequency) {

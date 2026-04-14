@@ -1,5 +1,5 @@
 name: billipod
-description: "Bill Management with Secure and Private Solid Pod Storage"
+description: "Billi Management with Secure and Private Solid Pod Storage"
 publish_to: 'none'
 version: 0.1.1+1
 
@@ -25,6 +25,6 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
-  # assets:
-  #   - assets/images/app_icon.png
+  assets:
+    - assets/images/app_icon.png
   #   - assets/images/app_image.jpg
