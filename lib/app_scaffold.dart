@@ -14,14 +14,14 @@ import 'package:provider/provider.dart';
 import 'package:solidpod/solidpod.dart';
 import 'package:solidui/solidui.dart';
 
-import 'package:billpod/constants/app.dart';
-import 'package:billpod/models/bill.dart';
-import 'package:billpod/pages/bill_edit.dart';
-import 'package:billpod/screens/future_screen.dart';
-import 'package:billpod/screens/past_screen.dart';
-import 'package:billpod/screens/scheduled_screen.dart';
-import 'package:billpod/screens/templates_screen.dart';
-import 'package:billpod/services/app_provider.dart';
+import 'package:billipod/constants/app.dart';
+import 'package:billipod/models/bill.dart';
+import 'package:billipod/pages/bill_edit.dart';
+import 'package:billipod/screens/expected_screen.dart';
+import 'package:billipod/screens/past_screen.dart';
+import 'package:billipod/screens/scheduled_screen.dart';
+import 'package:billipod/screens/templates_screen.dart';
+import 'package:billipod/services/app_provider.dart';
 
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
@@ -64,21 +64,21 @@ class _AppScaffoldState extends State<AppScaffold> {
         title: appName,
         versionConfig: SolidVersionConfig(
           changelogUrl:
-              'https://github.com/gjwgit/billpod/blob/dev/CHANGELOG.md',
+              'https://github.com/gjwgit/billipod/blob/dev/CHANGELOG.md',
         ),
       ),
       menu: [
-        const SolidMenuItem(
-          title: 'Future',
-          icon: Icons.upcoming_outlined,
-          tooltip: '**Future**\n\nUpcoming bills not yet scheduled.',
-          child: FutureScreen(),
-        ),
         const SolidMenuItem(
           title: 'Scheduled',
           icon: Icons.schedule_send_outlined,
           tooltip: '**Scheduled**\n\nPayments that have been scheduled.',
           child: ScheduledScreen(),
+        ),
+        const SolidMenuItem(
+          title: 'Expected',
+          icon: Icons.upcoming_outlined,
+          tooltip: '**Expected**\n\nBills expected but not yet scheduled.',
+          child: ExpectedScreen(),
         ),
         const SolidMenuItem(
           title: 'Past',
@@ -107,7 +107,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         ),
         securityKeyStatus: SolidSecurityKeyStatus(
           isKeySaved: _isKeySaved,
-          title: 'BillPod Security Keys',
+          title: 'BilliPod Security Keys',
           onKeyStatusChanged: (hasKey) {
             final was = _isKeySaved;
             setState(() => _isKeySaved = hasKey);

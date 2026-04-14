@@ -16,7 +16,7 @@ import 'package:flutter/foundation.dart';
 
 import 'package:solidpod/solidpod.dart';
 
-import 'package:billpod/models/bill.dart';
+import 'package:billipod/models/bill.dart';
 
 /// Handles reading and writing bills to a Solid Pod.
 ///
@@ -27,8 +27,8 @@ class PodService {
   PodService._();
 
   static const _prefixes =
-      '@prefix billpod: <https://'
-      'billpod.solidcommunity.au/ont/> .\n'
+      '@prefix billipod: <https://'
+      'billipod.solidcommunity.au/ont/> .\n'
       '@prefix xsd:     <http://'
       'www.w3.org/2001/XMLSchema#> .\n';
 
@@ -36,12 +36,12 @@ class PodService {
 
   static String _buildTtl(String fileName, String json) =>
       '$_prefixes\n'
-      'billpod:${fileName.replaceAll('.', '_')} a billpod:BillList ;\n'
-      '  billpod:bills """$json""" .\n';
+      'billipod:${fileName.replaceAll('.', '_')} a billipod:BillList ;\n'
+      '  billipod:bills """$json""" .\n';
 
   static String? _extractJson(String ttl) {
     final match = RegExp(
-      r'billpod:bills\s+"""(.*?)"""',
+      r'billipod:bills\s+"""(.*?)"""',
       dotAll: true,
     ).firstMatch(ttl);
     return match?.group(1)?.trim();

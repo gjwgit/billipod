@@ -13,7 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
-import 'package:billpod/models/bill.dart';
+import 'package:billipod/models/bill.dart';
 
 class BillTile extends StatelessWidget {
   final Bill bill;

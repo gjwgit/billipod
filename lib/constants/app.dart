@@ -8,8 +8,8 @@
 
 library;
 
-const String appName = 'BillPod';
-const String appDirectory = 'billpod';
+const String appName = 'BilliPod';
+const String appDirectory = 'billipod';
 const String billsFileName = 'bills.ttl';
 
 /// How many months ahead to expand recurring bills.

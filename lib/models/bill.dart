@@ -50,7 +50,7 @@ enum BillStatus {
   past;
 
   String get label => switch (this) {
-    future => 'Future',
+    future => 'Expected',
     scheduled => 'Scheduled',
     past => 'Past',
   };

@@ -13,8 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
-import 'package:billpod/constants/app.dart';
-import 'package:billpod/models/bill.dart';
+import 'package:billipod/constants/app.dart';
+import 'package:billipod/models/bill.dart';
 
 class BillEdit extends StatefulWidget {
   final Bill? bill;
@@ -29,7 +29,6 @@ class _BillEditState extends State<BillEdit> {
   late final TextEditingController _title;
   late final TextEditingController _amount;
   late final TextEditingController _note;
-  late final TextEditingController _scheduledBy;
   late BillFrequency _frequency;
   late BillStatus _status;
   late bool _isTemplate;
@@ -51,7 +50,6 @@ class _BillEditState extends State<BillEdit> {
       text: b?.amount != null ? b!.amount!.toStringAsFixed(2) : '',
     );
     _note = TextEditingController(text: b?.note ?? '');
-    _scheduledBy = TextEditingController(text: b?.scheduledBy ?? '');
     _frequency = b?.frequency ?? BillFrequency.oneOff;
     _status = b?.status ?? BillStatus.future;
     _isTemplate = b?.isTemplate ?? false;
@@ -68,7 +66,6 @@ class _BillEditState extends State<BillEdit> {
     _title.dispose();
     _amount.dispose();
     _note.dispose();
-    _scheduledBy.dispose();
     super.dispose();
   }
 
@@ -83,7 +80,6 @@ class _BillEditState extends State<BillEdit> {
     notificationMethod: _notificationMethod,
     paymentMethod: _paymentMethod,
     scheduledDate: _scheduledDate,
-    scheduledBy: _scheduledBy.text.trim().isEmpty ? null : _scheduledBy.text.trim(),
     confirmedPaidDate: _confirmedPaidDate,
     note: _note.text.trim().isEmpty ? null : _note.text.trim(),
     parentId: widget.bill?.parentId,
@@ -207,17 +203,6 @@ class _BillEditState extends State<BillEdit> {
                         onChanged: (v) => setState(() => _status = v!),
                       ),
                       const Gap(12),
-                      // Due date
-                      _DateRow(
-                        label: 'Due date',
-                        date: _dueDate,
-                        onPick: () async {
-                          final d = await _pickDate(_dueDate);
-                          if (d != null) setState(() => _dueDate = d);
-                        },
-                        onClear: () => setState(() => _dueDate = null),
-                      ),
-                      const Gap(8),
                       // Notified date + method
                       _DateRow(
                         label: 'Notified date',
@@ -261,7 +246,7 @@ class _BillEditState extends State<BillEdit> {
                         onChanged: (v) => setState(() => _paymentMethod = v),
                       ),
                       const Gap(8),
-                      // Scheduled date + by
+                      // Scheduled date
                       _DateRow(
                         label: 'Scheduled date',
                         date: _scheduledDate,
@@ -272,13 +257,15 @@ class _BillEditState extends State<BillEdit> {
                         onClear: () => setState(() => _scheduledDate = null),
                       ),
                       const Gap(8),
-                      TextFormField(
-                        controller: _scheduledBy,
-                        decoration: const InputDecoration(
-                          labelText: 'Scheduled by',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
+                      // Due date
+                      _DateRow(
+                        label: 'Due date',
+                        date: _dueDate,
+                        onPick: () async {
+                          final d = await _pickDate(_dueDate);
+                          if (d != null) setState(() => _dueDate = d);
+                        },
+                        onClear: () => setState(() => _dueDate = null),
                       ),
                       const Gap(8),
                       // Confirmed paid date

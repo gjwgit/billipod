@@ -13,9 +13,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:solidui/solidui.dart';
 
-import 'package:billpod/app_scaffold.dart';
-import 'package:billpod/constants/app.dart';
-import 'package:billpod/services/app_provider.dart';
+import 'package:billipod/app_scaffold.dart';
+import 'package:billipod/constants/app.dart';
+import 'package:billipod/services/app_provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,19 +23,19 @@ void main() {
   runApp(
     ChangeNotifierProvider(
       create: (_) => AppProvider(),
-      child: const BillPodApp(),
+      child: const BilliPodApp(),
     ),
   );
 }
 
-class BillPodApp extends StatefulWidget {
-  const BillPodApp({super.key});
+class BilliPodApp extends StatefulWidget {
+  const BilliPodApp({super.key});
 
   @override
-  State<BillPodApp> createState() => _BillPodAppState();
+  State<BilliPodApp> createState() => _BilliPodAppState();
 }
 
-class _BillPodAppState extends State<BillPodApp> {
+class _BilliPodAppState extends State<BilliPodApp> {
   @override
   void initState() {
     super.initState();
@@ -70,7 +70,7 @@ class _BillPodAppState extends State<BillPodApp> {
         title: appName.toUpperCase(),
         image: const AssetImage('assets/images/app_image.jpg'),
         logo: const AssetImage('assets/images/app_icon.png'),
-        link: 'https://github.com/gjwgit/billpod',
+        link: 'https://github.com/gjwgit/billipod',
         child: const AppScaffold(),
       ),
     );

@@ -13,10 +13,10 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 
-import 'package:billpod/models/bill.dart';
-import 'package:billpod/pages/bill_edit.dart';
-import 'package:billpod/services/app_provider.dart';
-import 'package:billpod/widgets/bill_tile.dart';
+import 'package:billipod/models/bill.dart';
+import 'package:billipod/pages/bill_edit.dart';
+import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/widgets/bill_tile.dart';
 
 class TemplatesScreen extends StatelessWidget {
   const TemplatesScreen({super.key});
