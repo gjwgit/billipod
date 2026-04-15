@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.togaware" "\0"
-            VALUE "FileDescription", "billpod" "\0"
+            VALUE "FileDescription", "billipod" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "billpod" "\0"
+            VALUE "InternalName", "billipod" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 com.togaware. All rights reserved." "\0"
-            VALUE "OriginalFilename", "billpod.exe" "\0"
-            VALUE "ProductName", "billpod" "\0"
+            VALUE "OriginalFilename", "billipod.exe" "\0"
+            VALUE "ProductName", "billipod" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

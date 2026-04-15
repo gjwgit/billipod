@@ -1,4 +1,4 @@
-package com.togaware.billpod
+package com.togaware.billipod
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -42,9 +42,10 @@ on:
       - installers
 
 env:
-  APP: billpod
+  APP: billipod
   RELEASE: dev
   LINUX_PKGS: libsecret-1-dev libjsoncpp-dev
+  BUILD: 'none'
   FLUTTER_VERSION: "3.41.5"
   MACOS_APP_RELEASE_UNSIGNED_PATH: build/macos/Build/Products/Release-unsigned
   MACOS_APP_RELEASE_STAGING_PATH: build/macos/Build/Products/Release-staging
@@ -76,10 +77,13 @@ jobs:
 
   package-linux-deb:
     if: |
-      contains(github.event.head_commit.message, 'bump version') ||
-      contains(github.event.head_commit.message, 'build installers') ||
-      contains(github.event.head_commit.message, 'build linux') ||
-      contains(github.event.head_commit.message, 'build deb')
+      contains(env.BUILD, 'deb') &&
+      (
+        contains(github.event.head_commit.message, 'bump version') ||
+        contains(github.event.head_commit.message, 'build installers') ||
+        contains(github.event.head_commit.message, 'build linux') ||
+        contains(github.event.head_commit.message, 'build deb')
+      )
 
     runs-on: ubuntu-latest
 
@@ -196,9 +200,12 @@ jobs:
 
   package-linux-zip:
     if: |
-      contains(github.event.head_commit.message, 'bump version') ||
-      contains(github.event.head_commit.message, 'build installers') ||
-      contains(github.event.head_commit.message, 'build linux')
+      contains(env.BUILD, 'lzip') &&
+      (
+        contains(github.event.head_commit.message, 'bump version') ||
+        contains(github.event.head_commit.message, 'build installers') ||
+        contains(github.event.head_commit.message, 'build linux')
+      )
 
     runs-on: ubuntu-latest
 
@@ -260,11 +267,13 @@ jobs:
 
   package-linux-snap:
     if: |
-      contains(github.event.head_commit.message, 'bump version') ||
-      contains(github.event.head_commit.message, 'build installers') ||
-      contains(github.event.head_commit.message, 'build linux') ||
-      contains(github.event.head_commit.message, 'build snap')
-
+      contains(env.BUILD, 'snap') &&
+      (
+        contains(github.event.head_commit.message, 'bump version') ||
+        contains(github.event.head_commit.message, 'build installers') ||
+        contains(github.event.head_commit.message, 'build linux') ||
+        contains(github.event.head_commit.message, 'build snap')
+      )
     runs-on: ubuntu-latest
 
     steps:
@@ -336,10 +345,12 @@ jobs:
 
   package-macos-dmg-zip-original:
     if: |
-      contains(github.event.head_commit.message, 'bump version') ||
-      contains(github.event.head_commit.message, 'build installers') ||
-      contains(github.event.head_commit.message, 'build macos basic')
-
+      contains(env.BUILD, 'odmgzip') &&
+      (
+        contains(github.event.head_commit.message, 'bump version') ||
+        contains(github.event.head_commit.message, 'build installers') ||
+        contains(github.event.head_commit.message, 'build macos basic')
+      )
     runs-on: macos-latest
 
     steps:
@@ -439,9 +450,12 @@ jobs:
 
   package-macos-dmg-zip-unsigned:
     if: |
-      contains(github.event.head_commit.message, 'bump version x') ||
-      contains(github.event.head_commit.message, 'build installers x') ||
-      contains(github.event.head_commit.message, 'build macos unsigned')
+      contains(env.BUILD, 'udmgzip') &&
+      (
+        contains(github.event.head_commit.message, 'bump version x') ||
+        contains(github.event.head_commit.message, 'build installers x') ||
+        contains(github.event.head_commit.message, 'build macos unsigned')
+      )
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -561,9 +575,12 @@ jobs:
     env:
       MACOS_INSTALL_CERTIFICATE_NAME: "3rd Party Mac Developer Installer: Togaware Pty Ltd (G7843T3SD3)"
     if: |
-      contains(github.event.head_commit.message, 'bump version x') ||
-      contains(github.event.head_commit.message, 'build installers x') ||
-      contains(github.event.head_commit.message, 'build macos appstore')
+      contains(env.BUILD, 'mpkg') &&
+      (
+        contains(github.event.head_commit.message, 'bump version x') ||
+        contains(github.event.head_commit.message, 'build installers x') ||
+        contains(github.event.head_commit.message, 'build macos appstore')
+      )
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -747,9 +764,12 @@ jobs:
 
   package-macos-dmg-zip-dev:
     if: |
-      contains(github.event.head_commit.message, 'bump version x') ||
-      contains(github.event.head_commit.message, 'build installers x') ||
-      contains(github.event.head_commit.message, 'build macos dev')
+      contains(env.BUILD, 'mdmgzip') &&
+      (
+        contains(github.event.head_commit.message, 'bump version x') ||
+        contains(github.event.head_commit.message, 'build installers x') ||
+        contains(github.event.head_commit.message, 'build macos dev')
+      )
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -887,9 +907,12 @@ jobs:
 
   package-ios-ipa:
     if: |
-      contains(github.event.head_commit.message, 'bump version x') ||
-      contains(github.event.head_commit.message, 'build installers x') ||
-      contains(github.event.head_commit.message, 'build ios')
+      contains(env.BUILD, 'ipa') &&
+      (
+        contains(github.event.head_commit.message, 'bump version x') ||
+        contains(github.event.head_commit.message, 'build installers x') ||
+        contains(github.event.head_commit.message, 'build ios')
+      )
     runs-on: macos-latest
     env:
       IOS_APP_RELEASE_PATH: build/ios/ipa
@@ -1047,9 +1070,15 @@ jobs:
 
   package-windows-zip-exe:
     if: |
-      contains(github.event.head_commit.message, 'bump version') ||
-      contains(github.event.head_commit.message, 'build installers') ||
-      contains(github.event.head_commit.message, 'build windows')
+      (
+        contains(env.BUILD, 'wexe') ||
+        contains(env.BUILD, 'wzip')
+      ) &&
+      (
+        contains(github.event.head_commit.message, 'bump version') ||
+        contains(github.event.head_commit.message, 'build installers') ||
+        contains(github.event.head_commit.message, 'build windows')
+      )
     runs-on: windows-latest # randomly not working (choco fails) with inno 1.2.7
 
     steps:
