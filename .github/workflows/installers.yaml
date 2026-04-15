@@ -84,7 +84,7 @@ jobs:
 
   package-linux-deb:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'deb') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
@@ -208,7 +208,7 @@ jobs:
 
   package-linux-zip:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'lzip') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
@@ -276,7 +276,7 @@ jobs:
 
   package-linux-snap:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'snap') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
@@ -355,7 +355,7 @@ jobs:
 
   package-macos-dmg-zip-original:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'odmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
@@ -461,7 +461,7 @@ jobs:
 
   package-macos-dmg-zip-unsigned:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'udmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
@@ -587,7 +587,7 @@ jobs:
     needs: determine-build
     env:
       MACOS_INSTALL_CERTIFICATE_NAME: "3rd Party Mac Developer Installer: Togaware Pty Ltd (G7843T3SD3)"
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'mpkg') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
@@ -777,7 +777,7 @@ jobs:
 
   package-macos-dmg-zip-dev:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'mdmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
@@ -921,7 +921,7 @@ jobs:
 
   package-ios-ipa:
     needs: determine-build
-    if: |
+    if: >-
       contains(needs.determine-build.outputs.build, 'ipa') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
@@ -1085,7 +1085,7 @@ jobs:
 
   package-windows-zip-exe:
     needs: determine-build
-    if: |
+    if: >-
       (
         contains(needs.determine-build.outputs.build, 'wexe') ||
         contains(needs.determine-build.outputs.build, 'wzip')
