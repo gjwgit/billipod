@@ -45,13 +45,20 @@ env:
   APP: billipod
   RELEASE: dev
   LINUX_PKGS: libsecret-1-dev libjsoncpp-dev
-  BUILD: 'none'
   FLUTTER_VERSION: "3.41.5"
   MACOS_APP_RELEASE_UNSIGNED_PATH: build/macos/Build/Products/Release-unsigned
   MACOS_APP_RELEASE_STAGING_PATH: build/macos/Build/Products/Release-staging
   MACOS_APP_RELEASE_DEV_PATH: build/macos/Build/Products/Release-dev
 
 jobs:
+
+  determine-build:
+    runs-on: ubuntu-latest
+    outputs:
+      build: ${{ steps.set-build.outputs.build }}
+      steps:
+        - id: set-build
+          run: echo "build=none" >> $GITHUB_OUTPUT
 
   ########################################################################
   # LINUX
@@ -76,8 +83,9 @@ jobs:
   # separately or to build separately as required.
 
   package-linux-deb:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'deb') &&
+      contains(needs.determine-build.outputs.build, 'deb') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
         contains(github.event.head_commit.message, 'build installers') ||
@@ -199,8 +207,9 @@ jobs:
           path: build/${{env.APP}}_${{env.VERSION}}_amd64.deb
 
   package-linux-zip:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'lzip') &&
+      contains(needs.determine-build.outputs.build, 'lzip') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
         contains(github.event.head_commit.message, 'build installers') ||
@@ -266,8 +275,9 @@ jobs:
           path: build/linux/x64/release/bundle/${{env.APP}}-linux.zip
 
   package-linux-snap:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'snap') &&
+      contains(needs.determine-build.outputs.build, 'snap') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
         contains(github.event.head_commit.message, 'build installers') ||
@@ -344,8 +354,9 @@ jobs:
   # steps have a template, this ORIGINAL build can be removed.
 
   package-macos-dmg-zip-original:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'odmgzip') &&
+      contains(needs.determine-build.outputs.build, 'odmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
         contains(github.event.head_commit.message, 'build installers') ||
@@ -449,8 +460,9 @@ jobs:
   # PROVISIONING_PROFILE_SPECIFIER: ""
 
   package-macos-dmg-zip-unsigned:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'udmgzip') &&
+      contains(needs.determine-build.outputs.build, 'udmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
         contains(github.event.head_commit.message, 'build installers x') ||
@@ -572,10 +584,11 @@ jobs:
   # Profile creation date: 29/10/2025
 
   package-macos-pkg-appstore:
+    needs: determine-build
     env:
       MACOS_INSTALL_CERTIFICATE_NAME: "3rd Party Mac Developer Installer: Togaware Pty Ltd (G7843T3SD3)"
     if: |
-      contains(env.BUILD, 'mpkg') &&
+      contains(needs.determine-build.outputs.build, 'mpkg') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
         contains(github.event.head_commit.message, 'build installers x') ||
@@ -763,8 +776,9 @@ jobs:
   # Profile creation date: 29/10/2025
 
   package-macos-dmg-zip-dev:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'mdmgzip') &&
+      contains(needs.determine-build.outputs.build, 'mdmgzip') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
         contains(github.event.head_commit.message, 'build installers x') ||
@@ -906,8 +920,9 @@ jobs:
   # IOS
 
   package-ios-ipa:
+    needs: determine-build
     if: |
-      contains(env.BUILD, 'ipa') &&
+      contains(needs.determine-build.outputs.build, 'ipa') &&
       (
         contains(github.event.head_commit.message, 'bump version x') ||
         contains(github.event.head_commit.message, 'build installers x') ||
@@ -1069,10 +1084,11 @@ jobs:
   # WINDOWS
 
   package-windows-zip-exe:
+    needs: determine-build
     if: |
       (
-        contains(env.BUILD, 'wexe') ||
-        contains(env.BUILD, 'wzip')
+        contains(needs.determine-build.outputs.build, 'wexe') ||
+        contains(needs.determine-build.outputs.build, 'wzip')
       ) &&
       (
         contains(github.event.head_commit.message, 'bump version') ||
