@@ -41,6 +41,17 @@ class AppProvider extends ChangeNotifier {
 
   // ── Load / Save ────────────────────────────────────────────────────────────
 
+  /// Load bills directly — used in tests to avoid requiring a live pod.
+  void loadTestData({required List<Bill> bills}) {
+    _testMode = true;
+    _bills = bills;
+    _expandRecurring();
+    _loading = false;
+    notifyListeners();
+  }
+
+  bool _testMode = false;
+
   Future<void> loadFromPod() async {
     _loading = true;
     _error = null;
@@ -57,6 +68,7 @@ class AppProvider extends ChangeNotifier {
   }
 
   Future<String?> saveToPod() async {
+    if (_testMode) return null;
     final err = await PodService.saveBills(billsFileName, _bills);
     if (err != null) {
       _error = err;
