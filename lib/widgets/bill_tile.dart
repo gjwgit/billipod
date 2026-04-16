@@ -19,6 +19,7 @@ class BillTile extends StatelessWidget {
   final Bill bill;
   final VoidCallback onTap;
   final VoidCallback onDelete;
+  final VoidCallback? onStar; // null = no star button
   final List<Widget>? actions; // extra trailing actions (e.g. move buttons)
 
   const BillTile({
@@ -26,6 +27,7 @@ class BillTile extends StatelessWidget {
     required this.bill,
     required this.onTap,
     required this.onDelete,
+    this.onStar,
     this.actions,
   });
 
@@ -36,6 +38,7 @@ class BillTile extends StatelessWidget {
 
     return Card(
       elevation: 0,
+      color: bill.isStarred ? Colors.amber.withValues(alpha: 0.12) : null,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
@@ -157,6 +160,17 @@ class BillTile extends StatelessWidget {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
+                  IconButton(
+                    icon: Icon(
+                      bill.isStarred ? Icons.star : Icons.star_border,
+                      size: 18,
+                      color: bill.isStarred
+                          ? Colors.amber
+                          : cs.onSurfaceVariant,
+                    ),
+                    tooltip: bill.isStarred ? 'Unstar' : 'Star',
+                    onPressed: onStar,
+                  ),
                   ...?actions,
                   IconButton(
                     icon: const Icon(Icons.delete_outline, size: 18),

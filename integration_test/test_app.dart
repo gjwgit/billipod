@@ -3,6 +3,7 @@
 library;
 
 import 'package:flutter/material.dart';
+
 import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
@@ -13,17 +14,18 @@ import 'package:billipod/screens/templates_screen.dart';
 import 'package:billipod/services/app_provider.dart';
 
 /// Build a testable app with [provider] injected, no SolidLogin/solidui.
-Widget buildTestApp(AppProvider provider) => ChangeNotifierProvider<AppProvider>.value(
-  value: provider,
-  child: MaterialApp(
-    title: 'BilliPod Test',
-    theme: ThemeData(
-      colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A5276)),
-      useMaterial3: true,
-    ),
-    home: const _TestScaffold(),
-  ),
-);
+Widget buildTestApp(AppProvider provider) =>
+    ChangeNotifierProvider<AppProvider>.value(
+      value: provider,
+      child: MaterialApp(
+        title: 'BilliPod Test',
+        theme: ThemeData(
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A5276)),
+          useMaterial3: true,
+        ),
+        home: const _TestScaffold(),
+      ),
+    );
 
 /// Create a provider pre-loaded with bills.
 AppProvider providerWith({List<Bill> bills = const []}) {

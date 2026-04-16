@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -120,8 +121,9 @@ void main() {
       expect(find.text('\$1,234.56'), findsOneWidget);
     });
 
-    testWidgets('recurring template appears in Recurring screen',
-        (tester) async {
+    testWidgets('recurring template appears in Recurring screen', (
+      tester,
+    ) async {
       await pumpApp(tester, [
         makeBill(
           title: 'Netflix',
@@ -135,8 +137,9 @@ void main() {
       expect(find.text('Netflix'), findsOneWidget);
     });
 
-    testWidgets('recurring template generates instances in Expected',
-        (tester) async {
+    testWidgets('recurring template generates instances in Expected', (
+      tester,
+    ) async {
       await pumpApp(tester, [
         makeBill(
           title: 'Water bill',
@@ -155,8 +158,9 @@ void main() {
   // ── Move between sections ──────────────────────────────────────────────────
 
   group('move between sections', () {
-    testWidgets('move to Scheduled button appears on expected bill',
-        (tester) async {
+    testWidgets('move to Scheduled button appears on expected bill', (
+      tester,
+    ) async {
       await pumpApp(tester, [
         makeBill(title: 'Council rates', status: BillStatus.future),
       ]);
@@ -166,7 +170,9 @@ void main() {
       expect(find.byIcon(Icons.schedule_send_outlined), findsWidgets);
     });
 
-    testWidgets('Mark as Paid button appears on scheduled bill', (tester) async {
+    testWidgets('Mark as Paid button appears on scheduled bill', (
+      tester,
+    ) async {
       await pumpApp(tester, [
         makeBill(title: 'Gas bill', status: BillStatus.scheduled),
       ]);
@@ -194,32 +200,35 @@ void main() {
       ]);
       await tester.tap(find.text('Cancel test'));
       await tester.pumpAndSettle();
-      await tester.tap(find.descendant(
-        of: find.byType(Dialog),
-        matching: find.text('Cancel'),
-      ));
+      await tester.tap(
+        find.descendant(of: find.byType(Dialog), matching: find.text('Cancel')),
+      );
       await tester.pumpAndSettle();
       expect(find.byType(Dialog), findsNothing);
       expect(find.text('Cancel test'), findsOneWidget);
     });
 
-    testWidgets('barrierDismissible is false — dialog stays open on tap outside',
-        (tester) async {
-      await pumpApp(tester, [
-        makeBill(title: 'Barrier test', status: BillStatus.scheduled),
-      ]);
-      await tester.tap(find.text('Barrier test'));
-      await tester.pumpAndSettle();
-      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
-      await tester.pumpAndSettle();
-      expect(find.byType(Dialog), findsOneWidget);
-    });
+    testWidgets(
+      'barrierDismissible is false — dialog stays open on tap outside',
+      (tester) async {
+        await pumpApp(tester, [
+          makeBill(title: 'Barrier test', status: BillStatus.scheduled),
+        ]);
+        await tester.tap(find.text('Barrier test'));
+        await tester.pumpAndSettle();
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await tester.pumpAndSettle();
+        expect(find.byType(Dialog), findsOneWidget);
+      },
+    );
   });
 
   // ── Duplicate ─────────────────────────────────────────────────────────────
 
   group('duplicate', () {
-    testWidgets('duplicate button is present on each bill tile', (tester) async {
+    testWidgets('duplicate button is present on each bill tile', (
+      tester,
+    ) async {
       await pumpApp(tester, [
         makeBill(title: 'Duplicate me', status: BillStatus.scheduled),
       ]);
@@ -255,17 +264,19 @@ void main() {
     });
 
     testWidgets('cancelling delete keeps the bill', (tester) async {
-      final provider = providerWith(bills: [
-        makeBill(title: 'Keep me', status: BillStatus.scheduled),
-      ]);
+      final provider = providerWith(
+        bills: [makeBill(title: 'Keep me', status: BillStatus.scheduled)],
+      );
       await tester.pumpWidget(buildTestApp(provider));
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.delete_outline).first);
       await tester.pumpAndSettle();
-      await tester.tap(find.descendant(
-        of: find.byType(AlertDialog),
-        matching: find.text('Cancel'),
-      ));
+      await tester.tap(
+        find.descendant(
+          of: find.byType(AlertDialog),
+          matching: find.text('Cancel'),
+        ),
+      );
       await tester.pumpAndSettle();
       expect(provider.scheduledBills, hasLength(1));
     });

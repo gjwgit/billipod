@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/services/app_provider.dart';
 
@@ -170,52 +171,69 @@ void main() {
   group('recurring expansion', () {
     test('monthly template generates multiple future instances', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'tmpl',
-        frequency: BillFrequency.monthly,
-        dueDate: DateTime(2026, 1, 1),
-        isTemplate: true,
-      ));
+      p.addBill(
+        make(
+          id: 'tmpl',
+          frequency: BillFrequency.monthly,
+          dueDate: DateTime(2026, 1, 1),
+          isTemplate: true,
+        ),
+      );
       // Should generate ~12 months of instances.
-      final instances = p.futureBills.where((b) => b.parentId == 'tmpl').toList();
+      final instances = p.futureBills
+          .where((b) => b.parentId == 'tmpl')
+          .toList();
       expect(instances.length, greaterThanOrEqualTo(1));
     });
 
     test('annual template generates at least one future instance', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'annual',
-        frequency: BillFrequency.annual,
-        dueDate: DateTime(2025, 6, 1),
-        isTemplate: true,
-      ));
-      final instances = p.futureBills.where((b) => b.parentId == 'annual').toList();
-      expect(instances, isNotEmpty,
-          reason: 'Annual bills must always have at least one future instance');
+      p.addBill(
+        make(
+          id: 'annual',
+          frequency: BillFrequency.annual,
+          dueDate: DateTime(2025, 6, 1),
+          isTemplate: true,
+        ),
+      );
+      final instances = p.futureBills
+          .where((b) => b.parentId == 'annual')
+          .toList();
+      expect(
+        instances,
+        isNotEmpty,
+        reason: 'Annual bills must always have at least one future instance',
+      );
     });
 
     test('semi-annual generates at least one instance', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'semi',
-        frequency: BillFrequency.semiAnnual,
-        dueDate: DateTime(2025, 12, 1),
-        isTemplate: true,
-      ));
-      final instances = p.futureBills.where((b) => b.parentId == 'semi').toList();
+      p.addBill(
+        make(
+          id: 'semi',
+          frequency: BillFrequency.semiAnnual,
+          dueDate: DateTime(2025, 12, 1),
+          isTemplate: true,
+        ),
+      );
+      final instances = p.futureBills
+          .where((b) => b.parentId == 'semi')
+          .toList();
       expect(instances, isNotEmpty);
     });
 
     test('instances inherit template amount and note', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'tmpl',
-        frequency: BillFrequency.monthly,
-        dueDate: DateTime(2026, 1, 1),
-        amount: 49.99,
-        note: 'Streaming service',
-        isTemplate: true,
-      ));
+      p.addBill(
+        make(
+          id: 'tmpl',
+          frequency: BillFrequency.monthly,
+          dueDate: DateTime(2026, 1, 1),
+          amount: 49.99,
+          note: 'Streaming service',
+          isTemplate: true,
+        ),
+      );
       final instance = p.futureBills.firstWhere((b) => b.parentId == 'tmpl');
       expect(instance.amount, 49.99);
       expect(instance.note, 'Streaming service');
@@ -223,13 +241,17 @@ void main() {
 
     test('instances are not templates', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'tmpl',
-        frequency: BillFrequency.monthly,
-        dueDate: DateTime(2026, 1, 1),
-        isTemplate: true,
-      ));
-      final instances = p.futureBills.where((b) => b.parentId == 'tmpl').toList();
+      p.addBill(
+        make(
+          id: 'tmpl',
+          frequency: BillFrequency.monthly,
+          dueDate: DateTime(2026, 1, 1),
+          isTemplate: true,
+        ),
+      );
+      final instances = p.futureBills
+          .where((b) => b.parentId == 'tmpl')
+          .toList();
       expect(instances.every((b) => !b.isTemplate), isTrue);
     });
 
@@ -237,33 +259,42 @@ void main() {
       final dueDate = DateTime(2026, 3, 1);
       final notifiedDate = DateTime(2026, 2, 15); // 14 days before due
       final p = freshProvider();
-      p.addBill(make(
-        id: 'tmpl',
-        frequency: BillFrequency.monthly,
-        dueDate: dueDate,
-        notifiedDate: notifiedDate,
-        isTemplate: true,
-      ));
+      p.addBill(
+        make(
+          id: 'tmpl',
+          frequency: BillFrequency.monthly,
+          dueDate: dueDate,
+          notifiedDate: notifiedDate,
+          isTemplate: true,
+        ),
+      );
       // Each instance should have notifiedDate 14 days before its dueDate.
-      final instances = p.futureBills.where((b) => b.parentId == 'tmpl').toList();
+      final instances = p.futureBills
+          .where((b) => b.parentId == 'tmpl')
+          .toList();
       for (final inst in instances) {
         if (inst.dueDate != null && inst.notifiedDate != null) {
           final offset = inst.dueDate!.difference(inst.notifiedDate!).inDays;
-          expect(offset, 14,
-              reason: 'Notified date offset should match template offset');
+          expect(
+            offset,
+            14,
+            reason: 'Notified date offset should match template offset',
+          );
         }
       }
     });
 
     test('manually edited instance is not auto-deleted on re-expansion', () {
       final p = freshProvider();
-      p.addBill(make(
-        id: 'tmpl',
-        frequency: BillFrequency.monthly,
-        dueDate: DateTime(2026, 1, 1),
-        note: 'Template note',
-        isTemplate: true,
-      ));
+      p.addBill(
+        make(
+          id: 'tmpl',
+          frequency: BillFrequency.monthly,
+          dueDate: DateTime(2026, 1, 1),
+          note: 'Template note',
+          isTemplate: true,
+        ),
+      );
       // Get an auto-generated instance and manually edit its note.
       final instance = p.futureBills.firstWhere((b) => b.parentId == 'tmpl');
       p.updateBill(instance.copyWith(note: 'Manually changed note'));
@@ -274,8 +305,11 @@ void main() {
       final edited = p.allBills.where(
         (b) => b.id == instance.id && b.note == 'Manually changed note',
       );
-      expect(edited, isNotEmpty,
-          reason: 'Manually edited instance should survive re-expansion');
+      expect(
+        edited,
+        isNotEmpty,
+        reason: 'Manually edited instance should survive re-expansion',
+      );
     });
   });
 
@@ -291,16 +325,20 @@ void main() {
 
     test('pastBills sorted by due date descending', () {
       final p = freshProvider();
-      p.addBill(make(
-        dueDate: DateTime(2026, 1, 1),
-        title: 'Jan',
-        status: BillStatus.past,
-      ));
-      p.addBill(make(
-        dueDate: DateTime(2026, 3, 1),
-        title: 'Mar',
-        status: BillStatus.past,
-      ));
+      p.addBill(
+        make(
+          dueDate: DateTime(2026, 1, 1),
+          title: 'Jan',
+          status: BillStatus.past,
+        ),
+      );
+      p.addBill(
+        make(
+          dueDate: DateTime(2026, 3, 1),
+          title: 'Mar',
+          status: BillStatus.past,
+        ),
+      );
       expect(p.pastBills.first.title, 'Mar');
     });
 

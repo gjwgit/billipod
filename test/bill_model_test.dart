@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
+
 import 'package:billipod/models/bill.dart';
 
 void main() {
@@ -73,11 +74,17 @@ void main() {
     final tomorrow = DateTime.now().add(const Duration(days: 1));
 
     test('past due and not paid is overdue', () {
-      expect(make(dueDate: yesterday, status: BillStatus.future).isOverdue, isTrue);
+      expect(
+        make(dueDate: yesterday, status: BillStatus.future).isOverdue,
+        isTrue,
+      );
     });
 
     test('past status is never overdue', () {
-      expect(make(dueDate: yesterday, status: BillStatus.past).isOverdue, isFalse);
+      expect(
+        make(dueDate: yesterday, status: BillStatus.past).isOverdue,
+        isFalse,
+      );
     });
 
     test('no due date is not overdue', () {

@@ -67,6 +67,10 @@ class TemplatesScreen extends StatelessWidget {
           bill: bill,
           onTap: () => _editBill(context, bill, provider),
           onDelete: () => _confirmDelete(context, bill, provider),
+          onStar: () {
+            provider.updateBill(bill.copyWith(isStarred: !bill.isStarred));
+            provider.saveToPod();
+          },
         );
       },
     );

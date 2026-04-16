@@ -85,6 +85,9 @@ class Bill {
   /// True if this is a recurring template (not a concrete instance).
   final bool isTemplate;
 
+  /// True if the user has starred/highlighted this bill.
+  final bool isStarred;
+
   Bill({
     String? id,
     required this.title,
@@ -101,6 +104,7 @@ class Bill {
     this.note,
     this.parentId,
     this.isTemplate = false,
+    this.isStarred = false,
   }) : id = id ?? _uuid.v4();
 
   // ── Serialisation ──────────────────────────────────────────────────────────
@@ -123,6 +127,7 @@ class Bill {
     if (note != null) 'note': note,
     if (parentId != null) 'parentId': parentId,
     'isTemplate': isTemplate,
+    if (isStarred) 'isStarred': isStarred,
   };
 
   factory Bill.fromJson(Map<String, dynamic> j) => Bill(
@@ -155,6 +160,7 @@ class Bill {
     note: j['note'] as String?,
     parentId: j['parentId'] as String?,
     isTemplate: j['isTemplate'] as bool? ?? false,
+    isStarred: j['isStarred'] as bool? ?? false,
   );
 
   Bill copyWith({
@@ -172,6 +178,7 @@ class Bill {
     Object? note = _sentinel,
     Object? parentId = _sentinel,
     bool? isTemplate,
+    bool? isStarred,
   }) => Bill(
     id: id,
     title: title ?? this.title,
@@ -200,6 +207,7 @@ class Bill {
     note: note == _sentinel ? this.note : note as String?,
     parentId: parentId == _sentinel ? this.parentId : parentId as String?,
     isTemplate: isTemplate ?? this.isTemplate,
+    isStarred: isStarred ?? this.isStarred,
   );
 
   // ── Helpers ────────────────────────────────────────────────────────────────
