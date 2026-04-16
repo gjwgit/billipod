@@ -4,6 +4,7 @@ Noted here are the high level changes for the app.  Each update
 includes a short user-oriented description.  The next release is 0.2
 following incremental updates through the 0.1.n series.
 
+<!--
 You can run the app in your
 [**browser**](https://billipod.solidcommunity.au) or else download and
 install locally the latest version from the [Solid Community
@@ -20,6 +21,7 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 **Windows** as
 [inno](https://solidcommunity.au/installers/billipod-windows-inno.exe)
 or [zip](https://solidcommunity.au/installers/billipod-windows.zip).
+-->
 
 Contributions are welcome. Visit
 [github](https://github.com/gjwgit/billipod) to submit an issue or, even
@@ -39,6 +41,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Refining the functionality [0.1.2 20260416 gjw]
 + Initial functionality [0.1.1 20260414 gjw]
 
 ## 0.1 Initial Shell App

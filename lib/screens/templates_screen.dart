@@ -1,6 +1,6 @@
 /// TemplatesScreen — manage recurring bill templates.
 ///
-// Time-stamp: <2026-04-14>
+// Time-stamp: <Thursday 2026-04-16 15:56:03 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -34,10 +34,9 @@ class TemplatesScreen extends StatelessWidget {
             Icon(
               Icons.repeat,
               size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
             ),
             const Gap(16),
             const Text(
@@ -61,7 +60,7 @@ class TemplatesScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: templates.length,
-      separatorBuilder: (_, __) => const Gap(8),
+      separatorBuilder: (_, _) => const Gap(8),
       itemBuilder: (_, i) {
         final bill = templates[i];
         return BillTile(
@@ -71,43 +70,6 @@ class TemplatesScreen extends StatelessWidget {
         );
       },
     );
-  }
-
-
-  Future<void> _duplicateBill(
-    BuildContext context,
-    Bill bill,
-    AppProvider provider,
-  ) async {
-    // Advance all dates by one payment cycle.
-    DateTime? advanceDate(DateTime? d) {
-      if (d == null) return null;
-      return bill.nextDueDate(d) ?? d;
-    }
-
-    final copy = Bill(
-      title: bill.title,
-      amount: bill.amount,
-      dueDate: advanceDate(bill.dueDate),
-      frequency: bill.frequency,
-      status: BillStatus.future,
-      notifiedDate: advanceDate(bill.notifiedDate),
-      notificationMethod: bill.notificationMethod,
-      paymentMethod: bill.paymentMethod,
-      scheduledDate: advanceDate(bill.scheduledDate),
-      confirmedPaidDate: advanceDate(bill.confirmedPaidDate),
-      note: bill.note,
-      isTemplate: false,
-    );
-    final edited = await showDialog<Bill>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => BillEdit(bill: copy),
-    );
-    if (edited != null && context.mounted) {
-      provider.addBill(edited);
-      await provider.saveToPod();
-    }
   }
 
   Future<void> _editBill(

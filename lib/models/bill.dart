@@ -112,10 +112,8 @@ class Bill {
     if (dueDate != null) 'dueDate': dueDate!.toIso8601String(),
     'frequency': frequency.name,
     'status': status.name,
-    if (notifiedDate != null)
-      'notifiedDate': notifiedDate!.toIso8601String(),
-    if (notificationMethod != null)
-      'notificationMethod': notificationMethod,
+    if (notifiedDate != null) 'notifiedDate': notifiedDate!.toIso8601String(),
+    if (notificationMethod != null) 'notificationMethod': notificationMethod,
     if (paymentMethod != null) 'paymentMethod': paymentMethod,
     if (scheduledDate != null)
       'scheduledDate': scheduledDate!.toIso8601String(),
@@ -193,8 +191,9 @@ class Bill {
     scheduledDate: scheduledDate == _sentinel
         ? this.scheduledDate
         : scheduledDate as DateTime?,
-    scheduledBy:
-        scheduledBy == _sentinel ? this.scheduledBy : scheduledBy as String?,
+    scheduledBy: scheduledBy == _sentinel
+        ? this.scheduledBy
+        : scheduledBy as String?,
     confirmedPaidDate: confirmedPaidDate == _sentinel
         ? this.confirmedPaidDate
         : confirmedPaidDate as DateTime?,
@@ -213,23 +212,17 @@ class Bill {
   }
 
   /// Formatted amount string.
-  String get amountStr => amount != null
-      ? '\$${NumberFormat('#,##0.00').format(amount!)}'
-      : '';
+  String get amountStr =>
+      amount != null ? '\$${NumberFormat('#,##0.00').format(amount!)}' : '';
 
   /// Compute the next due date for a recurring bill given a base date.
   DateTime? nextDueDate(DateTime base) => switch (frequency) {
     BillFrequency.oneOff => null,
-    BillFrequency.monthly =>
-      DateTime(base.year, base.month + 1, base.day),
-    BillFrequency.every28Days =>
-      base.add(const Duration(days: 28)),
-    BillFrequency.quarterly =>
-      DateTime(base.year, base.month + 3, base.day),
-    BillFrequency.semiAnnual =>
-      DateTime(base.year, base.month + 6, base.day),
-    BillFrequency.annual =>
-      DateTime(base.year + 1, base.month, base.day),
+    BillFrequency.monthly => DateTime(base.year, base.month + 1, base.day),
+    BillFrequency.every28Days => base.add(const Duration(days: 28)),
+    BillFrequency.quarterly => DateTime(base.year, base.month + 3, base.day),
+    BillFrequency.semiAnnual => DateTime(base.year, base.month + 6, base.day),
+    BillFrequency.annual => DateTime(base.year + 1, base.month, base.day),
   };
 }
 

@@ -1,6 +1,6 @@
 /// BillEdit — add/edit bill dialog.
 ///
-// Time-stamp: <2026-04-14>
+// Time-stamp: <Thursday 2026-04-16 15:54:56 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -95,7 +95,6 @@ class _BillEditState extends State<BillEdit> {
 
   @override
   Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
     return Dialog(
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
       child: ConstrainedBox(
@@ -145,7 +144,9 @@ class _BillEditState extends State<BillEdit> {
                       // Amount
                       TextFormField(
                         controller: _amount,
-                        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
                         decoration: const InputDecoration(
                           labelText: 'Amount',
                           border: OutlineInputBorder(),
@@ -156,17 +157,19 @@ class _BillEditState extends State<BillEdit> {
                       const Gap(12),
                       // Frequency
                       DropdownButtonFormField<BillFrequency>(
-                        value: _frequency,
+                        initialValue: _frequency,
                         decoration: const InputDecoration(
                           labelText: 'Frequency',
                           border: OutlineInputBorder(),
                           isDense: true,
                         ),
                         items: BillFrequency.values
-                            .map((f) => DropdownMenuItem(
-                                  value: f,
-                                  child: Text(f.label),
-                                ))
+                            .map(
+                              (f) => DropdownMenuItem(
+                                value: f,
+                                child: Text(f.label),
+                              ),
+                            )
                             .toList(),
                         onChanged: (v) => setState(() => _frequency = v!),
                       ),
@@ -188,17 +191,19 @@ class _BillEditState extends State<BillEdit> {
                       const Gap(4),
                       // Status
                       DropdownButtonFormField<BillStatus>(
-                        value: _status,
+                        initialValue: _status,
                         decoration: const InputDecoration(
                           labelText: 'Status',
                           border: OutlineInputBorder(),
                           isDense: true,
                         ),
                         items: BillStatus.values
-                            .map((s) => DropdownMenuItem(
-                                  value: s,
-                                  child: Text(s.label),
-                                ))
+                            .map(
+                              (s) => DropdownMenuItem(
+                                value: s,
+                                child: Text(s.label),
+                              ),
+                            )
                             .toList(),
                         onChanged: (v) => setState(() => _status = v!),
                       ),
@@ -215,7 +220,7 @@ class _BillEditState extends State<BillEdit> {
                       ),
                       const Gap(8),
                       DropdownButtonFormField<String?>(
-                        value: _notificationMethod,
+                        initialValue: _notificationMethod,
                         decoration: const InputDecoration(
                           labelText: 'Notification method',
                           border: OutlineInputBorder(),
@@ -223,8 +228,9 @@ class _BillEditState extends State<BillEdit> {
                         ),
                         items: [
                           const DropdownMenuItem(value: null, child: Text('—')),
-                          ...notificationMethods.map((m) =>
-                              DropdownMenuItem(value: m, child: Text(m))),
+                          ...notificationMethods.map(
+                            (m) => DropdownMenuItem(value: m, child: Text(m)),
+                          ),
                         ],
                         onChanged: (v) =>
                             setState(() => _notificationMethod = v),
@@ -232,7 +238,7 @@ class _BillEditState extends State<BillEdit> {
                       const Gap(12),
                       // Payment method
                       DropdownButtonFormField<String?>(
-                        value: _paymentMethod,
+                        initialValue: _paymentMethod,
                         decoration: const InputDecoration(
                           labelText: 'Payment method',
                           border: OutlineInputBorder(),
@@ -240,8 +246,9 @@ class _BillEditState extends State<BillEdit> {
                         ),
                         items: [
                           const DropdownMenuItem(value: null, child: Text('—')),
-                          ...paymentMethods.map((m) =>
-                              DropdownMenuItem(value: m, child: Text(m))),
+                          ...paymentMethods.map(
+                            (m) => DropdownMenuItem(value: m, child: Text(m)),
+                          ),
                         ],
                         onChanged: (v) => setState(() => _paymentMethod = v),
                       ),
@@ -276,7 +283,8 @@ class _BillEditState extends State<BillEdit> {
                           final d = await _pickDate(_confirmedPaidDate);
                           if (d != null) setState(() => _confirmedPaidDate = d);
                         },
-                        onClear: () => setState(() => _confirmedPaidDate = null),
+                        onClear: () =>
+                            setState(() => _confirmedPaidDate = null),
                       ),
                       const Gap(12),
                       // Note
@@ -359,12 +367,8 @@ class _DateRow extends StatelessWidget {
               : const Icon(Icons.calendar_today_outlined, size: 16),
         ),
         child: Text(
-          date != null
-              ? DateFormat('d MMM yyyy').format(date!)
-              : '—',
-          style: TextStyle(
-            color: date != null ? null : cs.onSurfaceVariant,
-          ),
+          date != null ? DateFormat('d MMM yyyy').format(date!) : '—',
+          style: TextStyle(color: date != null ? null : cs.onSurfaceVariant),
         ),
       ),
     );

@@ -798,10 +798,10 @@ packages:
     dependency: transitive
     description:
       name: solid_auth
-      sha256: "57091f4e48843bb40d6e27d384548dbee8aab017ba3d3aff0ea9f925d0b62ff9"
+      sha256: f8669ec441ef7662edabfe8a592dafb6997fddcebdd6470a31c86271415be264
       url: "https://pub.dev"
     source: hosted
-    version: "0.1.28"
+    version: "0.1.29"
   solidpod:
     dependency: "direct main"
     description:

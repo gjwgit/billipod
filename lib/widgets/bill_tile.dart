@@ -99,7 +99,9 @@ class BillTile extends StatelessWidget {
                             context,
                             Icons.calendar_today_outlined,
                             _fmtDate(bill.dueDate!),
-                            overdue ? cs.errorContainer : cs.surfaceContainerHighest,
+                            overdue
+                                ? cs.errorContainer
+                                : cs.surfaceContainerHighest,
                             overdue ? cs.onErrorContainer : cs.onSurfaceVariant,
                           ),
                         if (bill.frequency != BillFrequency.oneOff)

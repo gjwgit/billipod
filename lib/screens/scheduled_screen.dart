@@ -38,10 +38,9 @@ class ScheduledScreen extends StatelessWidget {
             Icon(
               Icons.schedule_send_outlined,
               size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
             ),
             const Gap(16),
             const Text(
@@ -64,7 +63,7 @@ class ScheduledScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: bills.length,
-      separatorBuilder: (_, __) => const Gap(8),
+      separatorBuilder: (_, _) => const Gap(8),
       itemBuilder: (_, i) {
         final bill = bills[i];
         return BillTile(
@@ -122,7 +121,6 @@ class ScheduledScreen extends StatelessWidget {
       },
     );
   }
-
 
   Future<void> _duplicateBill(
     BuildContext context,

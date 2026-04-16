@@ -38,10 +38,9 @@ class ExpectedScreen extends StatelessWidget {
             Icon(
               Icons.upcoming_outlined,
               size: 64,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.3),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
             ),
             const Gap(16),
             const Text('No future bills.', style: TextStyle(fontSize: 16)),
@@ -61,7 +60,7 @@ class ExpectedScreen extends StatelessWidget {
     return ListView.separated(
       padding: const EdgeInsets.all(16),
       itemCount: bills.length,
-      separatorBuilder: (_, __) => const Gap(8),
+      separatorBuilder: (_, _) => const Gap(8),
       itemBuilder: (_, i) {
         final bill = bills[i];
         return BillTile(
@@ -87,7 +86,6 @@ class ExpectedScreen extends StatelessWidget {
       },
     );
   }
-
 
   Future<void> _duplicateBill(
     BuildContext context,

@@ -72,9 +72,7 @@ class PodService {
       final json = _extractJson(ttl);
       if (json == null || json.isEmpty) return [];
       final list = jsonDecode(json) as List;
-      return list
-          .map((j) => Bill.fromJson(j as Map<String, dynamic>))
-          .toList();
+      return list.map((j) => Bill.fromJson(j as Map<String, dynamic>)).toList();
     } catch (e) {
       debugPrint('[PodService] loadBills error ($fileName): $e');
       return null;

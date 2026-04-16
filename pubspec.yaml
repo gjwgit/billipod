@@ -1,7 +1,7 @@
 name: billipod
-description: "Billi Management with Secure and Private Solid Pod Storage"
+description: "Bill Management with Secure and Private Solid Pod Storage"
 publish_to: 'none'
-version: 0.1.1+1
+version: 0.1.2+1
 
 environment:
   sdk: ^3.11.3

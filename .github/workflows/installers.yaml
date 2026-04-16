@@ -52,14 +52,6 @@ env:
 
 jobs:
 
-  determine-build:
-    runs-on: ubuntu-latest
-    outputs:
-      build: ${{ steps.set-build.outputs.build }}
-      steps:
-        - id: set-build
-          run: echo "build=none" >> $GITHUB_OUTPUT
-
   ########################################################################
   # LINUX
   #
@@ -83,15 +75,11 @@ jobs:
   # separately or to build separately as required.
 
   package-linux-deb:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'deb') &&
-      (
-        contains(github.event.head_commit.message, 'bump version') ||
-        contains(github.event.head_commit.message, 'build installers') ||
-        contains(github.event.head_commit.message, 'build linux') ||
-        contains(github.event.head_commit.message, 'build deb')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version') ||
+      contains(github.event.head_commit.message, 'build installers') ||
+      contains(github.event.head_commit.message, 'build linux') ||
+      contains(github.event.head_commit.message, 'build deb')
 
     runs-on: ubuntu-latest
 
@@ -207,14 +195,10 @@ jobs:
           path: build/${{env.APP}}_${{env.VERSION}}_amd64.deb
 
   package-linux-zip:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'lzip') &&
-      (
-        contains(github.event.head_commit.message, 'bump version') ||
-        contains(github.event.head_commit.message, 'build installers') ||
-        contains(github.event.head_commit.message, 'build linux')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version') ||
+      contains(github.event.head_commit.message, 'build installers') ||
+      contains(github.event.head_commit.message, 'build linux')
 
     runs-on: ubuntu-latest
 
@@ -275,15 +259,12 @@ jobs:
           path: build/linux/x64/release/bundle/${{env.APP}}-linux.zip
 
   package-linux-snap:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'snap') &&
-      (
-        contains(github.event.head_commit.message, 'bump version') ||
-        contains(github.event.head_commit.message, 'build installers') ||
-        contains(github.event.head_commit.message, 'build linux') ||
-        contains(github.event.head_commit.message, 'build snap')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version') ||
+      contains(github.event.head_commit.message, 'build installers') ||
+      contains(github.event.head_commit.message, 'build linux') ||
+      contains(github.event.head_commit.message, 'build snap')
+
     runs-on: ubuntu-latest
 
     steps:
@@ -354,14 +335,11 @@ jobs:
   # steps have a template, this ORIGINAL build can be removed.
 
   package-macos-dmg-zip-original:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'odmgzip') &&
-      (
-        contains(github.event.head_commit.message, 'bump version') ||
-        contains(github.event.head_commit.message, 'build installers') ||
-        contains(github.event.head_commit.message, 'build macos basic')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version') ||
+      contains(github.event.head_commit.message, 'build installers') ||
+      contains(github.event.head_commit.message, 'build macos basic')
+
     runs-on: macos-latest
 
     steps:
@@ -460,14 +438,10 @@ jobs:
   # PROVISIONING_PROFILE_SPECIFIER: ""
 
   package-macos-dmg-zip-unsigned:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'udmgzip') &&
-      (
-        contains(github.event.head_commit.message, 'bump version x') ||
-        contains(github.event.head_commit.message, 'build installers x') ||
-        contains(github.event.head_commit.message, 'build macos unsigned')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version x') ||
+      contains(github.event.head_commit.message, 'build installers x') ||
+      contains(github.event.head_commit.message, 'build macos unsigned')
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -584,16 +558,12 @@ jobs:
   # Profile creation date: 29/10/2025
 
   package-macos-pkg-appstore:
-    needs: determine-build
     env:
       MACOS_INSTALL_CERTIFICATE_NAME: "3rd Party Mac Developer Installer: Togaware Pty Ltd (G7843T3SD3)"
-    if: >-
-      contains(needs.determine-build.outputs.build, 'mpkg') &&
-      (
-        contains(github.event.head_commit.message, 'bump version x') ||
-        contains(github.event.head_commit.message, 'build installers x') ||
-        contains(github.event.head_commit.message, 'build macos appstore')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version x') ||
+      contains(github.event.head_commit.message, 'build installers x') ||
+      contains(github.event.head_commit.message, 'build macos appstore')
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -776,14 +746,10 @@ jobs:
   # Profile creation date: 29/10/2025
 
   package-macos-dmg-zip-dev:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'mdmgzip') &&
-      (
-        contains(github.event.head_commit.message, 'bump version x') ||
-        contains(github.event.head_commit.message, 'build installers x') ||
-        contains(github.event.head_commit.message, 'build macos dev')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version x') ||
+      contains(github.event.head_commit.message, 'build installers x') ||
+      contains(github.event.head_commit.message, 'build macos dev')
     runs-on: macos-latest
     steps:
       - name: Clone Repository
@@ -920,14 +886,10 @@ jobs:
   # IOS
 
   package-ios-ipa:
-    needs: determine-build
-    if: >-
-      contains(needs.determine-build.outputs.build, 'ipa') &&
-      (
-        contains(github.event.head_commit.message, 'bump version x') ||
-        contains(github.event.head_commit.message, 'build installers x') ||
-        contains(github.event.head_commit.message, 'build ios')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version x') ||
+      contains(github.event.head_commit.message, 'build installers x') ||
+      contains(github.event.head_commit.message, 'build ios')
     runs-on: macos-latest
     env:
       IOS_APP_RELEASE_PATH: build/ios/ipa
@@ -1084,17 +1046,10 @@ jobs:
   # WINDOWS
 
   package-windows-zip-exe:
-    needs: determine-build
-    if: >-
-      (
-        contains(needs.determine-build.outputs.build, 'wexe') ||
-        contains(needs.determine-build.outputs.build, 'wzip')
-      ) &&
-      (
-        contains(github.event.head_commit.message, 'bump version') ||
-        contains(github.event.head_commit.message, 'build installers') ||
-        contains(github.event.head_commit.message, 'build windows')
-      )
+    if: |
+      contains(github.event.head_commit.message, 'bump version') ||
+      contains(github.event.head_commit.message, 'build installers') ||
+      contains(github.event.head_commit.message, 'build windows')
     runs-on: windows-latest # randomly not working (choco fails) with inno 1.2.7
 
     steps:
