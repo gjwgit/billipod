@@ -354,6 +354,9 @@ if [[ "${status}" == "completed" ]]; then
 
     echo ""
 
+    echo '******************** FINISHED.'
+
+
 else
 
     gh run view ${bumpId} | cat

@@ -10,7 +10,6 @@ import 'package:billipod/models/bill.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
-import 'package:billipod/screens/templates_screen.dart';
 import 'package:billipod/services/app_provider.dart';
 
 /// Build a testable app with [provider] injected, no SolidLogin/solidui.
@@ -64,19 +63,13 @@ class _TestScaffold extends StatefulWidget {
 class _TestScaffoldState extends State<_TestScaffold> {
   int _index = 0;
 
-  static const _titles = ['Scheduled', 'Expected', 'Past', 'Recurring'];
+  static const _titles = ['Scheduled', 'Expected', 'Past'];
   static const _icons = [
     Icons.schedule_send_outlined,
     Icons.upcoming_outlined,
     Icons.check_circle_outline,
-    Icons.repeat,
   ];
-  static const _screens = [
-    ScheduledScreen(),
-    ExpectedScreen(),
-    PastScreen(),
-    TemplatesScreen(),
-  ];
+  static const _screens = [ScheduledScreen(), ExpectedScreen(), PastScreen()];
 
   @override
   Widget build(BuildContext context) => Scaffold(

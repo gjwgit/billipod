@@ -30,7 +30,6 @@ void main() {
       expect(find.text('Scheduled'), findsOneWidget);
       expect(find.text('Expected'), findsOneWidget);
       expect(find.text('Past'), findsOneWidget);
-      expect(find.text('Recurring'), findsOneWidget);
     });
 
     testWidgets('tapping Expected shows expected screen', (tester) async {
@@ -45,13 +44,6 @@ void main() {
       await tester.tap(find.text('Past'));
       await tester.pumpAndSettle();
       expect(find.text('No paid bills yet.'), findsOneWidget);
-    });
-
-    testWidgets('tapping Recurring shows templates screen', (tester) async {
-      await pumpApp(tester);
-      await tester.tap(find.text('Recurring'));
-      await tester.pumpAndSettle();
-      expect(find.text('No recurring templates.'), findsOneWidget);
     });
   });
 
@@ -119,22 +111,6 @@ void main() {
         ),
       ]);
       expect(find.text('\$1,234.56'), findsOneWidget);
-    });
-
-    testWidgets('recurring template appears in Recurring screen', (
-      tester,
-    ) async {
-      await pumpApp(tester, [
-        makeBill(
-          title: 'Netflix',
-          frequency: BillFrequency.monthly,
-          dueDate: DateTime(2026, 1, 1),
-          isTemplate: true,
-        ),
-      ]);
-      await tester.tap(find.text('Recurring'));
-      await tester.pumpAndSettle();
-      expect(find.text('Netflix'), findsOneWidget);
     });
 
     testWidgets('recurring template generates instances in Expected', (

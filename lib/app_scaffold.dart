@@ -20,7 +20,6 @@ import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
-import 'package:billipod/screens/templates_screen.dart';
 import 'package:billipod/services/app_provider.dart';
 
 class AppScaffold extends StatefulWidget {
@@ -85,14 +84,6 @@ class _AppScaffoldState extends State<AppScaffold> {
           icon: Icons.check_circle_outline,
           tooltip: '**Past**\n\nBills that have been paid.',
           child: PastScreen(),
-        ),
-        const SolidMenuItem(
-          title: 'Recurring',
-          icon: Icons.repeat,
-          tooltip:
-              '**Recurring**\n\nManage recurring bill templates.\n\n'
-              'Each template auto-expands the next 12 months of instances.',
-          child: TemplatesScreen(),
         ),
       ],
       floatingActionButton: FloatingActionButton(

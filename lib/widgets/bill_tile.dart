@@ -1,6 +1,6 @@
 /// BillTile — a single bill row in the list.
 ///
-// Time-stamp: <2026-04-14>
+// Time-stamp: <2026-04-17>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -19,8 +19,8 @@ class BillTile extends StatelessWidget {
   final Bill bill;
   final VoidCallback onTap;
   final VoidCallback onDelete;
-  final VoidCallback? onStar; // null = no star button
-  final List<Widget>? actions; // extra trailing actions (e.g. move buttons)
+  final VoidCallback? onStar;
+  final List<Widget>? actions;
 
   const BillTile({
     super.key,
@@ -50,127 +50,136 @@ class BillTile extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
+          padding: const EdgeInsets.fromLTRB(14, 10, 4, 0),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Status icon ───────────────────────────────────────────────
-              Padding(
-                padding: const EdgeInsets.only(top: 2),
-                child: Icon(
-                  _statusIcon,
-                  size: 20,
-                  color: overdue ? cs.error : cs.primary,
-                ),
-              ),
-              const Gap(10),
-              // ── Content ───────────────────────────────────────────────────
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            bill.title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 14,
-                              color: overdue ? cs.error : null,
-                            ),
-                          ),
-                        ),
-                        if (bill.amount != null)
-                          Text(
-                            bill.amountStr,
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 14,
-                              color: overdue ? cs.error : cs.primary,
-                            ),
-                          ),
-                      ],
-                    ),
-                    const Gap(3),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 2,
-                      children: [
-                        if (bill.dueDate != null)
-                          _chip(
-                            context,
-                            Icons.calendar_today_outlined,
-                            _fmtDate(bill.dueDate!),
-                            overdue
-                                ? cs.errorContainer
-                                : cs.surfaceContainerHighest,
-                            overdue ? cs.onErrorContainer : cs.onSurfaceVariant,
-                          ),
-                        if (bill.frequency != BillFrequency.oneOff)
-                          _chip(
-                            context,
-                            Icons.repeat,
-                            bill.frequency.label,
-                            cs.secondaryContainer,
-                            cs.onSecondaryContainer,
-                          ),
-                        if (bill.paymentMethod != null)
-                          _chip(
-                            context,
-                            Icons.payment_outlined,
-                            bill.paymentMethod!,
-                            cs.surfaceContainerHighest,
-                            cs.onSurfaceVariant,
-                          ),
-                        if (bill.scheduledDate != null)
-                          _chip(
-                            context,
-                            Icons.schedule_outlined,
-                            'Scheduled ${_fmtDate(bill.scheduledDate!)}',
-                            cs.tertiaryContainer,
-                            cs.onTertiaryContainer,
-                          ),
-                        if (bill.notifiedDate != null)
-                          _chip(
-                            context,
-                            Icons.notifications_outlined,
-                            'Notified ${_fmtDate(bill.notifiedDate!)}',
-                            cs.surfaceContainerHighest,
-                            cs.onSurfaceVariant,
-                          ),
-                      ],
-                    ),
-                    if (bill.note != null && bill.note!.isNotEmpty) ...[
-                      const Gap(4),
-                      Text(
-                        bill.note!,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: cs.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ),
-              // ── Trailing ──────────────────────────────────────────────────
-              Column(
-                mainAxisSize: MainAxisSize.min,
+              // ── Content row ───────────────────────────────────────────────
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  IconButton(
-                    icon: Icon(
-                      bill.isStarred ? Icons.star : Icons.star_border,
-                      size: 18,
-                      color: bill.isStarred
-                          ? Colors.amber
-                          : cs.onSurfaceVariant,
+                  // Status icon
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Icon(
+                      _statusIcon,
+                      size: 20,
+                      color: overdue ? cs.error : cs.primary,
                     ),
-                    tooltip: bill.isStarred ? 'Unstar' : 'Star',
-                    onPressed: onStar,
                   ),
+                  const Gap(10),
+                  // Title, amount, chips, note
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                bill.title,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: overdue ? cs.error : null,
+                                ),
+                              ),
+                            ),
+                            if (bill.amount != null)
+                              Text(
+                                bill.amountStr,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                  fontSize: 14,
+                                  color: overdue ? cs.error : cs.primary,
+                                ),
+                              ),
+                          ],
+                        ),
+                        const Gap(3),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 2,
+                          children: [
+                            if (bill.dueDate != null)
+                              _chip(
+                                context,
+                                Icons.calendar_today_outlined,
+                                _fmtDate(bill.dueDate!),
+                                overdue
+                                    ? cs.errorContainer
+                                    : cs.surfaceContainerHighest,
+                                overdue
+                                    ? cs.onErrorContainer
+                                    : cs.onSurfaceVariant,
+                              ),
+                            if (bill.frequency != BillFrequency.oneOff)
+                              _chip(
+                                context,
+                                Icons.repeat,
+                                bill.frequency.label,
+                                cs.secondaryContainer,
+                                cs.onSecondaryContainer,
+                              ),
+                            if (bill.paymentMethod != null)
+                              _chip(
+                                context,
+                                Icons.payment_outlined,
+                                bill.paymentMethod!,
+                                cs.surfaceContainerHighest,
+                                cs.onSurfaceVariant,
+                              ),
+                            if (bill.scheduledDate != null)
+                              _chip(
+                                context,
+                                Icons.schedule_outlined,
+                                'Scheduled ${_fmtDate(bill.scheduledDate!)}',
+                                cs.tertiaryContainer,
+                                cs.onTertiaryContainer,
+                              ),
+                            if (bill.notifiedDate != null)
+                              _chip(
+                                context,
+                                Icons.notifications_outlined,
+                                'Notified ${_fmtDate(bill.notifiedDate!)}',
+                                cs.surfaceContainerHighest,
+                                cs.onSurfaceVariant,
+                              ),
+                          ],
+                        ),
+                        if (bill.note != null && bill.note!.isNotEmpty) ...[
+                          const Gap(4),
+                          Text(
+                            bill.note!,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: cs.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              // ── Button row along the bottom right ─────────────────────────
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  if (onStar != null)
+                    IconButton(
+                      icon: Icon(
+                        bill.isStarred ? Icons.star : Icons.star_border,
+                        size: 18,
+                        color: bill.isStarred
+                            ? Colors.amber
+                            : cs.onSurfaceVariant,
+                      ),
+                      tooltip: bill.isStarred ? 'Unstar' : 'Star',
+                      onPressed: onStar,
+                    ),
                   ...?actions,
                   IconButton(
                     icon: const Icon(Icons.delete_outline, size: 18),

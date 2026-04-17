@@ -12,7 +12,7 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 [apk](https://solidcommunity.au/installers/billipod.apk); for
 **GNU/Linux** as
 [deb](https://solidcommunity.au/installers/billipod_amd64.deb) or
-[snap](https://solidcommunity.au/installers/billipod_amd64.snap) or
+<!--[snap](https://solidcommunity.au/installers/billipod_amd64.snap) or-->
 [zip](https://solidcommunity.au/installers/billipod-linux.zip); for
 **macOS** as
 [dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Remove the RECCURENCE page, cleanup ass SEARCH [0.1.4 20260418 gjw]
 + Add a star to highlight items [0.1.3 20260416 gjw]
 + Refining the functionality [0.1.2 20260416 gjw]
 + Initial functionality [0.1.1 20260414 gjw]
