@@ -355,7 +355,6 @@ void main() {
   group('field preservation on updateBill', () {
     test('CRITICAL: isAutoPaid is preserved after updateBill', () {
       final p = freshProvider();
-      final b = make(id: 'x', title: 'Bill').copyWith(isAutoPaid: true);
       // Use Bill directly since make() helper doesn't expose isAutoPaid.
       final original = Bill(id: 'x', title: 'Original', isAutoPaid: true);
       p.addBill(original);
