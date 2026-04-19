@@ -31,7 +31,6 @@ class _BillEditState extends State<BillEdit> {
   late final TextEditingController _note;
   late BillFrequency _frequency;
   late BillStatus _status;
-  late bool _isTemplate;
   DateTime? _dueDate;
   DateTime? _notifiedDate;
   String? _notificationMethod;
@@ -52,7 +51,6 @@ class _BillEditState extends State<BillEdit> {
     _note = TextEditingController(text: b?.note ?? '');
     _frequency = b?.frequency ?? BillFrequency.oneOff;
     _status = b?.status ?? BillStatus.future;
-    _isTemplate = b?.isTemplate ?? false;
     _dueDate = b?.dueDate;
     _notifiedDate = b?.notifiedDate;
     _notificationMethod = b?.notificationMethod;
@@ -83,7 +81,7 @@ class _BillEditState extends State<BillEdit> {
     confirmedPaidDate: _confirmedPaidDate,
     note: _note.text.trim().isEmpty ? null : _note.text.trim(),
     parentId: widget.bill?.parentId,
-    isTemplate: _isTemplate,
+    isTemplate: false,
   );
 
   Future<DateTime?> _pickDate(DateTime? initial) => showDatePicker(
@@ -174,21 +172,6 @@ class _BillEditState extends State<BillEdit> {
                         onChanged: (v) => setState(() => _frequency = v!),
                       ),
                       const Gap(12),
-                      // Recurring template checkbox
-                      if (_frequency != BillFrequency.oneOff)
-                        CheckboxListTile(
-                          value: _isTemplate,
-                          onChanged: (v) =>
-                              setState(() => _isTemplate = v ?? false),
-                          title: const Text('Recurring template'),
-                          subtitle: const Text(
-                            'Auto-expands the next 12 months of instances.',
-                          ),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                        ),
-                      const Gap(4),
                       // Status
                       DropdownButtonFormField<BillStatus>(
                         initialValue: _status,
