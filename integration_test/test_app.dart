@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/screens/expected_screen.dart';
+import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
 import 'package:billipod/services/app_provider.dart';
@@ -63,13 +64,19 @@ class _TestScaffold extends StatefulWidget {
 class _TestScaffoldState extends State<_TestScaffold> {
   int _index = 0;
 
-  static const _titles = ['Scheduled', 'Expected', 'Past'];
+  static const _titles = ['Scheduled', 'Expected', 'Past', 'Import / Export'];
   static const _icons = [
     Icons.schedule_send_outlined,
     Icons.upcoming_outlined,
     Icons.check_circle_outline,
+    Icons.import_export,
   ];
-  static const _screens = [ScheduledScreen(), ExpectedScreen(), PastScreen()];
+  static const _screens = [
+    ScheduledScreen(),
+    ExpectedScreen(),
+    PastScreen(),
+    ImportScreen(),
+  ];
 
   @override
   Widget build(BuildContext context) => Scaffold(

@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Add IMPOTY/EXPORT [0.1.7 20260420 gjw]
 + Bug fix saving/duplicate auto paid [0.1.6 20260419 gjw]
 + Add AutoPaid [0.1.5 20260419 gjw]
 + Remove the RECCURENCE page, cleanup ass SEARCH [0.1.4 20260418 gjw]

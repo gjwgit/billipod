@@ -1,7 +1,7 @@
 name: billipod
 description: "Bill Management with Secure and Private Solid Pod Storage"
 publish_to: 'none'
-version: 0.1.6+1
+version: 0.1.7+1
 
 environment:
   sdk: ^3.11.3
@@ -11,7 +11,10 @@ dependencies:
     sdk: flutter
 
   gap: ^3.0.1
+  file_picker: ^10.3.10
   intl: ^0.20.2
+  pdf: ^3.11.1
+  printing: ^5.13.1
   provider: ^6.1.5
   solidpod: ^0.12.2
   solidui: ^0.3.18

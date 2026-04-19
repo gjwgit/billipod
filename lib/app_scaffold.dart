@@ -18,6 +18,7 @@ import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/screens/expected_screen.dart';
+import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
 import 'package:billipod/services/app_provider.dart';
@@ -84,6 +85,14 @@ class _AppScaffoldState extends State<AppScaffold> {
           icon: Icons.check_circle_outline,
           tooltip: '**Past**\n\nBills that have been paid.',
           child: PastScreen(),
+        ),
+        const SolidMenuItem(
+          title: 'Import / Export',
+          icon: Icons.import_export,
+          tooltip:
+              '**Import / Export**\n\n'
+              'Import from JSON backup or export to JSON and PDF.',
+          child: ImportScreen(),
         ),
       ],
       floatingActionButton: FloatingActionButton(
