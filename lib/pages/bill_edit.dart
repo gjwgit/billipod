@@ -84,6 +84,7 @@ class _BillEditState extends State<BillEdit> {
     note: _note.text.trim().isEmpty ? null : _note.text.trim(),
     parentId: widget.bill?.parentId,
     isTemplate: false,
+    isStarred: widget.bill?.isStarred ?? false,
     isAutoPaid: _isAutoPaid,
   );
 

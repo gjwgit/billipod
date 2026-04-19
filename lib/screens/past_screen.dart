@@ -179,6 +179,7 @@ class _PastScreenState extends State<PastScreen> {
           confirmedPaidDate: advance(bill.confirmedPaidDate, i),
           note: bill.note,
           isTemplate: false,
+          isAutoPaid: bill.isAutoPaid,
         ),
       );
     }

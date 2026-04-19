@@ -257,4 +257,48 @@ void main() {
       expect(BillFrequency.annual.label, 'Annually');
     });
   });
+  // ── isAutoPaid and isStarred round-trip ────────────────────────────────────
+
+  group('isAutoPaid', () {
+    test('defaults to false', () {
+      expect(make().isAutoPaid, isFalse);
+    });
+
+    test('round-trips through JSON when true', () {
+      final b = make(title: 'Auto').copyWith(isAutoPaid: true);
+      expect(Bill.fromJson(b.toJson()).isAutoPaid, isTrue);
+    });
+
+    test('not written to JSON when false', () {
+      expect(make().toJson().containsKey('isAutoPaid'), isFalse);
+    });
+
+    test('copyWith preserves when not specified', () {
+      final b = make().copyWith(isAutoPaid: true);
+      expect(b.copyWith(title: 'New').isAutoPaid, isTrue);
+    });
+  });
+
+  group('isStarred preserved on edit (regression)', () {
+    test('copyWith preserves isStarred when not specified', () {
+      final b = make().copyWith(isStarred: true);
+      // Simulates _buildBill creating a new Bill — isStarred must be carried over.
+      final edited = b.copyWith(title: 'Edited title');
+      expect(
+        edited.isStarred,
+        isTrue,
+        reason: 'isStarred must be preserved when editing a bill',
+      );
+    });
+
+    test('copyWith preserves isAutoPaid when not specified', () {
+      final b = make().copyWith(isAutoPaid: true);
+      final edited = b.copyWith(title: 'Edited title');
+      expect(
+        edited.isAutoPaid,
+        isTrue,
+        reason: 'isAutoPaid must be preserved when editing a bill',
+      );
+    });
+  });
 }

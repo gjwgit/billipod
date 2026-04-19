@@ -233,6 +233,7 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
           confirmedPaidDate: advance(bill.confirmedPaidDate, i),
           note: bill.note,
           isTemplate: false,
+          isAutoPaid: bill.isAutoPaid,
         ),
       );
     }

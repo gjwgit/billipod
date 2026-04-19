@@ -195,6 +195,7 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           confirmedPaidDate: advance(bill.confirmedPaidDate, i),
           note: bill.note,
           isTemplate: false,
+          isAutoPaid: bill.isAutoPaid,
         ),
       );
     }
