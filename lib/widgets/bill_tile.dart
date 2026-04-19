@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:billipod/models/bill.dart';
-import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 class BillTile extends StatelessWidget {
   final Bill bill;
@@ -195,7 +195,8 @@ class BillTile extends StatelessWidget {
                     ),
                   ...?actions,
                   MarkdownTooltip(
-                    message: '**Delete**\n\nPermanently remove this bill. This cannot be undone.',
+                    message:
+                        '**Delete**\n\nPermanently remove this bill. This cannot be undone.',
                     child: IconButton(
                       icon: const Icon(Icons.delete_outline, size: 18),
                       color: cs.error,
@@ -210,7 +211,6 @@ class BillTile extends StatelessWidget {
       ),
     );
   }
-
 
   IconData get _statusIcon => switch (bill.status) {
     BillStatus.future => Icons.upcoming_outlined,

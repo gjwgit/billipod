@@ -11,13 +11,13 @@ library;
 import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/widgets/bill_tile.dart';
-import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
 
 class ExpectedScreen extends StatefulWidget {
@@ -93,9 +93,9 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
                   onChanged: (v) => setState(() => _query = v),
                 ),
               ),
-          const Gap(4),
-          MarkdownTooltip(
-            message: '''
+              const Gap(4),
+              const MarkdownTooltip(
+                message: '''
 
 **Search tips**
 
@@ -104,8 +104,16 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
 - Tap any bill to edit it
 
 ''',
-            child: const Icon(Icons.help_outline, size: 18),
-          ),
+                child: Icon(Icons.help_outline, size: 18),
+              ),
+              MarkdownTooltip(
+                message: '**Add bill**\n\nAdd a new future bill.',
+                child: IconButton(
+                  icon: const Icon(Icons.add_circle_outline, size: 20),
+                  onPressed: () =>
+                      _addBill(context, provider, BillStatus.future),
+                ),
+              ),
             ],
           ),
         ),
@@ -164,7 +172,8 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
                           ' each advanced by one frequency cycle.',
                       child: IconButton(
                         icon: const Icon(Icons.copy_outlined, size: 18),
-                        onPressed: () => _duplicateBill(context, bill, provider),
+                        onPressed: () =>
+                            _duplicateBill(context, bill, provider),
                       ),
                     ),
                     MarkdownTooltip(
@@ -172,7 +181,10 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
                           '**Move to Scheduled**\n\nMark this bill as scheduled'
                           ' — payment has been arranged.',
                       child: IconButton(
-                        icon: const Icon(Icons.schedule_send_outlined, size: 18),
+                        icon: const Icon(
+                          Icons.schedule_send_outlined,
+                          size: 18,
+                        ),
                         onPressed: () {
                           provider.moveToStatus(bill.id, BillStatus.scheduled);
                           provider.saveToPod();
@@ -186,6 +198,27 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           ),
       ],
     );
+  }
+
+  Future<void> _addBill(
+    BuildContext context,
+    AppProvider provider,
+    BillStatus defaultStatus,
+  ) async {
+    final bill = await showDialog<Bill>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => BillEdit(
+        bill: Bill(
+          title: _query.trim().isNotEmpty ? _query.trim() : 'New bill',
+          status: defaultStatus,
+        ),
+      ),
+    );
+    if (bill != null && context.mounted) {
+      provider.addBill(bill);
+      await provider.saveToPod();
+    }
   }
 
   Future<void> _duplicateBill(

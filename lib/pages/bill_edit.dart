@@ -12,9 +12,9 @@ import 'package:flutter/material.dart';
 
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:billipod/constants/app.dart';
-import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:billipod/models/bill.dart';
 
 class BillEdit extends StatefulWidget {

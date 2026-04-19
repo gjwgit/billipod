@@ -15,8 +15,6 @@ import 'package:solidpod/solidpod.dart';
 import 'package:solidui/solidui.dart';
 
 import 'package:billipod/constants/app.dart';
-import 'package:billipod/models/bill.dart';
-import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
@@ -60,17 +58,9 @@ class _AppScaffoldState extends State<AppScaffold> {
       showLogout: false,
       showLogin: false,
       themeToggle: const SolidThemeToggleConfig(enabled: true),
-      appBar: SolidAppBarConfig(
+      appBar: const SolidAppBarConfig(
         title: appName,
-        actions: [
-          SolidAppBarAction(
-            icon: Icons.add,
-            tooltip: '**Add bill**\n\nAdd a new bill to the Expected list.',
-            onPressed: () => _addBill(context),
-            initialIndex: 0,
-          ),
-        ],
-        versionConfig: const SolidVersionConfig(
+        versionConfig: SolidVersionConfig(
           changelogUrl:
               'https://github.com/gjwgit/billipod/blob/dev/CHANGELOG.md',
         ),
@@ -121,17 +111,5 @@ class _AppScaffoldState extends State<AppScaffold> {
         ),
       ),
     );
-  }
-
-  Future<void> _addBill(BuildContext context) async {
-    final bill = await showDialog<Bill>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => const BillEdit(),
-    );
-    if (bill != null && context.mounted) {
-      context.read<AppProvider>().addBill(bill);
-      await context.read<AppProvider>().saveToPod();
-    }
   }
 }

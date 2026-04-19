@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Move floating + to per page + button next to SEARCH [0.1.9 20260420 gjw]
 + Add tooltips [0.1.8 20260420 gjw]
 + Add IMPORT/EXPORT [0.1.7 20260420 gjw]
 + Bug fix saving/duplicate auto paid [0.1.6 20260419 gjw]
