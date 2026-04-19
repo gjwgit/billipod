@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
 
@@ -30,6 +31,7 @@ class PastScreen extends StatefulWidget {
 class _PastScreenState extends State<PastScreen> {
   final _search = TextEditingController();
   String _query = '';
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -113,6 +115,16 @@ class _PastScreenState extends State<PastScreen> {
                   onPressed: () => _addBill(context, provider, BillStatus.past),
                 ),
               ),
+              MarkdownTooltip(
+                message:
+                    '**Export PDF**\n\nSave or print these past bills as a PDF.',
+                child: IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
+                  onPressed: _loading
+                      ? null
+                      : () => _exportPdf(context, provider),
+                ),
+              ),
             ],
           ),
         ),
@@ -174,6 +186,24 @@ class _PastScreenState extends State<PastScreen> {
           ),
       ],
     );
+  }
+
+  Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
+    setState(() => _loading = true);
+    final err = await ExportService.exportPdf(
+      context: context,
+      bills: provider.pastBills,
+      title: 'Past Bills',
+      prefix: 'past',
+    );
+    if (mounted) {
+      setState(() => _loading = false);
+      if (err != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('PDF export failed: $err')));
+      }
+    }
   }
 
   Future<void> _addBill(

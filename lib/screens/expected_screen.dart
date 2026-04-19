@@ -17,6 +17,7 @@ import 'package:provider/provider.dart';
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
 
@@ -30,6 +31,7 @@ class ExpectedScreen extends StatefulWidget {
 class _ExpectedScreenState extends State<ExpectedScreen> {
   final _search = TextEditingController();
   String _query = '';
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -112,6 +114,16 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
                   icon: const Icon(Icons.add_circle_outline, size: 20),
                   onPressed: () =>
                       _addBill(context, provider, BillStatus.future),
+                ),
+              ),
+              MarkdownTooltip(
+                message:
+                    '**Export PDF**\n\nSave or print these expected bills as a PDF.',
+                child: IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
+                  onPressed: _loading
+                      ? null
+                      : () => _exportPdf(context, provider),
                 ),
               ),
             ],
@@ -198,6 +210,24 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           ),
       ],
     );
+  }
+
+  Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
+    setState(() => _loading = true);
+    final err = await ExportService.exportPdf(
+      context: context,
+      bills: provider.futureBills,
+      title: 'Expected Bills',
+      prefix: 'expected',
+    );
+    if (mounted) {
+      setState(() => _loading = false);
+      if (err != null) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('PDF export failed: $err')));
+      }
+    }
   }
 
   Future<void> _addBill(

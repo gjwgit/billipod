@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Add PDF to each of SCHEDULED/EXPECTED/PAST [0.1.10 20260420 gjw]
 + Move floating + to per page + button next to SEARCH [0.1.9 20260420 gjw]
 + Add tooltips [0.1.8 20260420 gjw]
 + Add IMPORT/EXPORT [0.1.7 20260420 gjw]
