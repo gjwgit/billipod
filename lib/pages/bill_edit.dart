@@ -37,6 +37,7 @@ class _BillEditState extends State<BillEdit> {
   String? _paymentMethod;
   DateTime? _scheduledDate;
   DateTime? _confirmedPaidDate;
+  late bool _isAutoPaid;
 
   bool get _isNew => widget.bill == null;
 
@@ -57,6 +58,7 @@ class _BillEditState extends State<BillEdit> {
     _paymentMethod = b?.paymentMethod;
     _scheduledDate = b?.scheduledDate;
     _confirmedPaidDate = b?.confirmedPaidDate;
+    _isAutoPaid = b?.isAutoPaid ?? false;
   }
 
   @override
@@ -82,6 +84,7 @@ class _BillEditState extends State<BillEdit> {
     note: _note.text.trim().isEmpty ? null : _note.text.trim(),
     parentId: widget.bill?.parentId,
     isTemplate: false,
+    isAutoPaid: _isAutoPaid,
   );
 
   Future<DateTime?> _pickDate(DateTime? initial) => showDatePicker(
@@ -234,6 +237,20 @@ class _BillEditState extends State<BillEdit> {
                           ),
                         ],
                         onChanged: (v) => setState(() => _paymentMethod = v),
+                      ),
+                      const Gap(8),
+                      // Payment type checkboxes
+                      CheckboxListTile(
+                        value: _isAutoPaid,
+                        onChanged: (v) =>
+                            setState(() => _isAutoPaid = v ?? false),
+                        title: const Text('Auto-paid'),
+                        subtitle: const Text(
+                          'Payment is made automatically (e.g. credit card direct debit).',
+                        ),
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
                       ),
                       const Gap(8),
                       // Scheduled date

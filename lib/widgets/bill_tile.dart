@@ -129,6 +129,14 @@ class BillTile extends StatelessWidget {
                                 cs.surfaceContainerHighest,
                                 cs.onSurfaceVariant,
                               ),
+                            if (bill.isAutoPaid)
+                              _chip(
+                                context,
+                                Icons.autorenew,
+                                'Auto-paid',
+                                cs.tertiaryContainer,
+                                cs.onTertiaryContainer,
+                              ),
                             if (bill.scheduledDate != null)
                               _chip(
                                 context,

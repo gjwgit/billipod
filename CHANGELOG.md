@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Add AutoPaid [0.1.5 20260419 gjw]
 + Remove the RECCURENCE page, cleanup ass SEARCH [0.1.4 20260418 gjw]
 + Add a star to highlight items [0.1.3 20260416 gjw]
 + Refining the functionality [0.1.2 20260416 gjw]

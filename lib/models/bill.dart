@@ -88,6 +88,9 @@ class Bill {
   /// True if the user has starred/highlighted this bill.
   final bool isStarred;
 
+  /// True if this bill is paid automatically (e.g. via credit card).
+  final bool isAutoPaid;
+
   Bill({
     String? id,
     required this.title,
@@ -105,6 +108,7 @@ class Bill {
     this.parentId,
     this.isTemplate = false,
     this.isStarred = false,
+    this.isAutoPaid = false,
   }) : id = id ?? _uuid.v4();
 
   // ── Serialisation ──────────────────────────────────────────────────────────
@@ -128,6 +132,7 @@ class Bill {
     if (parentId != null) 'parentId': parentId,
     'isTemplate': isTemplate,
     if (isStarred) 'isStarred': isStarred,
+    if (isAutoPaid) 'isAutoPaid': isAutoPaid,
   };
 
   factory Bill.fromJson(Map<String, dynamic> j) => Bill(
@@ -161,6 +166,7 @@ class Bill {
     parentId: j['parentId'] as String?,
     isTemplate: j['isTemplate'] as bool? ?? false,
     isStarred: j['isStarred'] as bool? ?? false,
+    isAutoPaid: j['isAutoPaid'] as bool? ?? false,
   );
 
   Bill copyWith({
@@ -179,6 +185,7 @@ class Bill {
     Object? parentId = _sentinel,
     bool? isTemplate,
     bool? isStarred,
+    bool? isAutoPaid,
   }) => Bill(
     id: id,
     title: title ?? this.title,
@@ -208,6 +215,7 @@ class Bill {
     parentId: parentId == _sentinel ? this.parentId : parentId as String?,
     isTemplate: isTemplate ?? this.isTemplate,
     isStarred: isStarred ?? this.isStarred,
+    isAutoPaid: isAutoPaid ?? this.isAutoPaid,
   );
 
   // ── Helpers ────────────────────────────────────────────────────────────────
