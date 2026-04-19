@@ -17,6 +17,7 @@ import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/widgets/bill_tile.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
 
 class ScheduledScreen extends StatefulWidget {
@@ -65,28 +66,47 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-          child: TextField(
-            controller: _search,
-            decoration: InputDecoration(
-              hintText: 'Search bills…',
-              prefixIcon: const Icon(Icons.search, size: 20),
-              suffixIcon: _query.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: const Icon(Icons.clear, size: 18),
-                      onPressed: () {
-                        _search.clear();
-                        setState(() => _query = '');
-                      },
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _search,
+                  decoration: InputDecoration(
+                    hintText: 'Search bills…',
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    suffixIcon: _query.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.clear, size: 18),
+                            onPressed: () {
+                              _search.clear();
+                              setState(() => _query = '');
+                            },
+                          ),
+                    isDense: true,
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
                     ),
-              isDense: true,
-              border: const OutlineInputBorder(),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 8,
+                  ),
+                  onChanged: (v) => setState(() => _query = v),
+                ),
               ),
-            ),
-            onChanged: (v) => setState(() => _query = v),
+          const Gap(4),
+          MarkdownTooltip(
+            message: '''
+
+**Search tips**
+
+- Plain text — searches title, note, payment method and amount
+- Starred items show with a gold background
+- Tap any bill to edit it
+
+''',
+            child: const Icon(Icons.help_outline, size: 18),
+          ),
+            ],
           ),
         ),
         if (bills.isEmpty)
@@ -138,23 +158,31 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                     provider.saveToPod();
                   },
                   actions: [
-                    IconButton(
-                      icon: const Icon(Icons.copy_outlined, size: 18),
-                      tooltip: 'Duplicate',
-                      onPressed: () => _duplicateBill(context, bill, provider),
+                    MarkdownTooltip(
+                      message:
+                          '**Duplicate**\n\nCreate one or more copies of this bill,'
+                          ' each advanced by one frequency cycle.',
+                      child: IconButton(
+                        icon: const Icon(Icons.copy_outlined, size: 18),
+                        onPressed: () => _duplicateBill(context, bill, provider),
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.check_circle_outline, size: 18),
-                      tooltip: 'Mark as Paid',
-                      onPressed: () => _markPaid(context, bill, provider),
+                    MarkdownTooltip(
+                      message: '**Mark as Paid**\n\nConfirm payment and move this bill to Past.',
+                      child: IconButton(
+                        icon: const Icon(Icons.check_circle_outline, size: 18),
+                        onPressed: () => _markPaid(context, bill, provider),
+                      ),
                     ),
-                    IconButton(
-                      icon: const Icon(Icons.upcoming_outlined, size: 18),
-                      tooltip: 'Move back to Expected',
-                      onPressed: () {
-                        provider.moveToStatus(bill.id, BillStatus.future);
-                        provider.saveToPod();
-                      },
+                    MarkdownTooltip(
+                      message: '**Move back to Expected**\n\nReturn this bill to the Expected list.',
+                      child: IconButton(
+                        icon: const Icon(Icons.upcoming_outlined, size: 18),
+                        onPressed: () {
+                          provider.moveToStatus(bill.id, BillStatus.future);
+                          provider.saveToPod();
+                        },
+                      ),
                     ),
                   ],
                 );

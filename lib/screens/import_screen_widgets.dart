@@ -88,7 +88,8 @@ class ImportMessageBanner extends StatelessWidget {
             child: Text(
               message,
               style: TextStyle(
-                color: isError ? cs.onErrorContainer : cs.onSecondaryContainer,
+                color:
+                    isError ? cs.onErrorContainer : cs.onSecondaryContainer,
               ),
             ),
           ),

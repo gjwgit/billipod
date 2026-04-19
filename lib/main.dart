@@ -55,6 +55,10 @@ class _BilliPodAppState extends State<BilliPodApp> {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF1A5276)),
         useMaterial3: true,
+        snackBarTheme: const SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          showCloseIcon: true,
+        ),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -62,6 +66,10 @@ class _BilliPodAppState extends State<BilliPodApp> {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
+        snackBarTheme: const SnackBarThemeData(
+          behavior: SnackBarBehavior.floating,
+          showCloseIcon: true,
+        ),
       ),
       themeMode: solidThemeNotifier.themeMode,
       home: SolidLogin(

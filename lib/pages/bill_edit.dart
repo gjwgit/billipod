@@ -14,6 +14,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:billipod/constants/app.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:billipod/models/bill.dart';
 
 class BillEdit extends StatefulWidget {
@@ -241,17 +242,29 @@ class _BillEditState extends State<BillEdit> {
                       ),
                       const Gap(8),
                       // Payment type checkboxes
-                      CheckboxListTile(
-                        value: _isAutoPaid,
-                        onChanged: (v) =>
-                            setState(() => _isAutoPaid = v ?? false),
-                        title: const Text('Auto-paid'),
-                        subtitle: const Text(
-                          'Payment is made automatically (e.g. credit card direct debit).',
+                      MarkdownTooltip(
+                        message: '''
+
+**Auto-paid**
+
+Check this if the payment is made automatically, for example
+by credit card direct debit or bank auto-payment.
+
+The bill will show an **Auto-paid** chip in the listing.
+
+''',
+                        child: CheckboxListTile(
+                          value: _isAutoPaid,
+                          onChanged: (v) =>
+                              setState(() => _isAutoPaid = v ?? false),
+                          title: const Text('Auto-paid'),
+                          subtitle: const Text(
+                            'Payment is made automatically (e.g. credit card direct debit).',
+                          ),
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
                         ),
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: EdgeInsets.zero,
-                        dense: true,
                       ),
                       const Gap(8),
                       // Scheduled date

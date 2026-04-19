@@ -60,9 +60,17 @@ class _AppScaffoldState extends State<AppScaffold> {
       showLogout: false,
       showLogin: false,
       themeToggle: const SolidThemeToggleConfig(enabled: true),
-      appBar: const SolidAppBarConfig(
+      appBar: SolidAppBarConfig(
         title: appName,
-        versionConfig: SolidVersionConfig(
+        actions: [
+          SolidAppBarAction(
+            icon: Icons.add,
+            tooltip: '**Add bill**\n\nAdd a new bill to the Expected list.',
+            onPressed: () => _addBill(context),
+            initialIndex: 0,
+          ),
+        ],
+        versionConfig: const SolidVersionConfig(
           changelogUrl:
               'https://github.com/gjwgit/billipod/blob/dev/CHANGELOG.md',
         ),
@@ -95,11 +103,6 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: ImportScreen(),
         ),
       ],
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addBill(context),
-        tooltip: 'Add bill',
-        child: const Icon(Icons.add),
-      ),
       statusBar: SolidStatusBarConfig(
         loginStatus: const SolidLoginStatus(),
         serverInfo: const SolidServerInfo(

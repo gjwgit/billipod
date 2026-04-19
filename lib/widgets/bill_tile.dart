@@ -14,6 +14,7 @@ import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 
 import 'package:billipod/models/bill.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 class BillTile extends StatelessWidget {
   final Bill bill;
@@ -177,23 +178,29 @@ class BillTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   if (onStar != null)
-                    IconButton(
-                      icon: Icon(
-                        bill.isStarred ? Icons.star : Icons.star_border,
-                        size: 18,
-                        color: bill.isStarred
-                            ? Colors.amber
-                            : cs.onSurfaceVariant,
+                    MarkdownTooltip(
+                      message: bill.isStarred
+                          ? '**Unstar**\n\nRemove highlight from this bill.'
+                          : '**Star**\n\nHighlight this bill with a gold background.',
+                      child: IconButton(
+                        icon: Icon(
+                          bill.isStarred ? Icons.star : Icons.star_border,
+                          size: 18,
+                          color: bill.isStarred
+                              ? Colors.amber
+                              : cs.onSurfaceVariant,
+                        ),
+                        onPressed: onStar,
                       ),
-                      tooltip: bill.isStarred ? 'Unstar' : 'Star',
-                      onPressed: onStar,
                     ),
                   ...?actions,
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, size: 18),
-                    color: cs.error,
-                    tooltip: 'Delete',
-                    onPressed: onDelete,
+                  MarkdownTooltip(
+                    message: '**Delete**\n\nPermanently remove this bill. This cannot be undone.',
+                    child: IconButton(
+                      icon: const Icon(Icons.delete_outline, size: 18),
+                      color: cs.error,
+                      onPressed: onDelete,
+                    ),
                   ),
                 ],
               ),
@@ -203,6 +210,7 @@ class BillTile extends StatelessWidget {
       ),
     );
   }
+
 
   IconData get _statusIcon => switch (bill.status) {
     BillStatus.future => Icons.upcoming_outlined,

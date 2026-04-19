@@ -160,7 +160,8 @@ class _ImportScreenState extends State<ImportScreen> {
           ImportActionCard(
             icon: Icons.picture_as_pdf_outlined,
             title: 'Export Past as PDF',
-            subtitle: 'Save or print ${provider.pastBills.length} paid bills.',
+            subtitle:
+                'Save or print ${provider.pastBills.length} paid bills.',
             loading: _loading,
             onTap: () => _exportPdf(
               context,
@@ -203,9 +204,8 @@ class _ImportScreenState extends State<ImportScreen> {
       }
 
       final List<dynamic> raw = jsonDecode(utf8.decode(bytes));
-      final imported = raw
-          .map((e) => Bill.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final imported =
+          raw.map((e) => Bill.fromJson(e as Map<String, dynamic>)).toList();
 
       if (imported.isEmpty) {
         _setImportMessage('No bills found in "${file.name}".', error: true);
@@ -242,17 +242,14 @@ class _ImportScreenState extends State<ImportScreen> {
 
     try {
       final bills = provider.allBills.where((b) => !b.isTemplate).toList();
-      final json = const JsonEncoder.withIndent(
-        '  ',
-      ).convert(bills.map((b) => b.toJson()).toList());
+      final json =
+          const JsonEncoder.withIndent('  ')
+              .convert(bills.map((b) => b.toJson()).toList());
       final bytes = utf8.encode(json);
       final fileName = 'billipod_backup_${_ts()}.json';
 
       if (kIsWeb) {
-        _setExportMessage(
-          'Export to file is not supported on web.',
-          error: true,
-        );
+        _setExportMessage('Export to file is not supported on web.', error: true);
         return;
       }
 
@@ -326,9 +323,12 @@ class _ImportScreenState extends State<ImportScreen> {
                 2: const pw.FlexColumnWidth(1.5),
                 3: const pw.FlexColumnWidth(1.5),
               },
-              border: const pw.TableBorder(
-                bottom: pw.BorderSide(color: PdfColors.grey300, width: 0.5),
-                horizontalInside: pw.BorderSide(
+              border: pw.TableBorder(
+                bottom: const pw.BorderSide(
+                  color: PdfColors.grey300,
+                  width: 0.5,
+                ),
+                horizontalInside: const pw.BorderSide(
                   color: PdfColors.grey200,
                   width: 0.5,
                 ),
@@ -336,7 +336,9 @@ class _ImportScreenState extends State<ImportScreen> {
               children: [
                 // Header row
                 pw.TableRow(
-                  decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.grey200,
+                  ),
                   children: [
                     _cell('Title', bold: true),
                     _cell('Amount', bold: true),
