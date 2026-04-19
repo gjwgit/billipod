@@ -214,6 +214,7 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
 
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
     setState(() => _loading = true);
+    final messenger = ScaffoldMessenger.of(context);
     final err = await ExportService.exportPdf(
       context: context,
       bills: provider.futureBills,
@@ -223,9 +224,9 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
     if (mounted) {
       setState(() => _loading = false);
       if (err != null) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('PDF export failed: $err')));
+        messenger.showSnackBar(
+          SnackBar(content: Text('PDF export failed: $err')),
+        );
       }
     }
   }
