@@ -11,14 +11,14 @@ dependencies:
     sdk: flutter
 
   gap: ^3.0.1
-  file_picker: ^10.3.10
+  file_picker: ^11.0.2
   intl: ^0.20.2
   markdown_tooltip: ^0.0.10
   pdf: ^3.11.1
   printing: ^5.13.1
   provider: ^6.1.5
-  solidpod: ^0.12.2
-  solidui: ^0.3.18
+  solidpod: ^0.12.3
+  solidui: ^0.3.20
   uuid: ^4.5.3
 
 dev_dependencies:

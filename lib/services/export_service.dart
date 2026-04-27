@@ -1,6 +1,6 @@
 /// ExportService — shared PDF export logic for BilliPod screens.
 ///
-// Time-stamp: <2026-04-20>
+// Time-stamp: <Monday 2026-04-20 14:08:35 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -131,7 +131,7 @@ class ExportService {
         return null;
       }
 
-      final savePath = await FilePicker.platform.saveFile(
+      final savePath = await FilePicker.saveFile(
         dialogTitle: 'Save PDF',
         fileName: pdfName,
         type: FileType.custom,

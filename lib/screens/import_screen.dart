@@ -1,6 +1,6 @@
 /// ImportScreen — import from JSON and export to JSON and PDF.
 ///
-// Time-stamp: <2026-04-20>
+// Time-stamp: <Monday 2026-04-20 14:08:12 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -140,7 +140,7 @@ class _ImportScreenState extends State<ImportScreen> {
     });
 
     try {
-      final result = await FilePicker.platform.pickFiles(
+      final result = await FilePicker.pickFiles(
         dialogTitle: 'Select BilliPod JSON backup',
         type: FileType.any,
         withData: true,
@@ -212,7 +212,7 @@ class _ImportScreenState extends State<ImportScreen> {
         return;
       }
 
-      final savePath = await FilePicker.platform.saveFile(
+      final savePath = await FilePicker.saveFile(
         dialogTitle: 'Save JSON backup',
         fileName: fileName,
         type: FileType.custom,
