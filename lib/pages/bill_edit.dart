@@ -29,6 +29,7 @@ class _BillEditState extends State<BillEdit> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _title;
   late final TextEditingController _amount;
+  late final TextEditingController _fee;
   late final TextEditingController _note;
   late BillFrequency _frequency;
   late BillStatus _status;
@@ -50,6 +51,11 @@ class _BillEditState extends State<BillEdit> {
     _amount = TextEditingController(
       text: b?.amount != null ? b!.amount!.toStringAsFixed(2) : '',
     );
+    _fee = TextEditingController(
+      text: b?.transactionFee != null
+          ? b!.transactionFee!.toStringAsFixed(2)
+          : '',
+    );
     _note = TextEditingController(text: b?.note ?? '');
     _frequency = b?.frequency ?? BillFrequency.oneOff;
     _status = b?.status ?? BillStatus.future;
@@ -66,6 +72,7 @@ class _BillEditState extends State<BillEdit> {
   void dispose() {
     _title.dispose();
     _amount.dispose();
+    _fee.dispose();
     _note.dispose();
     super.dispose();
   }
@@ -74,6 +81,7 @@ class _BillEditState extends State<BillEdit> {
     id: widget.bill?.id,
     title: _title.text.trim(),
     amount: double.tryParse(_amount.text.replaceAll(',', '')),
+    transactionFee: double.tryParse(_fee.text.replaceAll(',', '')),
     dueDate: _dueDate,
     frequency: _frequency,
     status: _status,
@@ -152,6 +160,20 @@ class _BillEditState extends State<BillEdit> {
                         ),
                         decoration: const InputDecoration(
                           labelText: 'Amount',
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          prefixText: '\$ ',
+                        ),
+                      ),
+                      const Gap(12),
+                      // Transaction fee
+                      TextFormField(
+                        controller: _fee,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        decoration: const InputDecoration(
+                          labelText: 'Transaction fee (optional)',
                           border: OutlineInputBorder(),
                           isDense: true,
                           prefixText: '\$ ',

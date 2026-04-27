@@ -283,8 +283,6 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           notifiedDate: advance(bill.notifiedDate, i),
           notificationMethod: bill.notificationMethod,
           paymentMethod: bill.paymentMethod,
-          scheduledDate: advance(bill.scheduledDate, i),
-          confirmedPaidDate: advance(bill.confirmedPaidDate, i),
           note: bill.note,
           isTemplate: false,
           isAutoPaid: bill.isAutoPaid,

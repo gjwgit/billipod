@@ -77,6 +77,7 @@ class Bill {
   final String? scheduledBy;
   final DateTime? confirmedPaidDate;
 
+  final double? transactionFee;
   final String? note;
 
   /// For expanded recurring instances, points to the template bill id.
@@ -104,6 +105,7 @@ class Bill {
     this.scheduledDate,
     this.scheduledBy,
     this.confirmedPaidDate,
+    this.transactionFee,
     this.note,
     this.parentId,
     this.isTemplate = false,
@@ -128,6 +130,7 @@ class Bill {
     if (scheduledBy != null) 'scheduledBy': scheduledBy,
     if (confirmedPaidDate != null)
       'confirmedPaidDate': confirmedPaidDate!.toIso8601String(),
+    if (transactionFee != null) 'transactionFee': transactionFee,
     if (note != null) 'note': note,
     if (parentId != null) 'parentId': parentId,
     'isTemplate': isTemplate,
@@ -162,6 +165,7 @@ class Bill {
     confirmedPaidDate: j['confirmedPaidDate'] != null
         ? DateTime.parse(j['confirmedPaidDate'] as String)
         : null,
+    transactionFee: (j['transactionFee'] as num?)?.toDouble(),
     note: j['note'] as String?,
     parentId: j['parentId'] as String?,
     isTemplate: j['isTemplate'] as bool? ?? false,
@@ -181,6 +185,7 @@ class Bill {
     Object? scheduledDate = _sentinel,
     Object? scheduledBy = _sentinel,
     Object? confirmedPaidDate = _sentinel,
+    Object? transactionFee = _sentinel,
     Object? note = _sentinel,
     Object? parentId = _sentinel,
     bool? isTemplate,
@@ -211,6 +216,9 @@ class Bill {
     confirmedPaidDate: confirmedPaidDate == _sentinel
         ? this.confirmedPaidDate
         : confirmedPaidDate as DateTime?,
+    transactionFee: transactionFee == _sentinel
+        ? this.transactionFee
+        : transactionFee as double?,
     note: note == _sentinel ? this.note : note as String?,
     parentId: parentId == _sentinel ? this.parentId : parentId as String?,
     isTemplate: isTemplate ?? this.isTemplate,
@@ -226,6 +234,11 @@ class Bill {
     if (dueDate == null) return false;
     return dueDate!.isBefore(DateTime.now());
   }
+
+  /// Formatted transaction fee string.
+  String get feeStr => transactionFee != null
+      ? '+ \$${NumberFormat('#,##0.00').format(transactionFee!)} fee'
+      : '';
 
   /// Formatted amount string.
   String get amountStr =>

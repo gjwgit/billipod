@@ -87,13 +87,26 @@ class BillTile extends StatelessWidget {
                               ),
                             ),
                             if (bill.amount != null)
-                              Text(
-                                bill.amountStr,
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w700,
-                                  fontSize: 14,
-                                  color: overdue ? cs.error : cs.primary,
-                                ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    bill.amountStr,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                      color: overdue ? cs.error : cs.primary,
+                                    ),
+                                  ),
+                                  if (bill.transactionFee != null)
+                                    Text(
+                                      bill.feeStr,
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: cs.onSurfaceVariant,
+                                      ),
+                                    ),
+                                ],
                               ),
                           ],
                         ),

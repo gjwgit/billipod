@@ -39,6 +39,8 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Do not duplicate SCHEDULED or CONFIRMED [0.1.12 20260427 gjw]
++ Support TRANSACTION FEE [0.1.11 20260427 gjw]
 + Add PDF to each of SCHEDULED/EXPECTED/PAST [0.1.10 20260420 gjw]
 + Move floating + to per page + button next to SEARCH [0.1.9 20260420 gjw]
 + Add tooltips [0.1.8 20260420 gjw]

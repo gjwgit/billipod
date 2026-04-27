@@ -259,8 +259,6 @@ class _PastScreenState extends State<PastScreen> {
           notifiedDate: advance(bill.notifiedDate, i),
           notificationMethod: bill.notificationMethod,
           paymentMethod: bill.paymentMethod,
-          scheduledDate: advance(bill.scheduledDate, i),
-          confirmedPaidDate: advance(bill.confirmedPaidDate, i),
           note: bill.note,
           isTemplate: false,
           isAutoPaid: bill.isAutoPaid,
