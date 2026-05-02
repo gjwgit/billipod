@@ -160,6 +160,7 @@ class _PastScreenState extends State<PastScreen> {
                 final bill = bills[i];
                 return BillTile(
                   bill: bill,
+                  outlineColor: Colors.orange.withValues(alpha: 0.3),
                   onTap: () => _editBill(context, bill, provider),
                   onDelete: () => _confirmDelete(context, bill, provider),
                   onStar: () {

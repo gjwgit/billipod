@@ -169,6 +169,9 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
                 final bill = bills[i];
                 return BillTile(
                   bill: bill,
+                  outlineColor: bill.isOverdue
+                      ? null
+                      : Colors.green.withValues(alpha: 0.6),
                   onTap: () => _editBill(context, bill, provider),
                   onDelete: () => _confirmDelete(context, bill, provider),
                   onStar: () {

@@ -15,6 +15,7 @@ import 'package:solidpod/solidpod.dart';
 import 'package:solidui/solidui.dart';
 
 import 'package:billipod/constants/app.dart';
+import 'package:billipod/screens/all_screen.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
@@ -83,6 +84,14 @@ class _AppScaffoldState extends State<AppScaffold> {
           icon: Icons.check_circle_outline,
           tooltip: '**Past**\n\nBills that have been paid.',
           child: PastScreen(),
+        ),
+        const SolidMenuItem(
+          title: 'All Bills',
+          icon: Icons.list_alt_outlined,
+          tooltip:
+              '**All Bills**\n\nEvery bill grouped by status: '
+              'Scheduled, Expected and Past.',
+          child: AllScreen(),
         ),
         const SolidMenuItem(
           title: 'Import / Export',

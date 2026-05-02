@@ -30,7 +30,12 @@ class BillTile extends StatelessWidget {
     required this.onDelete,
     this.onStar,
     this.actions,
+    this.outlineColor,
   });
+
+  /// Override the card border colour. When null the default logic applies
+  /// (error colour for overdue, outlineVariant otherwise).
+  final Color? outlineColor;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +48,8 @@ class BillTile extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
         side: BorderSide(
-          color: overdue ? cs.error : cs.outlineVariant,
-          width: overdue ? 1.5 : 1,
+          color: outlineColor ?? (overdue ? cs.error : cs.outlineVariant),
+          width: outlineColor != null ? 1.5 : (overdue ? 1.5 : 1),
         ),
       ),
       child: InkWell(

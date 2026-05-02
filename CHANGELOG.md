@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Add an ALL tab and colour status [0.1.14 20260503 gjw]
 + Updated code. Update to solidui server list [0.1.13 20260501 gjw]
 + Do not duplicate SCHEDULED or CONFIRMED [0.1.12 20260427 gjw]
 + Support TRANSACTION FEE [0.1.11 20260427 gjw]
