@@ -19,6 +19,7 @@ import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
+import 'package:billipod/widgets/bill_total_bar.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
 
 class ScheduledScreen extends StatefulWidget {
@@ -129,6 +130,7 @@ class _ScheduledScreenState extends State<ScheduledScreen> {
             ],
           ),
         ),
+        BillTotalBar(bills: bills),
         if (bills.isEmpty)
           Expanded(
             child: Center(

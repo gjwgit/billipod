@@ -18,6 +18,7 @@ import 'package:billipod/models/bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/widgets/bill_tile.dart';
+import 'package:billipod/widgets/bill_total_bar.dart';
 
 class AllScreen extends StatefulWidget {
   const AllScreen({super.key});
@@ -178,6 +179,7 @@ class _AllScreenState extends State<AllScreen> {
           ),
         ),
         const Gap(8),
+        BillTotalBar(bills: all),
 
         // ── Grouped bill list ───────────────────────────────────────
         Expanded(
