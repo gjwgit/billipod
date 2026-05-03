@@ -317,7 +317,15 @@ The bill will show an **Auto-paid** chip in the listing.
                         date: _confirmedPaidDate,
                         onPick: () async {
                           final d = await _pickDate(_confirmedPaidDate);
-                          if (d != null) setState(() => _confirmedPaidDate = d);
+                          if (d != null) {
+                            setState(() {
+                              _confirmedPaidDate = d;
+                              // A confirmed payment date means the bill is paid.
+                              if (_status == BillStatus.scheduled) {
+                                _status = BillStatus.past;
+                              }
+                            });
+                          }
                         },
                         onClear: () =>
                             setState(() => _confirmedPaidDate = null),

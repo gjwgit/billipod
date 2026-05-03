@@ -23,6 +23,24 @@ class AppProvider extends ChangeNotifier {
   String? get error => _error;
 
   /// All bills sorted by due date (nulls last).
+  /// True when there is already a future or scheduled bill with the same title
+  /// whose due date falls around the next frequency cycle of [bill].
+  /// Returns false for one-off bills (they have no follow-on concept).
+  bool hasFollowOn(Bill bill) {
+    if (bill.frequency == BillFrequency.oneOff) return false;
+    final next = bill.nextDueDate(bill.dueDate ?? DateTime.now());
+    if (next == null) return false;
+    final window = const Duration(days: 5);
+    return _bills.any(
+      (b) =>
+          b.id != bill.id &&
+          b.status != BillStatus.past &&
+          b.title == bill.title &&
+          b.dueDate != null &&
+          (b.dueDate!.difference(next)).abs() <= window,
+    );
+  }
+
   List<Bill> get allBills => List.unmodifiable(_bills);
 
   List<Bill> get futureBills => _sorted(

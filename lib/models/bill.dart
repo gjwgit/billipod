@@ -22,7 +22,9 @@ enum BillFrequency {
   every28Days,
   quarterly,
   semiAnnual,
-  annual;
+  annual,
+  firstOfMonth,
+  lastOfMonth;
 
   String get label => switch (this) {
     oneOff => 'One-off',
@@ -31,6 +33,8 @@ enum BillFrequency {
     quarterly => 'Quarterly',
     semiAnnual => 'Every 6 months',
     annual => 'Annually',
+    firstOfMonth => 'First of Month',
+    lastOfMonth => 'Last of Month',
   };
 
   /// Approximate days between payments (used for expansion).
@@ -41,6 +45,8 @@ enum BillFrequency {
     quarterly => null,
     semiAnnual => null,
     annual => null,
+    firstOfMonth => null,
+    lastOfMonth => null,
   };
 }
 
@@ -252,6 +258,8 @@ class Bill {
     BillFrequency.quarterly => DateTime(base.year, base.month + 3, base.day),
     BillFrequency.semiAnnual => DateTime(base.year, base.month + 6, base.day),
     BillFrequency.annual => DateTime(base.year + 1, base.month, base.day),
+    BillFrequency.firstOfMonth => DateTime(base.year, base.month + 1, 1),
+    BillFrequency.lastOfMonth => DateTime(base.year, base.month + 2, 0),
   };
 }
 

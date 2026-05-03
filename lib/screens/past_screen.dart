@@ -170,15 +170,29 @@ class _PastScreenState extends State<PastScreen> {
                     provider.saveToPod();
                   },
                   actions: [
-                    MarkdownTooltip(
-                      message:
-                          '**Duplicate**\n\nCreate one or more copies of this bill,'
-                          ' each advanced by one frequency cycle.',
-                      child: IconButton(
-                        icon: const Icon(Icons.copy_outlined, size: 18),
-                        onPressed: () =>
-                            _duplicateBill(context, bill, provider),
-                      ),
+                    Builder(
+                      builder: (ctx) {
+                        final missing = !provider.hasFollowOn(bill);
+                        return MarkdownTooltip(
+                          message: missing
+                              ? '**No follow-on bill**\n\n'
+                                    'There is no bill scheduled for the next '
+                                    'frequency cycle. Tap to create one.'
+                              : '**Duplicate**\n\nCreate one or more copies of '
+                                    'this bill, each advanced by one frequency cycle.',
+                          child: IconButton(
+                            icon: Icon(
+                              Icons.copy_outlined,
+                              size: 18,
+                              color: missing
+                                  ? Colors.green
+                                  : Colors.grey.withValues(alpha: 0.4),
+                            ),
+                            onPressed: () =>
+                                _duplicateBill(context, bill, provider),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 );
