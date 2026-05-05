@@ -1,6 +1,6 @@
 /// BillEdit — add/edit bill dialog.
 ///
-// Time-stamp: <Thursday 2026-04-16 15:54:56 +1000 Graham Williams>
+// Time-stamp: <Tuesday 2026-05-05 15:21:58 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -10,13 +10,13 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
-import 'package:billipod/widgets/emacs_text_field.dart';
 
 class BillEdit extends StatefulWidget {
   final Bill? bill;
