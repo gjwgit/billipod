@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.2 Basic Functionality
 
++ Migrate NOTES to EMACS TEXT FIELD [0.1.17 20260505 gjw]
 + Add a bill count and total liability for each page [0.1.16 20260503 gjw]
 + First/last day monthly. CONFIRMED to PAST. Next bill? [0.1.15 20260503 gjw]
 + Add an ALL tab and colour status [0.1.14 20260503 gjw]

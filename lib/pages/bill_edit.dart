@@ -16,6 +16,7 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
+import 'package:billipod/widgets/emacs_text_field.dart';
 
 class BillEdit extends StatefulWidget {
   final Bill? bill;
@@ -332,9 +333,9 @@ The bill will show an **Auto-paid** chip in the listing.
                       ),
                       const Gap(12),
                       // Note
-                      TextFormField(
+                      EmacsTextField(
                         controller: _note,
-                        maxLines: 3,
+                        minLines: 3,
                         decoration: const InputDecoration(
                           labelText: 'Note',
                           border: OutlineInputBorder(),
