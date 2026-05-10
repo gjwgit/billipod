@@ -20,6 +20,7 @@ import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
+import 'package:billipod/screens/share_screen.dart';
 import 'package:billipod/services/app_provider.dart';
 
 class AppScaffold extends StatefulWidget {
@@ -100,6 +101,14 @@ class _AppScaffoldState extends State<AppScaffold> {
               '**Import / Export**\n\n'
               'Import from JSON backup or export to JSON and PDF.',
           child: ImportScreen(),
+        ),
+        const SolidMenuItem(
+          title: 'Share',
+          icon: Icons.share_outlined,
+          tooltip:
+              '**Share**\n\n'
+              'Grant or revoke access to your bills for another Solid WebID.',
+          child: ShareScreen(),
         ),
       ],
       statusBar: SolidStatusBarConfig(

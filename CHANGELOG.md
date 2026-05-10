@@ -12,7 +12,6 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 [apk](https://solidcommunity.au/installers/billipod.apk); for
 **GNU/Linux** as
 [deb](https://solidcommunity.au/installers/billipod_amd64.deb) or
-<!--[snap](https://solidcommunity.au/installers/billipod_amd64.snap) or-->
 [zip](https://solidcommunity.au/installers/billipod-linux.zip); for
 **macOS** as
 [dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
@@ -37,8 +36,11 @@ Code](https://claude.com/product/claude-code).
 
 ## ToDo
 
-## 0.2 Basic Functionality
+## 0.3 Review and Robust
 
+## 0.2 Basic Functionality and sharing
+
++ Add SHARING capability [0.2.0 20260510 gjw]
 + Migrate NOTES to EMACS TEXT FIELD [0.1.17 20260505 gjw]
 + Add a bill count and total liability for each page [0.1.16 20260503 gjw]
 + First/last day monthly. CONFIRMED to PAST. Next bill? [0.1.15 20260503 gjw]
