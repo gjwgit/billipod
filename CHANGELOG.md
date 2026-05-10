@@ -12,6 +12,7 @@ AU](https://solidcommunity.au) or directly: for **Android** as
 [apk](https://solidcommunity.au/installers/billipod.apk); for
 **GNU/Linux** as
 [deb](https://solidcommunity.au/installers/billipod_amd64.deb) or
+[snap](https://solidcommunity.au/installers/billipod_amd64.snap); for
 [zip](https://solidcommunity.au/installers/billipod-linux.zip); for
 **macOS** as
 [dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
@@ -38,9 +39,10 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Review and Robust
 
++ Integrate shared bills into the interface [0.2.1 20260510 gjw]
+
 ## 0.2 Basic Functionality and sharing
 
-+ Integrate shared bills into the interface [0.2.1 20260510 gjw]
 + Add SHARING capability [0.2.0 20260510 gjw]
 + Migrate NOTES to EMACS TEXT FIELD [0.1.17 20260505 gjw]
 + Add a bill count and total liability for each page [0.1.16 20260503 gjw]

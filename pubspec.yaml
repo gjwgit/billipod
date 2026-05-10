@@ -19,7 +19,7 @@ dependencies:
   printing: ^5.13.1
   provider: ^6.1.5
   solidpod: ^0.12.4
-  solidui: ^0.3.40
+  solidui: ^0.3.42
   uuid: ^4.5.3
   window_manager: ^0.5.1
 
