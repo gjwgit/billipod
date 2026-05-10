@@ -121,8 +121,9 @@ class _ExpectedScreenState extends State<ExpectedScreen>
                     '**Export PDF**\n\nSave or print these expected bills as a PDF.',
                 child: IconButton(
                   icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
-                  onPressed:
-                      _loading ? null : () => _exportPdf(context, provider),
+                  onPressed: _loading
+                      ? null
+                      : () => _exportPdf(context, provider),
                 ),
               ),
             ],
@@ -216,7 +217,10 @@ class _ExpectedScreenState extends State<ExpectedScreen>
                           '**Move to Scheduled**\n\nMark this bill as scheduled'
                           ' — payment has been arranged.',
                       child: IconButton(
-                        icon: const Icon(Icons.schedule_send_outlined, size: 18),
+                        icon: const Icon(
+                          Icons.schedule_send_outlined,
+                          size: 18,
+                        ),
                         onPressed: () {
                           provider.moveToStatus(bill.id, BillStatus.scheduled);
                           provider.saveToPod();

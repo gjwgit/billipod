@@ -120,8 +120,9 @@ class _PastScreenState extends State<PastScreen>
                     '**Export PDF**\n\nSave or print these past bills as a PDF.',
                 child: IconButton(
                   icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
-                  onPressed:
-                      _loading ? null : () => _exportPdf(context, provider),
+                  onPressed: _loading
+                      ? null
+                      : () => _exportPdf(context, provider),
                 ),
               ),
             ],

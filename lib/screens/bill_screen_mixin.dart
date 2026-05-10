@@ -75,9 +75,9 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
     final err = await action();
     if (!context.mounted) return;
     if (err != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Save failed: $err')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Save failed: $err')));
     } else if (successMessage != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -293,8 +293,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         ownerLabel(context, t.sourceName!),
         Builder(
           builder: (ctx) {
-            final missing =
-                !provider.hasFollowOnInSource(t.ownerWebId!, t.bill);
+            final missing = !provider.hasFollowOnInSource(
+              t.ownerWebId!,
+              t.bill,
+            );
             return MarkdownTooltip(
               message: missing
                   ? '**No follow-on bill**\n\n'
@@ -349,8 +351,9 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
             icon: Icon(
               Icons.copy_outlined,
               size: 18,
-              color:
-                  missing ? Colors.green : Colors.grey.withValues(alpha: 0.4),
+              color: missing
+                  ? Colors.green
+                  : Colors.grey.withValues(alpha: 0.4),
             ),
             onPressed: () => duplicateBill(context, bill, provider),
           ),

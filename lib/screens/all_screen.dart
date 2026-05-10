@@ -54,7 +54,6 @@ class _AllScreenState extends State<AllScreen> {
         .toList();
   }
 
-
   Widget _tileFor(
     BuildContext context,
     AppProvider provider,
