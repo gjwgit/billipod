@@ -15,12 +15,15 @@ import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
+import 'package:billipod/models/tagged_bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/bill_total_bar.dart';
 import 'package:billipod/widgets/duplicate_count_dialog.dart';
+import 'package:billipod/widgets/shared_read_only_tile.dart';
+import 'package:billipod/widgets/source_toggle_bar.dart';
 
 class ExpectedScreen extends StatefulWidget {
   const ExpectedScreen({super.key});
@@ -55,10 +58,25 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
         .toList();
   }
 
+  List<TaggedBill> _filterTagged(List<TaggedBill> tagged) {
+    if (_query.isEmpty) return tagged;
+    final q = _query.toLowerCase();
+    return tagged
+        .where(
+          (t) =>
+              t.bill.title.toLowerCase().contains(q) ||
+              (t.bill.note?.toLowerCase().contains(q) ?? false) ||
+              (t.bill.paymentMethod?.toLowerCase().contains(q) ?? false) ||
+              t.bill.amountStr.contains(q),
+        )
+        .toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
-    final bills = _filter(provider.futureBills);
+    final tagged = _filterTagged(provider.activeFutureBills);
+    final bills = tagged.map((t) => t.bill).toList();
     final cs = Theme.of(context).colorScheme;
 
     if (provider.loading) {
@@ -71,7 +89,16 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
           child: Row(
             children: [
+              if (provider.hasSharedSources) ...[
+                const Flexible(
+                  flex: 2,
+                  fit: FlexFit.loose,
+                  child: SourceToggleBar(),
+                ),
+                const SizedBox(width: 6),
+              ],
               Expanded(
+                flex: 3,
                 child: TextField(
                   controller: _search,
                   decoration: InputDecoration(
@@ -131,7 +158,7 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           ),
         ),
         BillTotalBar(bills: bills),
-        if (bills.isEmpty)
+        if (tagged.isEmpty)
           Expanded(
             child: Center(
               child: Column(
@@ -165,10 +192,111 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(16),
-              itemCount: bills.length,
+              itemCount: tagged.length,
               separatorBuilder: (_, _) => const Gap(8),
               itemBuilder: (_, i) {
-                final bill = bills[i];
+                final t = tagged[i];
+                if (!t.isOwn && t.canEdit) {
+                  return BillTile(
+                    bill: t.bill,
+                    onTap: () => _editSharedBill(context, t, provider),
+                    onDelete: () => _confirmDelete(
+                      context,
+                      t.bill,
+                      provider,
+                      sharedWebId: t.ownerWebId,
+                    ),
+                    onStar: () => _saveSharedOrError(
+                      context,
+                      () => provider.updateSharedBill(
+                        t.ownerWebId!,
+                        t.bill.copyWith(isStarred: !t.bill.isStarred),
+                      ),
+                    ),
+                    actions: [
+                      // Owner label on the left of the action row.
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 4),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.person_outline,
+                                size: 11,
+                                color: cs.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                t.sourceName!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: cs.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Builder(
+                        builder: (ctx) {
+                          final missing = !provider.hasFollowOnInSource(
+                            t.ownerWebId!,
+                            t.bill,
+                          );
+                          return MarkdownTooltip(
+                            message: missing
+                                ? '**No follow-on bill**\n\n'
+                                      'There is no bill scheduled for the next '
+                                      'frequency cycle. Tap to create one.'
+                                : '**Duplicate**\n\nCreate one or more copies of '
+                                      'this bill, each advanced by one frequency cycle.',
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.copy_outlined,
+                                size: 18,
+                                color: missing
+                                    ? Colors.green
+                                    : Colors.grey.withValues(alpha: 0.4),
+                              ),
+                              onPressed: () => _duplicateBill(
+                                context,
+                                t.bill,
+                                provider,
+                                sharedWebId: t.ownerWebId,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      MarkdownTooltip(
+                        message:
+                            '**Move to Scheduled**\n\nMark this bill as scheduled'
+                            ' — payment has been arranged.',
+                        child: IconButton(
+                          icon: const Icon(
+                            Icons.schedule_send_outlined,
+                            size: 18,
+                          ),
+                          onPressed: () => _saveSharedOrError(
+                            context,
+                            () => provider.updateSharedBill(
+                              t.ownerWebId!,
+                              t.bill.copyWith(status: BillStatus.scheduled),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                }
+                if (!t.isOwn) {
+                  return SharedReadOnlyTile(
+                    bill: t.bill,
+                    sourceName: t.sourceName!,
+                  );
+                }
+                final bill = t.bill;
                 return BillTile(
                   bill: bill,
                   onTap: () => _editBill(context, bill, provider),
@@ -271,8 +399,9 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
   Future<void> _duplicateBill(
     BuildContext context,
     Bill bill,
-    AppProvider provider,
-  ) async {
+    AppProvider provider, {
+    String? sharedWebId,
+  }) async {
     final count = await showDialog<int>(
       context: context,
       builder: (ctx) => DuplicateCountDialog(bill: bill),
@@ -288,8 +417,9 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
       return result;
     }
 
+    final newBills = <Bill>[];
     for (int i = 1; i <= count; i++) {
-      provider.addBill(
+      newBills.add(
         Bill(
           title: bill.title,
           amount: bill.amount,
@@ -305,7 +435,57 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
         ),
       );
     }
-    await provider.saveToPod();
+    if (sharedWebId != null) {
+      await _saveSharedOrError(
+        context,
+        () => provider.addSharedBills(sharedWebId, newBills),
+      );
+    } else {
+      for (final b in newBills) {
+        provider.addBill(b);
+      }
+      await provider.saveToPod();
+    }
+  }
+
+  Future<void> _saveSharedOrError(
+    BuildContext context,
+    Future<String?> Function() action, {
+    String? successMessage,
+  }) async {
+    final err = await action();
+    if (!context.mounted) return;
+    if (err != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Save failed: $err')));
+    } else if (successMessage != null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(successMessage),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    }
+  }
+
+  Future<void> _editSharedBill(
+    BuildContext context,
+    TaggedBill t,
+    AppProvider provider,
+  ) async {
+    final updated = await showDialog<Bill>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => BillEdit(bill: t.bill),
+    );
+    if (updated != null) {
+      await _saveSharedOrError(
+        context,
+        () => provider.updateSharedBill(t.ownerWebId!, updated),
+        successMessage: "Changes saved to ${t.sourceName}'s POD.",
+      );
+    }
   }
 
   Future<void> _editBill(
@@ -327,8 +507,9 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
   Future<void> _confirmDelete(
     BuildContext context,
     Bill bill,
-    AppProvider provider,
-  ) async {
+    AppProvider provider, {
+    String? sharedWebId,
+  }) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -350,8 +531,15 @@ class _ExpectedScreenState extends State<ExpectedScreen> {
       ),
     );
     if (confirmed == true) {
-      provider.deleteBill(bill.id);
-      await provider.saveToPod();
+      if (sharedWebId != null) {
+        await _saveSharedOrError(
+          context,
+          () => provider.deleteSharedBill(sharedWebId, bill.id),
+        );
+      } else {
+        provider.deleteBill(bill.id);
+        await provider.saveToPod();
+      }
     }
   }
 }

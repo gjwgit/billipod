@@ -2,7 +2,7 @@
 #
 # Generic Makefile
 #
-# Time-stamp: <Monday 2026-04-20 07:47:54 +1000 Graham Williams>
+# Time-stamp: <Sunday 2026-05-10 14:53:32 +1000 Graham Williams>
 #
 # Copyright (c) Graham.Williams@togaware.com
 #
@@ -29,7 +29,7 @@ DEST=/var/www/html/$(APP)
 # the download folder, and the URL to the downloads.
 
 REPO=solidcommunity.au
-RLOC=/var/www/html/installers/
+RLOC=/var/www/html/web/installers/
 DWLD=https://$(REPO)/installers/
 
 ########################################################################

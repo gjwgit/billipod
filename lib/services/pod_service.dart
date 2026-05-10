@@ -78,4 +78,39 @@ class PodService {
       return null;
     }
   }
+
+  /// Load bills from a full URL on an external pod (shared with us).
+  /// Returns null on failure, empty list if file has no bills.
+  static Future<List<Bill>?> loadBillsFromUrl(String url) async {
+    try {
+      final ttl = await readExternalPod(url);
+      if (ttl.isEmpty) return [];
+      final json = _extractJson(ttl);
+      if (json == null || json.isEmpty) return [];
+      final list = jsonDecode(json) as List;
+      return list.map((j) => Bill.fromJson(j as Map<String, dynamic>)).toList();
+    } catch (e) {
+      debugPrint('[PodService] loadBillsFromUrl error ($url): $e');
+      return null;
+    }
+  }
+
+  /// Save [bills] back to a full URL on an external pod (requires write access).
+  /// Returns an error message on failure, or null on success.
+  static Future<String?> saveBillsToUrl(
+    String url,
+    String ownerWebId,
+    List<Bill> bills,
+  ) async {
+    try {
+      final fileName = Uri.parse(url).pathSegments.last;
+      final json = jsonEncode(bills.map((b) => b.toJson()).toList());
+      final ttl = _buildTtl(fileName, json);
+      await writeExternalPod(url, ttl, ownerWebId);
+      return null;
+    } catch (e) {
+      debugPrint('[PodService] saveBillsToUrl error ($url): $e');
+      return e.toString();
+    }
+  }
 }

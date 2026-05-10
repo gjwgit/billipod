@@ -8,16 +8,162 @@
 
 library;
 
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
+
+import 'package:solidpod/solidpod.dart';
 
 import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
+import 'package:billipod/models/tagged_bill.dart';
 import 'package:billipod/services/pod_service.dart';
 
 class AppProvider extends ChangeNotifier {
   List<Bill> _bills = [];
   bool _loading = false;
   String? _error;
+
+  // ── Shared source state ───────────────────────────────────────────────────
+
+  String _ownName = '';
+  bool _ownActive = true;
+  final List<SharedSource> _sharedSources = [];
+
+  String get ownName => _ownName;
+  bool get ownActive => _ownActive;
+  List<SharedSource> get sharedSources => List.unmodifiable(_sharedSources);
+  bool get hasSharedSources => _sharedSources.isNotEmpty;
+
+  void toggleOwn() {
+    _ownActive = !_ownActive;
+    notifyListeners();
+  }
+
+  void toggleSharedSource(String webId) {
+    final src = _sharedSources.firstWhere((s) => s.webId == webId);
+    src.isActive = !src.isActive;
+    notifyListeners();
+  }
+
+  /// Loads the list of PODs that have shared their bills.ttl with the current
+  /// user, then asynchronously loads their bills in the background.
+  Future<void> loadSharedSources() async {
+    // Resolve own pod username.
+    final webId = await getWebId();
+    if (webId != null && webId.isNotEmpty) {
+      _ownName = _podName(webId);
+    }
+    // Fetch shared resource map filtered to bills.ttl.
+    final result = await sharedResources(billsFileName, null);
+    if (result is! Map || result.isEmpty) {
+      notifyListeners();
+      return;
+    }
+    _sharedSources.clear();
+    for (final key in result.keys) {
+      final fileUrl = key as String;
+      final entry = result[key] as Map<dynamic, dynamic>;
+      final ownerWebId =
+          entry[PermissionLogLiteral.owner] as String? ?? fileUrl;
+      final permissions =
+          entry[PermissionLogLiteral.permissions] as String? ?? '';
+      final p = permissions.toLowerCase();
+      final canEdit =
+          p.contains(AccessMode.write.mode.toLowerCase()) ||
+          p.contains(AccessMode.control.mode.toLowerCase());
+      _sharedSources.add(
+        SharedSource(
+          webId: ownerWebId,
+          name: _podName(ownerWebId),
+          fileUrl: fileUrl,
+          canEdit: canEdit,
+        ),
+      );
+    }
+    notifyListeners();
+    // Load bills for each source in the background.
+    for (final src in _sharedSources) {
+      unawaited(_loadSourceBills(src));
+    }
+  }
+
+  Future<void> _loadSourceBills(SharedSource src) async {
+    src.isLoading = true;
+    notifyListeners();
+    final bills = await PodService.loadBillsFromUrl(src.fileUrl);
+    src.bills = bills ?? [];
+    src.isLoading = false;
+    notifyListeners();
+  }
+
+  static String _podName(String webId) {
+    try {
+      final segments = Uri.parse(
+        webId,
+      ).pathSegments.where((s) => s.isNotEmpty).toList();
+      return segments.isNotEmpty ? segments.first : webId;
+    } catch (_) {
+      return webId;
+    }
+  }
+
+  // ── Tagged bill computed properties ───────────────────────────────────────
+
+  /// Bills tagged with their source, combined from all active sources.
+  List<TaggedBill> get activeScheduledBills =>
+      _taggedByStatus(BillStatus.scheduled);
+
+  List<TaggedBill> get activeFutureBills => _taggedByStatus(BillStatus.future);
+
+  List<TaggedBill> get activePastBills =>
+      _taggedByStatus(BillStatus.past, desc: true);
+
+  List<TaggedBill> get activeAllBills {
+    final result = <TaggedBill>[
+      ..._taggedByStatus(BillStatus.scheduled),
+      ..._taggedByStatus(BillStatus.future),
+      ..._taggedByStatus(BillStatus.past, desc: true),
+    ];
+    return result;
+  }
+
+  List<TaggedBill> _taggedByStatus(BillStatus status, {bool desc = false}) {
+    final result = <TaggedBill>[];
+    if (_ownActive) {
+      final own = switch (status) {
+        BillStatus.scheduled => scheduledBills,
+        BillStatus.future => futureBills,
+        BillStatus.past => pastBills,
+      };
+      result.addAll(own.map((b) => TaggedBill(b, null)));
+    }
+    for (final src in _sharedSources.where((s) => s.isActive && !s.isLoading)) {
+      final srcBills = src.bills
+          .where((b) => b.status == status && !b.isTemplate)
+          .toList();
+      result.addAll(
+        srcBills.map(
+          (b) => TaggedBill(
+            b,
+            src.name,
+            canEdit: src.canEdit,
+            fileUrl: src.fileUrl,
+            ownerWebId: src.webId,
+          ),
+        ),
+      );
+    }
+    result.sort((a, b) {
+      if (a.bill.dueDate == null && b.bill.dueDate == null) return 0;
+      if (a.bill.dueDate == null) return 1;
+      if (b.bill.dueDate == null) return -1;
+      return desc
+          ? b.bill.dueDate!.compareTo(a.bill.dueDate!)
+          : a.bill.dueDate!.compareTo(b.bill.dueDate!);
+    });
+    return result;
+  }
 
   bool get loading => _loading;
   String? get error => _error;
@@ -83,6 +229,55 @@ class AppProvider extends ChangeNotifier {
     }
     _loading = false;
     notifyListeners();
+    // Load shared sources in background — own bills are already visible.
+    unawaited(loadSharedSources());
+  }
+
+  /// Add one or more bills to a shared source and save once.
+  Future<String?> addSharedBills(String ownerWebId, List<Bill> bills) async {
+    final src = _sharedSources.firstWhere((s) => s.webId == ownerWebId);
+    src.bills = [...src.bills, ...bills];
+    notifyListeners();
+    return PodService.saveBillsToUrl(src.fileUrl, src.webId, src.bills);
+  }
+
+  /// Like [hasFollowOn] but checks within a shared source's bill list.
+  bool hasFollowOnInSource(String ownerWebId, Bill bill) {
+    if (bill.frequency == BillFrequency.oneOff) return false;
+    final next = bill.nextDueDate(bill.dueDate ?? DateTime.now());
+    if (next == null) return false;
+    final src = _sharedSources.firstWhere(
+      (s) => s.webId == ownerWebId,
+      orElse: () =>
+          SharedSource(webId: '', name: '', fileUrl: '', canEdit: false),
+    );
+    const window = Duration(days: 5);
+    return src.bills.any(
+      (b) =>
+          b.id != bill.id &&
+          b.status != BillStatus.past &&
+          b.title == bill.title &&
+          b.dueDate != null &&
+          (b.dueDate!.difference(next)).abs() <= window,
+    );
+  }
+
+  /// Update a single bill in a shared source and save back to their POD.
+  /// Returns an error message on failure, or null on success.
+  Future<String?> updateSharedBill(String ownerWebId, Bill updated) async {
+    final src = _sharedSources.firstWhere((s) => s.webId == ownerWebId);
+    src.bills = [for (final b in src.bills) b.id == updated.id ? updated : b];
+    notifyListeners();
+    return PodService.saveBillsToUrl(src.fileUrl, src.webId, src.bills);
+  }
+
+  /// Delete a single bill from a shared source and save back to their POD.
+  /// Returns an error message on failure, or null on success.
+  Future<String?> deleteSharedBill(String ownerWebId, String billId) async {
+    final src = _sharedSources.firstWhere((s) => s.webId == ownerWebId);
+    src.bills = src.bills.where((b) => b.id != billId).toList();
+    notifyListeners();
+    return PodService.saveBillsToUrl(src.fileUrl, src.webId, src.bills);
   }
 
   Future<String?> saveToPod() async {
