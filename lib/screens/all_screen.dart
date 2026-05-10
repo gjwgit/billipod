@@ -54,19 +54,6 @@ class _AllScreenState extends State<AllScreen> {
         .toList();
   }
 
-  List<Bill> _filter(List<Bill> bills) {
-    if (_query.isEmpty) return bills;
-    final q = _query.toLowerCase();
-    return bills
-        .where(
-          (b) =>
-              b.title.toLowerCase().contains(q) ||
-              (b.note?.toLowerCase().contains(q) ?? false) ||
-              (b.paymentMethod?.toLowerCase().contains(q) ?? false) ||
-              b.amountStr.contains(q),
-        )
-        .toList();
-  }
 
   Widget _tileFor(
     BuildContext context,
