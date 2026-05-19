@@ -18,6 +18,7 @@ import 'package:billipod/models/bill.dart';
 import 'package:billipod/models/tagged_bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
 import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/bill_total_bar.dart';
 import 'package:billipod/widgets/shared_read_only_tile.dart';
@@ -33,6 +34,7 @@ class AllScreen extends StatefulWidget {
 class _AllScreenState extends State<AllScreen> {
   final _search = TextEditingController();
   String _query = '';
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -212,6 +214,25 @@ class _AllScreenState extends State<AllScreen> {
     }
   }
 
+  Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
+    setState(() => _loading = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final bills = provider.allBills.where((b) => !b.isTemplate).toList();
+    final err = await ExportService.previewPdf(
+      bills: bills,
+      title: 'All Bills',
+      prefix: 'all',
+    );
+    if (mounted) {
+      setState(() => _loading = false);
+      if (err != null) {
+        messenger.showSnackBar(
+          SnackBar(content: Text('PDF export failed: $err')),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
@@ -282,12 +303,32 @@ class _AllScreenState extends State<AllScreen> {
                 ),
               ),
               const Gap(8),
+              const MarkdownTooltip(
+                message: '''
+
+**Search tips**
+
+- Plain text — searches title, note, payment method and amount
+- Starred items show with a gold background
+- Tap any bill to edit it
+
+''',
+                child: Icon(Icons.help_outline, size: 18),
+              ),
               MarkdownTooltip(
                 message: '**Add bill**\n\nCreate a new bill.',
                 child: IconButton(
-                  icon: const Icon(Icons.add_circle_outline),
-                  color: cs.primary,
+                  icon: const Icon(Icons.add_circle_outline, size: 20),
                   onPressed: () => _addBill(context, provider),
+                ),
+              ),
+              MarkdownTooltip(
+                message: '**Export PDF**\n\nSave or print all bills as a PDF.',
+                child: IconButton(
+                  icon: const Icon(Icons.picture_as_pdf_outlined, size: 20),
+                  onPressed: _loading
+                      ? null
+                      : () => _exportPdf(context, provider),
                 ),
               ),
             ],

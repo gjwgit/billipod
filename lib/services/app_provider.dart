@@ -17,6 +17,7 @@ import 'package:solidpod/solidpod.dart';
 import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/models/tagged_bill.dart';
+import 'package:billipod/services/bill_sort.dart';
 import 'package:billipod/services/pod_service.dart';
 
 class AppProvider extends ChangeNotifier {
@@ -189,17 +190,19 @@ class AppProvider extends ChangeNotifier {
 
   List<Bill> get allBills => List.unmodifiable(_bills);
 
-  List<Bill> get futureBills => _sorted(
+  List<Bill> get futureBills => sortedByDueAsc(
     _bills
         .where((b) => b.status == BillStatus.future && !b.isTemplate)
         .toList(),
   );
 
-  List<Bill> get scheduledBills =>
-      _sorted(_bills.where((b) => b.status == BillStatus.scheduled).toList());
+  List<Bill> get scheduledBills => sortedByDueAsc(
+    _bills.where((b) => b.status == BillStatus.scheduled).toList(),
+  );
 
-  List<Bill> get pastBills =>
-      _sortedDesc(_bills.where((b) => b.status == BillStatus.past).toList());
+  List<Bill> get pastBills => sortedByDueDesc(
+    _bills.where((b) => b.status == BillStatus.past).toList(),
+  );
 
   List<Bill> get templateBills => _bills.where((b) => b.isTemplate).toList();
 
@@ -458,26 +461,4 @@ class AppProvider extends ChangeNotifier {
 
   bool _sameDay(DateTime a, DateTime b) =>
       a.year == b.year && a.month == b.month && a.day == b.day;
-
-  List<Bill> _sorted(List<Bill> bills) {
-    final copy = List<Bill>.from(bills);
-    copy.sort((a, b) {
-      if (a.dueDate == null && b.dueDate == null) return 0;
-      if (a.dueDate == null) return 1;
-      if (b.dueDate == null) return -1;
-      return a.dueDate!.compareTo(b.dueDate!);
-    });
-    return copy;
-  }
-
-  List<Bill> _sortedDesc(List<Bill> bills) {
-    final copy = List<Bill>.from(bills);
-    copy.sort((a, b) {
-      if (a.dueDate == null && b.dueDate == null) return 0;
-      if (a.dueDate == null) return 1;
-      if (b.dueDate == null) return -1;
-      return b.dueDate!.compareTo(a.dueDate!);
-    });
-    return copy;
-  }
 }

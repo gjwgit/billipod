@@ -86,11 +86,10 @@ class _ScheduledScreenState extends State<ScheduledScreen>
                             },
                           ),
                     isDense: true,
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
                     ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                   onChanged: (v) => setState(() => _query = v),
                 ),
@@ -300,8 +299,7 @@ class _ScheduledScreenState extends State<ScheduledScreen>
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
     setState(() => _loading = true);
     final messenger = ScaffoldMessenger.of(context);
-    final err = await ExportService.exportPdf(
-      context: context,
+    final err = await ExportService.previewPdf(
       bills: provider.scheduledBills,
       title: 'Scheduled Bills',
       prefix: 'scheduled',

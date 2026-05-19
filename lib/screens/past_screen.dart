@@ -86,11 +86,10 @@ class _PastScreenState extends State<PastScreen>
                             },
                           ),
                     isDense: true,
-                    border: const OutlineInputBorder(),
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 8,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
                     ),
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                   onChanged: (v) => setState(() => _query = v),
                 ),
@@ -196,8 +195,7 @@ class _PastScreenState extends State<PastScreen>
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
     setState(() => _loading = true);
     final messenger = ScaffoldMessenger.of(context);
-    final err = await ExportService.exportPdf(
-      context: context,
+    final err = await ExportService.previewPdf(
       bills: provider.pastBills,
       title: 'Past Bills',
       prefix: 'past',

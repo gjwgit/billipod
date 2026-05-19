@@ -60,6 +60,12 @@ class _AppScaffoldState extends State<AppScaffold> {
       showLogout: false,
       showLogin: false,
       themeToggle: const SolidThemeToggleConfig(enabled: true),
+      aboutConfig: const SolidAboutConfig(
+        applicationName: appName,
+        applicationIcon: Icon(Icons.receipt_long, size: 64),
+        applicationLegalese: '© 2026 Togaware Pty Ltd',
+        text: aboutText,
+      ),
       appBar: const SolidAppBarConfig(
         title: appName,
         versionConfig: SolidVersionConfig(

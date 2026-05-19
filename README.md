@@ -1,4 +1,15 @@
-# Billi Pod - Secure, Private, Sharable Bills Management
+# Billi Pod
+
+> Bill Management with Secure and Private Solid Pod Storage
+
+BilliPod helps you keep on top of your bills — what's expected, what's
+scheduled, and what's been paid — with all data stored privately in
+your own [Solid Pod](https://solidproject.org/). Your Pod sits in a
+personal Data Vault on a Solid server in the cloud, where everything
+is stored encrypted and stays within the Pod. No data leaves the Pod
+unless you explicitly export it, so you stay in control.
+
+---
 
 [![Flutter](https://img.shields.io/badge/Flutter-%2302569B.svg?style=for-the-badge&logo=Flutter&logoColor=white)](https://flutter.dev)
 [![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)](https://dart.dev)
@@ -31,7 +42,7 @@ many more apps using the Solid ecosystem.
 
 The latest version of the app can be run online at
 [billipod.solidcommunity.au](https://billipod.solidcommunity.au) with no
-installation required though requiring a Bluelink login, or downloaded
+installation required though requiring a Solid login, or downloaded
 and installed for your platform from the [Solid Community
 AU](https://solidcommunity.au) repository:
 
@@ -68,5 +79,209 @@ a Pull Request. The app is implemented in
 Billi Pod is a Solid Flutter app to manage bills, past, scheduled, and
 upcoming. It is particularly useful for recurring bills and so knowing
 when bill payments are expected. You can view your Bills as filtered
-lists, recording dates of notificaiton, schedule, and due, how the
+lists, recording dates of notification, schedule, and due, how the
 bill is to be paid, and other useful information associated with the bill.
+
+## Quick start
+
+The typical workflow is:
+
+1. **Add** a regular bill, scheduled for its next payment.
+2. **Mark it scheduled** once you've set up the payment.
+3. **Verify the payment**, then tap the **Duplicate** button to roll the
+   next instance forward into the **Expected** list, where you can monitor
+   it until the next cycle.
+
+Each bill carries forward its title, amount, frequency, payment method
+and notes; only the due date advances.
+
+---
+
+## The five screens
+
+A left-hand menu (or bottom navigation on narrow screens) gives you:
+
+### Scheduled
+
+Bills you've committed to pay — the next payment is locked in. Use this
+view in the run-up to a payment date.
+
+### Expected
+
+Bills that you know are coming but haven't yet scheduled. The natural
+landing place for newly-duplicated bills from a paid one.
+
+### Past
+
+Bills you've paid. Useful for record-keeping and PDF reports.
+
+### All Bills
+
+Everything grouped by status (Scheduled · Expected · Past), with a single
+search box across all three groups. Quick way to find anything when you're
+not sure which bucket it's in.
+
+### Import / Export
+
+Backup and restore via JSON, plus PDF export with a date-range filter.
+See [Backup and report export](#backup-and-report-export) below.
+
+---
+
+## Adding and editing a bill
+
+Tap the **+** button in any of the four list screens to add a bill. The
+edit form captures:
+
++ **Title** — e.g. "Electricity", "Internet", "Rent"
++ **Amount** — formatted as a dollar value
++ **Due date** — the date you need to pay by
++ **Frequency** — one-off, monthly, every 28 days, quarterly, semi-annual,
+  annual, first-of-month, last-of-month
++ **Status** — Expected / Scheduled / Past
++ **Payment method** — Direct Debit, BPAY, Bank Transfer, Credit/Debit
+  Card, Cheque, Cash, PayPal, Other
++ **Notification method** — Email, Post, SMS, App, None, Other
++ **Notified date** — when the bill arrived
++ **Scheduled date** — when you set up the payment
++ **Confirmed paid date** — when the payment cleared
++ **Transaction fee** — captured separately from the amount
++ **Note** — free text for anything else
++ **Star** — mark important bills (they show with a gold background)
++ **Auto-paid** — flag bills paid automatically (e.g. by credit card)
+
+Tap any bill to edit it. The same form opens.
+
+---
+
+## The Duplicate workflow
+
+On a paid bill, look for the **copy** icon (📋). Its colour tells you what
+will happen:
+
++ **Green** — there is no follow-on bill for the next cycle yet. Tap to
+  create one in the **Expected** list, advanced by one frequency.
++ **Grey** — a follow-on bill already exists. Tapping still lets you
+  create extra copies if needed.
+
+A small dialog asks how many copies you want. This is the main way you
+move from "paid" back to "expected" for the next cycle, without having
+to retype the bill details.
+
+---
+
+## Search
+
+Every list page has a rounded search box. Plain-text search matches:
+
++ Title
++ Note
++ Payment method
++ Amount (as displayed)
+
+Clear the search with the × on the right of the field, or just delete
+the text. The list updates as you type.
+
+A help icon (?) next to the search shows these tips on long-press.
+
+---
+
+## Sharing bills with others
+
+Use the **Share** screen to:
+
++ **Manage Access** — grant or revoke access to your `bills.ttl` for
+  another Solid WebID. You choose read-only or read/write.
++ **Shared With Me** — open bills that other Pod owners have shared
+  with you. Permission level (read or read/write) is shown alongside
+  each source.
+
+Shared bills appear inline in the lists with a small person-outline icon
+and the source name. If you have write access, you can edit and delete
+them; they save back to the owner's Pod. Read-only bills are shown but
+not editable.
+
+The **source toggle bar** at the top of each list lets you switch between
+seeing only your own bills, only shared bills, or all of them combined.
+
+---
+
+## Backup and report export
+
+### JSON backup
+
+The standard way to back up. The export saves all your bills (excluding
+template entries) as a single JSON file with a timestamped name like
+`billipod_backup_20260520_2207.json`. Import merges entries back in,
+skipping any whose IDs already exist (so re-importing a backup over an
+existing list is safe).
+
+### PDF report
+
+Choose what to include:
+
++ **Scope selector** — All bills, Expected, Scheduled, or Past
++ **Date range** — optional From / To dates that filter by due date
+  (inclusive). Leave either blank for an open-ended range. Bills with no
+  due date are excluded when a range is set.
+
+The PDF contains:
+
++ **Title block** on page 1 with the date, bill count, total dollar
+  amount, and period (first–last due date)
++ **Sortable rows**, most recent due date first
++ **Total row** at the bottom showing the dollar total and the period
+  length (e.g. `2 years 3 months`)
++ **Repeating column headers** on every page
++ **Page numbers** in the footer (`Page 1 of 3`)
+
+After saving, a SnackBar offers a **View** action to open the PDF in your
+system's default viewer.
+
+For quick on-screen viewing without saving, tap the **PDF** icon (📄) on
+any of the four list pages. It opens the PDF directly in the system
+viewer with no save prompt — handy for a quick check or to print.
+
+---
+
+## About info
+
+Tap the **info** (ℹ) button in the top app bar at any time to see a brief
+about-the-app dialog with the version number and a short summary of how
+BilliPod works.
+
+---
+
+## Data and privacy
+
+All bills are stored in your Solid Pod as a Turtle file (`bills.ttl`) in
+the `billipod/` directory. You authenticate to your Pod when you start
+the app, and your security key (used to read/write the encrypted data)
+is managed through the standard SolidPod flow shown in the status bar.
+
+If you log into a fresh Pod, BilliPod creates the directory and an empty
+bill file on first save. Nothing about your bills ever leaves your Pod
+unless you explicitly export it as JSON or PDF.
+
+---
+
+## Troubleshooting
+
+**The app shows "loading…" forever after login.**
+The status bar at the bottom of the window shows your security-key state.
+If the key is missing, tap it and provide your password — bill loading
+restarts automatically once the key is saved.
+
+**A bill I shared isn't showing up.**
+The other person needs to add your WebID under **Share → Shared With
+Me** so the app knows where to fetch your bills from. Sharing is a
+two-step protocol: you grant, they subscribe.
+
+---
+
+## License
+
+GNU General Public License v3. See `LICENSE` or
+<https://opensource.org/license/gpl-3-0>.
+
+Copyright (C) 2026, Togaware Pty Ltd.

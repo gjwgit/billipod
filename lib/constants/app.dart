@@ -32,6 +32,16 @@ const String appName = 'BilliPod';
 
 const String appTitle = 'BilliPod - Manage Your Bills';
 
+/// Text shown in the SolidScaffold About dialog (accessed via the appbar
+/// info button). Supports basic Markdown.
+
+const String aboutText =
+    'BilliPod supports the management of your bills, upcoming, scheduled, '
+    'and past. A common workflow is to add a regular bill scheduled for the '
+    'next payment. When you have verified the payment has been successful '
+    'tap the **Duplicate** button to place the next bill in the '
+    '**Expected** list to be monitored.';
+
 const String appDirectory = 'billipod';
 const String billsFileName = 'bills.ttl';
 

@@ -16,11 +16,14 @@ import 'package:flutter/material.dart';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:gap/gap.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/screens/import_screen_widgets.dart';
 import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/services/export_service.dart';
+import 'package:billipod/widgets/date_field.dart';
 
 class ImportScreen extends StatefulWidget {
   const ImportScreen({super.key});
@@ -35,6 +38,14 @@ class _ImportScreenState extends State<ImportScreen> {
   bool _importError = false;
   String? _exportMessage;
   bool _exportError = false;
+
+  /// Which subset of bills to include when exporting to PDF.
+  _PdfScope _pdfScope = _PdfScope.all;
+
+  /// Optional date-range filter applied on top of the scope. When null on a
+  /// side, that side is unbounded.
+  DateTime? _rangeFrom;
+  DateTime? _rangeTo;
 
   void _setImportMessage(String msg, {bool error = false}) {
     setState(() {
@@ -123,6 +134,91 @@ class _ImportScreenState extends State<ImportScreen> {
               subtitle: 'Saves all $total bills as a JSON backup.',
               loading: _loading,
               onTap: () => _exportJson(context, provider),
+            ),
+
+            // ── PDF Export ──────────────────────────────────────────────
+            const Gap(24),
+            Text(
+              'Choose which bills to include, then export to PDF. '
+              'Optionally restrict to a date range based on due dates.',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+            const Gap(12),
+            DropdownButtonFormField<_PdfScope>(
+              initialValue: _pdfScope,
+              decoration: const InputDecoration(
+                labelText: 'Bills to include',
+                border: OutlineInputBorder(),
+                isDense: true,
+              ),
+              items: [
+                DropdownMenuItem(
+                  value: _PdfScope.all,
+                  child: Text(
+                    'All bills (${provider.allBills.where((b) => !b.isTemplate).length})',
+                  ),
+                ),
+                DropdownMenuItem(
+                  value: _PdfScope.expected,
+                  child: Text('Expected (${provider.futureBills.length})'),
+                ),
+                DropdownMenuItem(
+                  value: _PdfScope.scheduled,
+                  child: Text('Scheduled (${provider.scheduledBills.length})'),
+                ),
+                DropdownMenuItem(
+                  value: _PdfScope.past,
+                  child: Text('Past (${provider.pastBills.length})'),
+                ),
+              ],
+              onChanged: _loading
+                  ? null
+                  : (v) {
+                      if (v != null) setState(() => _pdfScope = v);
+                    },
+            ),
+            const Gap(12),
+            // Date range row: From | To | Clear
+            Row(
+              children: [
+                Expanded(
+                  child: DateField(
+                    label: 'From',
+                    value: _rangeFrom,
+                    enabled: !_loading,
+                    onPick: () => _pickRangeDate(isFrom: true),
+                  ),
+                ),
+                const Gap(8),
+                Expanded(
+                  child: DateField(
+                    label: 'To',
+                    value: _rangeTo,
+                    enabled: !_loading,
+                    onPick: () => _pickRangeDate(isFrom: false),
+                  ),
+                ),
+                const Gap(8),
+                IconButton(
+                  icon: const Icon(Icons.clear),
+                  tooltip: 'Clear date range',
+                  onPressed:
+                      (_loading || (_rangeFrom == null && _rangeTo == null))
+                      ? null
+                      : () => setState(() {
+                          _rangeFrom = null;
+                          _rangeTo = null;
+                        }),
+                ),
+              ],
+            ),
+            const Gap(12),
+            ImportActionCard(
+              icon: Icons.picture_as_pdf_outlined,
+              title: 'Export to PDF',
+              subtitle: _pdfScopeSubtitle(provider),
+              loading: _loading,
+              onTap: () => _exportPdf(context, provider),
             ),
           ],
         ),
@@ -229,4 +325,157 @@ class _ImportScreenState extends State<ImportScreen> {
       setState(() => _loading = false);
     }
   }
+
+  // ── PDF Export ────────────────────────────────────────────────────────────
+
+  /// Bills covered by the currently-selected scope AND date range.
+  List<Bill> _scopedBills(AppProvider provider) {
+    final List<Bill> base = switch (_pdfScope) {
+      _PdfScope.all => provider.allBills.where((b) => !b.isTemplate).toList(),
+      _PdfScope.expected => provider.futureBills,
+      _PdfScope.scheduled => provider.scheduledBills,
+      _PdfScope.past => provider.pastBills,
+    };
+    if (_rangeFrom == null && _rangeTo == null) return base;
+    // Normalize bounds: From at start of day, To at end of day, so a bill
+    // dated on the boundary is included regardless of its time-of-day.
+    final from = _rangeFrom == null
+        ? null
+        : DateTime(_rangeFrom!.year, _rangeFrom!.month, _rangeFrom!.day);
+    final to = _rangeTo == null
+        ? null
+        : DateTime(_rangeTo!.year, _rangeTo!.month, _rangeTo!.day, 23, 59, 59);
+    return base.where((b) {
+      final d = b.dueDate;
+      if (d == null) return false; // can't place undated bills in a range
+      if (from != null && d.isBefore(from)) return false;
+      if (to != null && d.isAfter(to)) return false;
+      return true;
+    }).toList();
+  }
+
+  String _pdfScopeSubtitle(AppProvider provider) {
+    final n = _scopedBills(provider).length;
+    final noun = 'bill${n == 1 ? '' : 's'}';
+    final rangeStr = (_rangeFrom == null && _rangeTo == null)
+        ? ''
+        : ' (${_rangeLabel()})';
+    switch (_pdfScope) {
+      case _PdfScope.all:
+        return 'Saves $n $noun as a PDF$rangeStr.';
+      case _PdfScope.expected:
+        return 'Saves $n expected $noun as a PDF$rangeStr.';
+      case _PdfScope.scheduled:
+        return 'Saves $n scheduled $noun as a PDF$rangeStr.';
+      case _PdfScope.past:
+        return 'Saves $n past $noun as a PDF$rangeStr.';
+    }
+  }
+
+  String _rangeLabel() {
+    final fmt = DateFormat('d MMM yyyy');
+    if (_rangeFrom != null && _rangeTo != null) {
+      return '${fmt.format(_rangeFrom!)} - ${fmt.format(_rangeTo!)}';
+    }
+    if (_rangeFrom != null) return 'from ${fmt.format(_rangeFrom!)}';
+    return 'until ${fmt.format(_rangeTo!)}';
+  }
+
+  Future<void> _pickRangeDate({required bool isFrom}) async {
+    final initial = isFrom
+        ? (_rangeFrom ?? _rangeTo ?? DateTime.now())
+        : (_rangeTo ?? _rangeFrom ?? DateTime.now());
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+      helpText: isFrom ? 'Range start' : 'Range end',
+    );
+    if (picked == null) return;
+    setState(() {
+      if (isFrom) {
+        _rangeFrom = picked;
+        // If From is after To, push To forward.
+        if (_rangeTo != null && _rangeTo!.isBefore(picked)) _rangeTo = picked;
+      } else {
+        _rangeTo = picked;
+        if (_rangeFrom != null && _rangeFrom!.isAfter(picked)) {
+          _rangeFrom = picked;
+        }
+      }
+    });
+  }
+
+  Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
+    setState(() {
+      _loading = true;
+      _exportMessage = null;
+    });
+
+    try {
+      final bills = _scopedBills(provider);
+      if (bills.isEmpty) {
+        _setExportMessage(
+          'No bills to export for this selection.',
+          error: true,
+        );
+        return;
+      }
+
+      final (baseTitle, prefix) = switch (_pdfScope) {
+        _PdfScope.all => ('All Bills', 'all'),
+        _PdfScope.expected => ('Expected Bills', 'expected'),
+        _PdfScope.scheduled => ('Scheduled Bills', 'scheduled'),
+        _PdfScope.past => ('Past Bills', 'past'),
+      };
+      final title = (_rangeFrom == null && _rangeTo == null)
+          ? baseTitle
+          : '$baseTitle (${_rangeLabel()})';
+
+      if (!context.mounted) return;
+      final messenger = ScaffoldMessenger.of(context);
+      final result = await ExportService.exportPdf(
+        bills: bills,
+        title: title,
+        prefix: prefix,
+      );
+      if (result.error != null) {
+        _setExportMessage('PDF export failed: ${result.error}', error: true);
+      } else if (result.savePath != null) {
+        _setExportMessage(
+          'Saved ${bills.length} bill${bills.length == 1 ? '' : 's'} to PDF.',
+        );
+        // Offer to view the saved file via a SnackBar action.
+        final savedPath = result.savePath!;
+        messenger.showSnackBar(
+          SnackBar(
+            content: const Text('PDF saved.'),
+            action: SnackBarAction(
+              label: 'View',
+              onPressed: () async {
+                final openErr = await ExportService.openSavedPdf(savedPath);
+                if (openErr != null && mounted) {
+                  messenger.showSnackBar(
+                    SnackBar(content: Text('Could not open: $openErr')),
+                  );
+                }
+              },
+            ),
+            duration: const Duration(seconds: 6),
+          ),
+        );
+      }
+      // result.savePath == null with no error → user cancelled the save
+      // dialog; leave _exportMessage as-is.
+    } catch (e, st) {
+      debugPrint('[Export PDF] error: $e\n$st');
+      _setExportMessage('Export failed: $e', error: true);
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
 }
+
+/// Which subset of bills the PDF export should include.
+enum _PdfScope { all, expected, scheduled, past }
