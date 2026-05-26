@@ -303,6 +303,7 @@ class _ScheduledScreenState extends State<ScheduledScreen>
       bills: provider.scheduledBills,
       title: 'Scheduled Bills',
       prefix: 'scheduled',
+      ascending: true,
     );
     if (mounted) {
       setState(() => _loading = false);

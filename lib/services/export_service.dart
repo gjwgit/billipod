@@ -44,9 +44,14 @@ class ExportService {
     required List<Bill> bills,
     required String title,
     required String prefix,
+    bool ascending = false,
   }) async {
     try {
-      final built = await _buildPdfBytes(bills: bills, title: title);
+      final built = await _buildPdfBytes(
+        bills: bills,
+        title: title,
+        ascending: ascending,
+      );
       final pdfName = 'billipod_${prefix}_${_ts()}.pdf';
 
       if (kIsWeb) {
@@ -90,9 +95,14 @@ class ExportService {
     required List<Bill> bills,
     required String title,
     required String prefix,
+    bool ascending = false,
   }) async {
     try {
-      final built = await _buildPdfBytes(bills: bills, title: title);
+      final built = await _buildPdfBytes(
+        bills: bills,
+        title: title,
+        ascending: ascending,
+      );
       final pdfName = 'billipod_${prefix}_${_ts()}.pdf';
 
       if (kIsWeb) {
@@ -136,6 +146,7 @@ class ExportService {
   static Future<Uint8List> _buildPdfBytes({
     required List<Bill> bills,
     required String title,
+    bool ascending = false,
   }) async {
     final now = DateTime.now();
     final dateStr = DateFormat('d MMMM yyyy').format(now);
@@ -219,7 +230,7 @@ class ExportService {
         if (ad == null && bd == null) return 0;
         if (ad == null) return 1;
         if (bd == null) return -1;
-        return bd.compareTo(ad);
+        return ascending ? ad.compareTo(bd) : bd.compareTo(ad);
       });
 
     doc.addPage(

@@ -1,4 +1,4 @@
-# Billi Pod
+# BilliPod
 
 > Bill Management with Secure and Private Solid Pod Storage
 
@@ -33,6 +33,11 @@ Williams](https://togaware.com/Graham.Williams.html) pair coding with
 [Flutter](https://flutter.dev)'s
 [SolidUI](https://github.com/anusii/solidui) package for cross
 platform development.
+
+Solid Pods are a new approach to handling your personal data on the
+World Wide Web and is the latest innovation from the inventor of the
+WWW, Sir Tim Berners-Lee. Obtain a Pod for yourself on any Solid
+server and link it to your app.
 
 We make this project available for free so if you appreciate the app
 then please show some ❤️ and tap on the star at
@@ -259,23 +264,10 @@ the `billipod/` directory. You authenticate to your Pod when you start
 the app, and your security key (used to read/write the encrypted data)
 is managed through the standard SolidPod flow shown in the status bar.
 
-If you log into a fresh Pod, BilliPod creates the directory and an empty
-bill file on first save. Nothing about your bills ever leaves your Pod
-unless you explicitly export it as JSON or PDF.
-
----
-
-## Troubleshooting
-
-**The app shows "loading…" forever after login.**
-The status bar at the bottom of the window shows your security-key state.
-If the key is missing, tap it and provide your password — bill loading
-restarts automatically once the key is saved.
-
-**A bill I shared isn't showing up.**
-The other person needs to add your WebID under **Share → Shared With
-Me** so the app knows where to fetch your bills from. Sharing is a
-two-step protocol: you grant, they subscribe.
+If you log into a fresh Pod, BilliPod creates the directory and an
+empty bill file on first save. Nothing about your bills ever leaves
+your Pod unless you explicitly share it with another Pod or export it
+as JSON or PDF.
 
 ---
 
