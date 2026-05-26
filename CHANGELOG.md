@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Review and Robust
 
++ For EXPECTED sort PDF ascending [0.2.4 20260527 gjw]
 + For SCHEDULE sort PDF ascending [0.2.3 20260527 gjw]
 + Export PDF to file or view PDF through buttons [0.2.2 20260520 gjw]
 + Integrate shared bills into the interface [0.2.1 20260510 gjw]

@@ -242,6 +242,7 @@ class _ExpectedScreenState extends State<ExpectedScreen>
       bills: provider.futureBills,
       title: 'Expected Bills',
       prefix: 'expected',
+      ascending: true,
     );
     if (mounted) {
       setState(() => _loading = false);
