@@ -296,9 +296,25 @@ The bill will show an **Auto-paid** chip in the listing.
                         date: _scheduledDate,
                         onPick: () async {
                           final d = await _pickDate(_scheduledDate);
-                          if (d != null) setState(() => _scheduledDate = d);
+                          if (d != null) {
+                            setState(() {
+                              _scheduledDate = d;
+                              // Promote Expected → Scheduled automatically
+                              // when a scheduled date is set.
+                              if (_status == BillStatus.future) {
+                                _status = BillStatus.scheduled;
+                              }
+                            });
+                          }
                         },
-                        onClear: () => setState(() => _scheduledDate = null),
+                        onClear: () => setState(() {
+                          _scheduledDate = null;
+                          // Demote Scheduled → Expected automatically
+                          // when the scheduled date is removed.
+                          if (_status == BillStatus.scheduled) {
+                            _status = BillStatus.future;
+                          }
+                        }),
                       ),
                       const Gap(8),
                       // Due date
