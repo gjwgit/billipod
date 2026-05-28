@@ -1,6 +1,6 @@
 /// BillTile — a single bill row in the list.
 ///
-// Time-stamp: <2026-04-17>
+// Time-stamp: <Thursday 2026-05-28 15:18:26 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -156,6 +156,14 @@ class BillTile extends StatelessWidget {
                                 cs.tertiaryContainer,
                                 cs.onTertiaryContainer,
                               ),
+                            if (bill.notifiedDate != null)
+                              _chip(
+                                context,
+                                Icons.notifications_outlined,
+                                'Notified ${_fmtDate(bill.notifiedDate!)}',
+                                cs.surfaceContainerHighest,
+                                cs.onSurfaceVariant,
+                              ),
                             if (bill.scheduledDate != null)
                               _chip(
                                 context,
@@ -164,13 +172,13 @@ class BillTile extends StatelessWidget {
                                 cs.tertiaryContainer,
                                 cs.onTertiaryContainer,
                               ),
-                            if (bill.notifiedDate != null)
+                            if (bill.confirmedPaidDate != null)
                               _chip(
                                 context,
-                                Icons.notifications_outlined,
-                                'Notified ${_fmtDate(bill.notifiedDate!)}',
-                                cs.surfaceContainerHighest,
-                                cs.onSurfaceVariant,
+                                Icons.check_circle_outline,
+                                'Confirmed ${_fmtDate(bill.confirmedPaidDate!)}',
+                                cs.primaryContainer,
+                                cs.onPrimaryContainer,
                               ),
                           ],
                         ),
