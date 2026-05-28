@@ -217,7 +217,7 @@ class _AllScreenState extends State<AllScreen> {
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
     setState(() => _loading = true);
     final messenger = ScaffoldMessenger.of(context);
-    final bills = provider.allBills.where((b) => !b.isTemplate).toList();
+    final bills = provider.activeAllBills.map((t) => t.bill).toList();
     final err = await ExportService.previewPdf(
       bills: bills,
       title: 'All Bills',

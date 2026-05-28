@@ -39,6 +39,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Review and Robust
 
++ Ensure PDF lists all bills including shared [0.2.7 20260528 gjw]
 + For PAST bill include CONFIRMED date [0.2.6 20260528 gjw]
 + Set STATUS when SCHEDULED date provided cleared [0.2.5 20260528 gjw]
 + For EXPECTED sort PDF ascending [0.2.4 20260527 gjw]

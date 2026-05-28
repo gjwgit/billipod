@@ -1,6 +1,6 @@
 /// AppScaffold — SolidScaffold with nav for BillPod.
 ///
-// Time-stamp: <2026-04-14>
+// Time-stamp: <Thursday 2026-05-28 18:38:06 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -65,6 +65,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         applicationIcon: Icon(Icons.receipt_long, size: 64),
         applicationLegalese: '© 2026 Togaware Pty Ltd',
         text: aboutText,
+        readmeUrl: 'https://gjwgit.github.io/billipod',
       ),
       appBar: const SolidAppBarConfig(
         title: appName,

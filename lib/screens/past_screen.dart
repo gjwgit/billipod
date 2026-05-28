@@ -196,7 +196,7 @@ class _PastScreenState extends State<PastScreen>
     setState(() => _loading = true);
     final messenger = ScaffoldMessenger.of(context);
     final err = await ExportService.previewPdf(
-      bills: provider.pastBills,
+      bills: provider.activePastBills.map((t) => t.bill).toList(),
       title: 'Past Bills',
       prefix: 'past',
     );

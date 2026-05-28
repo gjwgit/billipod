@@ -239,7 +239,7 @@ class _ExpectedScreenState extends State<ExpectedScreen>
     setState(() => _loading = true);
     final messenger = ScaffoldMessenger.of(context);
     final err = await ExportService.previewPdf(
-      bills: provider.futureBills,
+      bills: provider.activeFutureBills.map((t) => t.bill).toList(),
       title: 'Expected Bills',
       prefix: 'expected',
       ascending: true,
