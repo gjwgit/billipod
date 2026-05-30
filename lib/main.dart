@@ -1,6 +1,6 @@
 /// BillPod — bill management with Solid Pod storage.
 ///
-// Time-stamp: <Saturday 2026-05-30 09:35:40 +1000 Graham Williams>
+// Time-stamp: <Sunday 2026-05-31 06:27:00 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -149,7 +149,6 @@ class _BilliPodAppState extends State<BilliPodApp> {
           'com.togaware.billipod://redirect',
           'https://solidcommunity.au/apps/billipod/redirect.html',
         ],
-        autoLogin: true,
         child: const AppScaffold(),
       ),
     );
