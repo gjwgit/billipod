@@ -128,7 +128,7 @@ class _ScheduledScreenState extends State<ScheduledScreen>
             ],
           ),
         ),
-        BillTotalBar(bills: bills),
+        BillTotalBar(bills: bills, label: 'Scheduled'),
         if (tagged.isEmpty)
           Expanded(
             child: Center(

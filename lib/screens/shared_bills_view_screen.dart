@@ -313,7 +313,7 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
               ),
             ),
             const Gap(8),
-            BillTotalBar(bills: _filtered),
+            BillTotalBar(bills: _filtered, label: 'Shared'),
 
             // ── Grouped bill list ──────────────────────────────────────────
             Expanded(

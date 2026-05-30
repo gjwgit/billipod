@@ -335,7 +335,7 @@ class _AllScreenState extends State<AllScreen> {
           ),
         ),
         const Gap(8),
-        BillTotalBar(bills: all),
+        BillTotalBar(bills: all, label: 'All'),
 
         // ── Grouped bill list ───────────────────────────────────────
         Expanded(

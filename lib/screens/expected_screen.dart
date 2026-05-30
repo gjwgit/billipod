@@ -128,7 +128,7 @@ class _ExpectedScreenState extends State<ExpectedScreen>
             ],
           ),
         ),
-        BillTotalBar(bills: bills),
+        BillTotalBar(bills: bills, label: 'Expected'),
         if (tagged.isEmpty)
           Expanded(
             child: Center(

@@ -127,7 +127,7 @@ class _PastScreenState extends State<PastScreen>
             ],
           ),
         ),
-        BillTotalBar(bills: bills),
+        BillTotalBar(bills: bills, label: 'Past'),
         if (tagged.isEmpty)
           Expanded(
             child: Center(
