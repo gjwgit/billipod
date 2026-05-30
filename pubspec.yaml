@@ -1,10 +1,18 @@
 name: billipod
-description: "Bill Management with Secure and Private Solid Pod Storage"
+description: "BilliPod - Bill Management with Secure and Private Storage"
 publish_to: 'none'
 version: 0.2.7+3
 
 environment:
   sdk: ^3.11.3
+
+# 20250722 gjw To automatically upgrade package dependencies:
+#
+#   flutter pub upgrade --major-versions
+#
+# To see which dependencies have newer versions available:
+#
+#   flutter pub outdated
 
 dependencies:
   flutter:
@@ -33,6 +41,7 @@ dependencies:
   window_manager: ^0.5.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.3
   flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
@@ -40,8 +49,29 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
-  uses-material-design: true
-
   assets:
     - assets/images/app_icon.png
     - assets/images/app_image.jpg
+  uses-material-design: true
+
+# 20250429 gjw Define launcher icons for all platforms (except Linux)
+# so icons for the apps can be automatically updated using:
+#
+# `dart run flutter_launcher_icons`
+
+flutter_launcher_icons:
+  image_path: "assets/images/app_icon.png"
+  android: true
+  min_sdk_android: 21
+  ios: true
+  remove_alpha_ios: true
+  background_color_ios: "#ffffff"
+  macos:
+    generate: true
+  web:
+    generate: true
+    background_color: "#ffffff"
+    theme_color: "#ffffff"
+  windows:
+    generate: true
+    icon_size: 48 # min:48, max:256, default: 48
