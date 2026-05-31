@@ -1,6 +1,6 @@
 /// ScheduledScreen — bills with a scheduled payment date.
 ///
-// Time-stamp: <2026-04-17>
+// Time-stamp: <Monday 2026-06-01 09:12:27 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -180,7 +180,7 @@ class _ScheduledScreenState extends State<ScheduledScreen>
                     additionalActions: [
                       MarkdownTooltip(
                         message:
-                            '**Mark as Paid**\n\nConfirm payment and move this bill to Past.',
+                            '**Mark as Paid**\n\nConfirm payment, note the date, and move this bill to Past.',
                         child: IconButton(
                           icon: const Icon(
                             Icons.check_circle_outline,
@@ -230,7 +230,7 @@ class _ScheduledScreenState extends State<ScheduledScreen>
                     duplicateAction(context, bill, provider),
                     MarkdownTooltip(
                       message:
-                          '**Mark as Paid**\n\nConfirm payment and move this bill to Past.',
+                          '**Mark as Paid**\n\nConfirm payment, not the date, and move this bill to Past.',
                       child: IconButton(
                         icon: const Icon(Icons.check_circle_outline, size: 18),
                         onPressed: () => _markPaid(context, bill, provider),
