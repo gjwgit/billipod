@@ -143,6 +143,14 @@ class ExportService {
 
   /// Build the raw PDF bytes for [bills]. Shared by [previewPdf] and
   /// [exportPdf]. Does no file I/O.
+  /// Build the raw PDF bytes for [bills] with [title]. Public wrapper around
+  /// the internal builder so screens can show an in-app preview.
+  static Future<Uint8List> buildPdfBytes({
+    required List<Bill> bills,
+    required String title,
+    bool ascending = false,
+  }) => _buildPdfBytes(bills: bills, title: title, ascending: ascending);
+
   static Future<Uint8List> _buildPdfBytes({
     required List<Bill> bills,
     required String title,

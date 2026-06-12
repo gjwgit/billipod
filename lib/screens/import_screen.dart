@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:gap/gap.dart';
 import 'package:intl/intl.dart';
+import 'package:markdown_tooltip/markdown_tooltip.dart';
+import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
 
 import 'package:billipod/models/bill.dart';
@@ -34,12 +36,12 @@ class ImportScreen extends StatefulWidget {
 
 class _ImportScreenState extends State<ImportScreen> {
   bool _loading = false;
-  String? _importMessage;
-  bool _importError = false;
-  String? _exportMessage;
-  bool _exportError = false;
+  String? _backupMessage;
+  bool _backupError = false;
+  String? _viewMessage;
+  bool _viewError = false;
 
-  /// Which subset of bills to include when exporting to PDF.
+  /// Which subset of bills to include when viewing as PDF.
   _PdfScope _pdfScope = _PdfScope.all;
 
   /// Optional date-range filter applied on top of the scope. When null on a
@@ -47,17 +49,17 @@ class _ImportScreenState extends State<ImportScreen> {
   DateTime? _rangeFrom;
   DateTime? _rangeTo;
 
-  void _setImportMessage(String msg, {bool error = false}) {
+  void _setBackupMessage(String msg, {bool error = false}) {
     setState(() {
-      _importMessage = msg;
-      _importError = error;
+      _backupMessage = msg;
+      _backupError = error;
     });
   }
 
-  void _setExportMessage(String msg, {bool error = false}) {
+  void _setViewMessage(String msg, {bool error = false}) {
     setState(() {
-      _exportMessage = msg;
-      _exportError = error;
+      _viewMessage = msg;
+      _viewError = error;
     });
   }
 
@@ -83,66 +85,76 @@ class _ImportScreenState extends State<ImportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // ── Import ──────────────────────────────────────────────────
-            Text('Import', style: Theme.of(context).textTheme.titleLarge),
-            const Gap(8),
+            // ── Backup & Restore ────────────────────────────────────────
             Text(
-              'Import bills from a JSON backup. Imported bills are '
-              'merged with your existing list.',
-              style: TextStyle(color: cs.onSurfaceVariant),
-            ),
-            if (_importMessage != null) ...[
-              const Gap(12),
-              ImportMessageBanner(
-                message: _importMessage!,
-                isError: _importError,
-                cs: cs,
-              ),
-            ],
-            const Gap(16),
-            ImportActionCard(
-              icon: Icons.upload_file_outlined,
-              title: 'Import from JSON',
-              subtitle: 'Select a BilliPod JSON backup file to import.',
-              loading: _loading,
-              onTap: () => _importJson(context),
-            ),
-
-            // ── Export ──────────────────────────────────────────────────
-            const Gap(32),
-            Text(
-              'Export / Backup',
+              'Backup & Restore',
               style: Theme.of(context).textTheme.titleLarge,
             ),
-            if (_exportMessage != null) ...[
+            const Gap(8),
+            Text(
+              'Save a complete JSON backup of all your bills, or restore '
+              'everything from a previously saved backup file.',
+              style: TextStyle(color: cs.onSurfaceVariant),
+            ),
+            if (_backupMessage != null) ...[
               const Gap(12),
               ImportMessageBanner(
-                message: _exportMessage!,
-                isError: _exportError,
+                message: _backupMessage!,
+                isError: _backupError,
                 cs: cs,
               ),
             ],
-            const Gap(8),
-            Text(
-              'Save a timestamped backup of your bills.',
-              style: TextStyle(color: cs.onSurfaceVariant),
-            ),
             const Gap(16),
-            ImportActionCard(
-              icon: Icons.download_outlined,
-              title: 'Export to JSON',
-              subtitle: 'Saves all $total bills as a JSON backup.',
-              loading: _loading,
-              onTap: () => _exportJson(context, provider),
+            Row(
+              children: [
+                MarkdownTooltip(
+                  message:
+                      '**Export Backup**\n\n'
+                      'Save all $total bills to a BilliPod JSON backup file '
+                      'on this device. Keep it somewhere safe so you can '
+                      'restore everything later.',
+                  child: FilledButton.icon(
+                    icon: const Icon(Icons.download),
+                    label: const Text('Export Backup'),
+                    onPressed: _loading
+                        ? null
+                        : () => _exportJson(context, provider),
+                  ),
+                ),
+                const Gap(12),
+                MarkdownTooltip(
+                  message:
+                      '**Import Backup**\n\n'
+                      'Restore bills from a previously saved BilliPod JSON '
+                      'backup file. Restored bills are merged with your '
+                      'existing list.',
+                  child: OutlinedButton.icon(
+                    icon: const Icon(Icons.upload),
+                    label: const Text('Import Backup'),
+                    onPressed: _loading ? null : () => _importJson(context),
+                  ),
+                ),
+              ],
             ),
 
-            // ── PDF Export ──────────────────────────────────────────────
-            const Gap(24),
+            // ── View ────────────────────────────────────────────────────
+            const Gap(32),
+            Text('View', style: Theme.of(context).textTheme.titleLarge),
+            const Gap(8),
             Text(
-              'Choose which bills to include, then export to PDF. '
-              'Optionally restrict to a date range based on due dates.',
+              'Choose which bills to include, then view them as a PDF on '
+              'screen. You can save or print from the preview. Optionally '
+              'restrict to a date range based on due dates.',
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
+            if (_viewMessage != null) ...[
+              const Gap(12),
+              ImportMessageBanner(
+                message: _viewMessage!,
+                isError: _viewError,
+                cs: cs,
+              ),
+            ],
             const Gap(12),
             DropdownButtonFormField<_PdfScope>(
               initialValue: _pdfScope,
@@ -215,7 +227,7 @@ class _ImportScreenState extends State<ImportScreen> {
             const Gap(12),
             ImportActionCard(
               icon: Icons.picture_as_pdf_outlined,
-              title: 'Export to PDF',
+              title: 'View as PDF',
               subtitle: _pdfScopeSubtitle(provider),
               loading: _loading,
               onTap: () => _exportPdf(context, provider),
@@ -232,7 +244,7 @@ class _ImportScreenState extends State<ImportScreen> {
     final provider = context.read<AppProvider>();
     setState(() {
       _loading = true;
-      _importMessage = null;
+      _backupMessage = null;
     });
 
     try {
@@ -249,7 +261,7 @@ class _ImportScreenState extends State<ImportScreen> {
       final file = result.files.first;
       final bytes = file.bytes;
       if (bytes == null) {
-        _setImportMessage('Could not read file.', error: true);
+        _setBackupMessage('Could not read file.', error: true);
         setState(() => _loading = false);
         return;
       }
@@ -260,7 +272,7 @@ class _ImportScreenState extends State<ImportScreen> {
           .toList();
 
       if (imported.isEmpty) {
-        _setImportMessage('No bills found in "${file.name}".', error: true);
+        _setBackupMessage('No bills found in "${file.name}".', error: true);
         setState(() => _loading = false);
         return;
       }
@@ -272,13 +284,13 @@ class _ImportScreenState extends State<ImportScreen> {
         provider.addBill(b);
       }
       await provider.saveToPod();
-      _setImportMessage(
+      _setBackupMessage(
         'Imported ${fresh.length} new bill${fresh.length == 1 ? '' : 's'} '
         '(${imported.length - fresh.length} skipped as duplicates).',
       );
     } catch (e, st) {
       debugPrint('[Import] error: $e\n$st');
-      _setImportMessage('Import failed: $e', error: true);
+      _setBackupMessage('Import failed: $e', error: true);
     } finally {
       setState(() => _loading = false);
     }
@@ -289,7 +301,7 @@ class _ImportScreenState extends State<ImportScreen> {
   Future<void> _exportJson(BuildContext context, AppProvider provider) async {
     setState(() {
       _loading = true;
-      _exportMessage = null;
+      _backupMessage = null;
     });
 
     try {
@@ -301,7 +313,7 @@ class _ImportScreenState extends State<ImportScreen> {
       final fileName = 'billipod_backup_${_ts()}.json';
 
       if (kIsWeb) {
-        _setExportMessage(
+        _setBackupMessage(
           'Export to file is not supported on web.',
           error: true,
         );
@@ -316,11 +328,11 @@ class _ImportScreenState extends State<ImportScreen> {
       );
       if (savePath != null) {
         await File(savePath).writeAsBytes(bytes);
-        _setExportMessage('Saved to $savePath');
+        _setBackupMessage('Saved to $savePath');
       }
     } catch (e, st) {
       debugPrint('[Export JSON] error: $e\n$st');
-      _setExportMessage('Export failed: $e', error: true);
+      _setBackupMessage('Export failed: $e', error: true);
     } finally {
       setState(() => _loading = false);
     }
@@ -410,16 +422,13 @@ class _ImportScreenState extends State<ImportScreen> {
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {
     setState(() {
       _loading = true;
-      _exportMessage = null;
+      _viewMessage = null;
     });
 
     try {
       final bills = _scopedBills(provider);
       if (bills.isEmpty) {
-        _setExportMessage(
-          'No bills to export for this selection.',
-          error: true,
-        );
+        _setViewMessage('No bills to view for this selection.', error: true);
         return;
       }
 
@@ -433,46 +442,81 @@ class _ImportScreenState extends State<ImportScreen> {
           ? baseTitle
           : '$baseTitle (${_rangeLabel()})';
 
-      if (!context.mounted) return;
-      final messenger = ScaffoldMessenger.of(context);
-      final result = await ExportService.exportPdf(
+      // Expected and Scheduled read most naturally in ascending due-date
+      // order; Past and All stay descending (newest first).
+      final ascending =
+          _pdfScope == _PdfScope.expected || _pdfScope == _PdfScope.scheduled;
+      final pdfBytes = await ExportService.buildPdfBytes(
         bills: bills,
         title: title,
-        prefix: prefix,
+        ascending: ascending,
       );
-      if (result.error != null) {
-        _setExportMessage('PDF export failed: ${result.error}', error: true);
-      } else if (result.savePath != null) {
-        _setExportMessage(
-          'Saved ${bills.length} bill${bills.length == 1 ? '' : 's'} to PDF.',
-        );
-        // Offer to view the saved file via a SnackBar action.
-        final savedPath = result.savePath!;
-        messenger.showSnackBar(
-          SnackBar(
-            content: const Text('PDF saved.'),
-            action: SnackBarAction(
-              label: 'View',
-              onPressed: () async {
-                final openErr = await ExportService.openSavedPdf(savedPath);
-                if (openErr != null && mounted) {
-                  messenger.showSnackBar(
-                    SnackBar(content: Text('Could not open: $openErr')),
-                  );
-                }
-              },
+      final pdfName = 'billipod_${prefix}_${_ts()}.pdf';
+
+      if (!context.mounted) return;
+      // Open an on-screen preview of the actual PDF. Sharing is replaced
+      // with an explicit Save action that prompts for a filename and
+      // location; printing stays available.
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => Scaffold(
+            appBar: AppBar(title: Text(title)),
+            body: PdfPreview(
+              build: (_) async => pdfBytes,
+              pdfFileName: pdfName,
+              canChangePageFormat: false,
+              canChangeOrientation: false,
+              canDebug: false,
+              allowSharing: false,
+              actions: [
+                PdfPreviewAction(
+                  icon: const Icon(Icons.save_alt),
+                  onPressed: (ctx, build, pageFormat) async {
+                    final bytes = await build(pageFormat);
+                    await _savePdfAs(bytes, pdfName);
+                  },
+                ),
+              ],
             ),
-            duration: const Duration(seconds: 6),
           ),
-        );
-      }
-      // result.savePath == null with no error → user cancelled the save
-      // dialog; leave _exportMessage as-is.
+        ),
+      );
+      _setViewMessage(
+        'Viewed ${bills.length} bill${bills.length == 1 ? '' : 's'} as PDF.',
+      );
     } catch (e, st) {
-      debugPrint('[Export PDF] error: $e\n$st');
-      _setExportMessage('Export failed: $e', error: true);
+      debugPrint('[View PDF] error: $e\n$st');
+      _setViewMessage('PDF generation failed: $e', error: true);
     } finally {
       if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  /// Prompt for a filename and location, then write the PDF [bytes] there.
+  Future<void> _savePdfAs(List<int> bytes, String defaultName) async {
+    try {
+      if (kIsWeb) {
+        // No filesystem on web; fall back to the printing share/save sheet.
+        await Printing.sharePdf(
+          bytes: Uint8List.fromList(bytes),
+          filename: defaultName,
+        );
+        return;
+      }
+      final savePath = await FilePicker.saveFile(
+        dialogTitle: 'Save PDF',
+        fileName: defaultName,
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+      if (savePath == null) return; // user cancelled
+      await File(savePath).writeAsBytes(bytes);
+      if (mounted) {
+        _setViewMessage('Saved to $savePath');
+      }
+    } catch (e, st) {
+      debugPrint('[Save PDF] error: $e\n$st');
+      if (mounted) _setViewMessage('Save failed: $e', error: true);
     }
   }
 }

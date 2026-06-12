@@ -41,6 +41,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 0.3 Review and Robust
 
++ Restructure IMPORT/EXPRT as BACKUP [0.2.9 20260612 gjw]
 + Updated solidui menus to bottom [0.2.8 20260607 gjw]
 + Ensure PDF lists all bills including shared [0.2.7 20260528 gjw]
 + For PAST bill include CONFIRMED date [0.2.6 20260528 gjw]

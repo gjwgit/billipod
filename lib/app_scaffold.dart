@@ -102,11 +102,11 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: AllScreen(),
         ),
         const SolidMenuItem(
-          title: 'Import / Export',
-          icon: Icons.import_export,
+          title: 'Backup',
+          icon: Icons.save_alt,
           tooltip:
-              '**Import / Export**\n\n'
-              'Import from JSON backup or export to JSON and PDF.',
+              '**Backup**\n\n'
+              'Back up and restore all bills, or view bills as a PDF.',
           child: ImportScreen(),
         ),
         const SolidMenuItem(
