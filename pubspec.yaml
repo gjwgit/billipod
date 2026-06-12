@@ -1,7 +1,7 @@
 name: billipod
 description: "BilliPod - Bill Management with Secure and Private Storage"
 publish_to: 'none'
-version: 0.2.9+3
+version: 0.2.10+3
 
 environment:
   sdk: ^3.11.3
@@ -27,8 +27,8 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.1
   provider: ^6.1.5
-  solidpod: ^1.0.5
-  solidui: ^1.0.6
+  solidpod: ^1.0.6
+  solidui: ^1.0.7
   uuid: ^4.5.3
   window_manager: ^0.5.1
 

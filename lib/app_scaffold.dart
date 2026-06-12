@@ -102,20 +102,20 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: AllScreen(),
         ),
         const SolidMenuItem(
-          title: 'Backup',
-          icon: Icons.save_alt,
-          tooltip:
-              '**Backup**\n\n'
-              'Back up and restore all bills, or view bills as a PDF.',
-          child: ImportScreen(),
-        ),
-        const SolidMenuItem(
           title: 'Share',
           icon: Icons.share_outlined,
           tooltip:
               '**Share**\n\n'
               'Grant or revoke access to your bills for another Solid WebID.',
           child: ShareScreen(),
+        ),
+        const SolidMenuItem(
+          title: 'Backup',
+          icon: Icons.save_alt,
+          tooltip:
+              '**Backup**\n\n'
+              'Back up and restore all bills, or view bills as a PDF.',
+          child: ImportScreen(),
         ),
       ],
       statusBar: SolidStatusBarConfig(
