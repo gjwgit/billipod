@@ -141,6 +141,34 @@ class ExportService {
     }
   }
 
+  /// Prompt for a filename and location, then write the PDF [bytes] there.
+  ///
+  /// Returns the saved path on success, null if cancelled, or an 'error:'-
+  /// prefixed message on failure. On web, falls back to the share sheet.
+  static Future<String?> savePdfAs(List<int> bytes, String defaultName) async {
+    try {
+      if (kIsWeb) {
+        await Printing.sharePdf(
+          bytes: Uint8List.fromList(bytes),
+          filename: defaultName,
+        );
+        return null;
+      }
+      final savePath = await FilePicker.saveFile(
+        dialogTitle: 'Save PDF',
+        fileName: defaultName,
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+      if (savePath == null) return null;
+      await File(savePath).writeAsBytes(bytes);
+      return savePath;
+    } catch (e, st) {
+      debugPrint('[Save PDF] error: $e\n$st');
+      return 'error:Save failed: $e';
+    }
+  }
+
   /// Build the raw PDF bytes for [bills]. Shared by [previewPdf] and
   /// [exportPdf]. Does no file I/O.
   /// Build the raw PDF bytes for [bills] with [title]. Public wrapper around
