@@ -1,8 +1,7 @@
 # Billi Pod Change Log
 
 Noted here are the high level changes for the app.  Each update
-includes a short user-oriented description.  The next release is 0.2
-following incremental updates through the 0.1.n series.
+includes a short user-oriented description.
 
 You can run the app in your
 [**browser**](https://billipod.solidcommunity.au) or else download and
@@ -37,11 +36,13 @@ This app has been pair programmed by [Graham
 Williams](https://togaware.com/Graham.Williams.html) and [Claude
 Code](https://claude.com/product/claude-code).
 
-## ToDo
+## 1.0 Secure key management
 
-## 0.3 Review and Robust
++ Improve SAVE behaviour [1.0.1 20260614 gjw]
++ Bump to solid_auth fix for token timeout [1.0.0 20260612 gjw]
 
-+ Bump to solid_auth fix for token timeout [0.2.10 20260612 gjw]
+## 0.2 Review and Robust
+
 + Restructure IMPORT/EXPRT as BACKUP [0.2.9 20260612 gjw]
 + Updated solidui menus to bottom [0.2.8 20260607 gjw]
 + Ensure PDF lists all bills including shared [0.2.7 20260528 gjw]
@@ -52,7 +53,7 @@ Code](https://claude.com/product/claude-code).
 + Export PDF to file or view PDF through buttons [0.2.2 20260520 gjw]
 + Integrate shared bills into the interface [0.2.1 20260510 gjw]
 
-## 0.2 Basic Functionality and sharing
+## 0.1 Basic Functionality and sharing
 
 + Add SHARING capability [0.2.0 20260510 gjw]
 + Migrate NOTES to EMACS TEXT FIELD [0.1.17 20260505 gjw]
@@ -72,7 +73,4 @@ Code](https://claude.com/product/claude-code).
 + Add a star to highlight items [0.1.3 20260416 gjw]
 + Refining the functionality [0.1.2 20260416 gjw]
 + Initial functionality [0.1.1 20260414 gjw]
-
-## 0.1 Initial Shell App
-
 + Initial template app [0.1.0 20260414 gjw]

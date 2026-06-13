@@ -12,11 +12,11 @@ import 'package:flutter/material.dart';
 
 import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
-import 'package:intl/intl.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 
 import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
+import 'package:billipod/pages/bill_date_row.dart';
 
 class BillEdit extends StatefulWidget {
   final Bill? bill;
@@ -42,7 +42,41 @@ class _BillEditState extends State<BillEdit> {
   DateTime? _confirmedPaidDate;
   late bool _isAutoPaid;
 
+  // Snapshot of the initial values, used to detect whether anything has
+  // changed so the Save button can be enabled only when there is something
+  // to save.
+  late final String _initTitle;
+  late final String _initAmount;
+  late final String _initFee;
+  late final String _initNote;
+  late final BillFrequency _initFrequency;
+  late final BillStatus _initStatus;
+  late final DateTime? _initDueDate;
+  late final DateTime? _initNotifiedDate;
+  late final String? _initNotificationMethod;
+  late final String? _initPaymentMethod;
+  late final DateTime? _initScheduledDate;
+  late final DateTime? _initConfirmedPaidDate;
+  late final bool _initIsAutoPaid;
+
   bool get _isNew => widget.bill == null;
+
+  /// Whether any editable field differs from its initial value. Drives the
+  /// enabled state of the Save button.
+  bool get _hasChanges =>
+      _title.text != _initTitle ||
+      _amount.text != _initAmount ||
+      _fee.text != _initFee ||
+      _note.text != _initNote ||
+      _frequency != _initFrequency ||
+      _status != _initStatus ||
+      _dueDate != _initDueDate ||
+      _notifiedDate != _initNotifiedDate ||
+      _notificationMethod != _initNotificationMethod ||
+      _paymentMethod != _initPaymentMethod ||
+      _scheduledDate != _initScheduledDate ||
+      _confirmedPaidDate != _initConfirmedPaidDate ||
+      _isAutoPaid != _initIsAutoPaid;
 
   @override
   void initState() {
@@ -67,10 +101,37 @@ class _BillEditState extends State<BillEdit> {
     _scheduledDate = b?.scheduledDate;
     _confirmedPaidDate = b?.confirmedPaidDate;
     _isAutoPaid = b?.isAutoPaid ?? false;
+
+    // Record the initial state for change detection.
+    _initTitle = _title.text;
+    _initAmount = _amount.text;
+    _initFee = _fee.text;
+    _initNote = _note.text;
+    _initFrequency = _frequency;
+    _initStatus = _status;
+    _initDueDate = _dueDate;
+    _initNotifiedDate = _notifiedDate;
+    _initNotificationMethod = _notificationMethod;
+    _initPaymentMethod = _paymentMethod;
+    _initScheduledDate = _scheduledDate;
+    _initConfirmedPaidDate = _confirmedPaidDate;
+    _initIsAutoPaid = _isAutoPaid;
+
+    // Rebuild when text fields change so the Save button updates.
+    for (final c in [_title, _amount, _fee, _note]) {
+      c.addListener(_onChanged);
+    }
   }
+
+  /// Called whenever a tracked field changes; rebuilds so the Save button's
+  /// enabled state reflects [_hasChanges].
+  void _onChanged() => setState(() {});
 
   @override
   void dispose() {
+    for (final c in [_title, _amount, _fee, _note]) {
+      c.removeListener(_onChanged);
+    }
     _title.dispose();
     _amount.dispose();
     _fee.dispose();
@@ -220,7 +281,7 @@ class _BillEditState extends State<BillEdit> {
                       ),
                       const Gap(12),
                       // Notified date + method
-                      _DateRow(
+                      BillDateRow(
                         label: 'Notified date',
                         date: _notifiedDate,
                         onPick: () async {
@@ -291,7 +352,7 @@ The bill will show an **Auto-paid** chip in the listing.
                       ),
                       const Gap(8),
                       // Scheduled date
-                      _DateRow(
+                      BillDateRow(
                         label: 'Scheduled date',
                         date: _scheduledDate,
                         onPick: () async {
@@ -318,7 +379,7 @@ The bill will show an **Auto-paid** chip in the listing.
                       ),
                       const Gap(8),
                       // Due date
-                      _DateRow(
+                      BillDateRow(
                         label: 'Due date',
                         date: _dueDate,
                         onPick: () async {
@@ -329,7 +390,7 @@ The bill will show an **Auto-paid** chip in the listing.
                       ),
                       const Gap(8),
                       // Confirmed paid date
-                      _DateRow(
+                      BillDateRow(
                         label: 'Confirmed paid date',
                         date: _confirmedPaidDate,
                         onPick: () async {
@@ -377,59 +438,19 @@ The bill will show an **Auto-paid** chip in the listing.
                   ),
                   const Gap(8),
                   FilledButton(
-                    onPressed: () {
-                      if (_formKey.currentState!.validate()) {
-                        Navigator.pop(context, _buildBill());
-                      }
-                    },
+                    onPressed: _hasChanges
+                        ? () {
+                            if (_formKey.currentState!.validate()) {
+                              Navigator.pop(context, _buildBill());
+                            }
+                          }
+                        : null,
                     child: Text(_isNew ? 'Add Bill' : 'Save'),
                   ),
                 ],
               ),
             ),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-// ── Date row helper ───────────────────────────────────────────────────────────
-
-class _DateRow extends StatelessWidget {
-  final String label;
-  final DateTime? date;
-  final VoidCallback onPick;
-  final VoidCallback onClear;
-
-  const _DateRow({
-    required this.label,
-    required this.date,
-    required this.onPick,
-    required this.onClear,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-    return InkWell(
-      onTap: onPick,
-      borderRadius: BorderRadius.circular(4),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          border: const OutlineInputBorder(),
-          isDense: true,
-          suffixIcon: date != null
-              ? IconButton(
-                  icon: const Icon(Icons.clear, size: 16),
-                  onPressed: onClear,
-                )
-              : const Icon(Icons.calendar_today_outlined, size: 16),
-        ),
-        child: Text(
-          date != null ? DateFormat('d MMM yyyy').format(date!) : '—',
-          style: TextStyle(color: date != null ? null : cs.onSurfaceVariant),
         ),
       ),
     );
