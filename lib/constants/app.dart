@@ -1,6 +1,6 @@
 /// BillPod - app-wide constants.
 ///
-// Time-stamp: <Thursday 2026-05-28 14:10:23 +1000 Graham Williams>
+// Time-stamp: <Sunday 2026-06-14 08:49:32 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -37,10 +37,7 @@ const String appTitle = 'BilliPod - Manage Your Bills';
 
 const String aboutText =
     'BilliPod supports the management of your bills, whether that might be upcoming, scheduled, '
-    'or past bills. A common workflow is to add a regular bill scheduled for the '
-    'next payment. When you verify the payment within the app '
-    'tap the **Duplicate** button to place the next bill according to the **Frequency** in the '
-    '**Expected** list so that you can monitor it.';
+    'or past bills.';
 
 const String appDirectory = 'billipod';
 const String billsFileName = 'bills.ttl';

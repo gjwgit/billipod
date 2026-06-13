@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ HOME now using markdown [1.0.3 20260614 gjw]
 + Add a introductory HOME page [1.0.2 20260614 gjw]
 + Improve SAVE behaviour [1.0.1 20260614 gjw]
 + Bump to solid_auth fix for token timeout [1.0.0 20260612 gjw]

@@ -1,6 +1,6 @@
 /// BilliPod — home page with a welcome/overview card.
 ///
-// Time-stamp: <2026-06-12>
+// Time-stamp: <Sunday 2026-06-14 08:50:44 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -27,6 +27,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
+
 import 'package:billipod/constants/app.dart';
 
 /// The landing page, showing a welcome card describing the app.
@@ -50,35 +52,51 @@ class Home extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  Icons.receipt_long,
-                  size: 64,
-                  color: Theme.of(context).colorScheme.primary,
+                Row(
+                  children: [
+                    Icon(
+                      Icons.receipt_long,
+                      size: 48,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                Text(title, style: Theme.of(context).textTheme.headlineMedium),
                 const SizedBox(height: 24),
-                Text(
-                  'Welcome to BilliPod!\n'
-                  '\n'
-                  'BilliPod helps you track your bills — expected, '
-                  'scheduled, and paid — with everything stored encrypted '
-                  'in your personal Solid Pod, so your data stays under '
-                  'your control.\n'
-                  '\n'
-                  'Key features:\n'
-                  '\n'
-                  '• Scheduled, Expected and Past views of your bills\n'
-                  '• Due dates, amounts, fees and payment methods\n'
-                  '• Recurring and one-off bills\n'
-                  '• PDF view of your bills for any date range\n'
-                  '• Backup and restore all bills as JSON\n'
-                  '• Share bills with other Pod owners\n'
-                  '• Security key management for encrypted data\n'
-                  '• Theme switching (light / dark / system)\n'
-                  '\n'
-                  'Use the navigation menu to get started.',
-                  style: Theme.of(context).textTheme.bodyLarge,
+                MarkdownBody(
+                  data:
+                      '## Welcome to BilliPod!\n'
+                      '\n'
+                      'BilliPod helps you track your bills — expected, '
+                      'scheduled, and paid — with everything stored encrypted '
+                      'in your personal Solid Pod, so your data stays under '
+                      'your control.\n'
+                      '\n'
+                      'A common workflow is to add a regular bill scheduled '
+                      'for the next payment. When you verify the payment '
+                      'within the app tap the **Duplicate** button to place '
+                      'the next bill according to the **Frequency** in the '
+                      '**Expected** list so that you can monitor it.\n'
+                      '\n'
+                      '### Key features\n'
+                      '\n'
+                      '- Scheduled, Expected and Past views of your bills\n'
+                      '- Due dates, amounts, fees and payment methods\n'
+                      '- Recurring and one-off bills\n'
+                      '- PDF view of your bills for any date range\n'
+                      '- Backup and restore all bills as JSON\n'
+                      '- Share bills with other Pod owners\n'
+                      '- Security key management for encrypted data\n'
+                      '- Theme switching (light / dark / system)\n'
+                      '\n'
+                      'Use the navigation menu to get started.',
+                  styleSheet: MarkdownStyleSheet.fromTheme(Theme.of(context)),
                 ),
                 const SizedBox(height: 16),
                 Text(

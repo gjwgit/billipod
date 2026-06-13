@@ -1,7 +1,7 @@
 name: billipod
 description: "BilliPod - Bill Management with Secure and Private Storage"
 publish_to: 'none'
-version: 1.0.2+3
+version: 1.0.3+3
 
 environment:
   sdk: ^3.11.3
@@ -21,6 +21,7 @@ dependencies:
   emacs_text_field: ^0.1.0
   gap: ^3.0.1
   file_picker: ^11.0.2
+  flutter_markdown_plus: ^1.0.7
   intl: ^0.20.2
   markdown_tooltip: ^0.0.10
   open_filex: ^4.7.0
