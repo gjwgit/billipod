@@ -15,6 +15,7 @@ import 'package:solidpod/solidpod.dart';
 import 'package:solidui/solidui.dart';
 
 import 'package:billipod/constants/app.dart';
+import 'package:billipod/home.dart';
 import 'package:billipod/screens/all_screen.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/import_screen.dart';
@@ -75,6 +76,12 @@ class _AppScaffoldState extends State<AppScaffold> {
         ),
       ),
       menu: [
+        SolidMenuItem(
+          title: 'Home',
+          icon: Icons.home,
+          tooltip: '**Home**\n\nWelcome page with an overview of BilliPod.',
+          child: Home(title: appTitle.split(' - ')[0]),
+        ),
         const SolidMenuItem(
           title: 'Scheduled',
           icon: Icons.schedule_send_outlined,
