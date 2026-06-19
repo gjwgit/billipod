@@ -9,6 +9,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
@@ -234,6 +235,30 @@ class AppProvider extends ChangeNotifier {
     notifyListeners();
     // Load shared sources in background — own bills are already visible.
     unawaited(loadSharedSources());
+  }
+
+  /// A stable content signature of the user's own bills, used to detect whether
+  /// a reload from the Pod actually changed anything. Signs the source bills
+  /// (not the expanded recurring instances). Sorted so ordering is not a change.
+  String _billsSignature() {
+    final items = _bills.map((b) => jsonEncode(b.toJson())).toList()..sort();
+    return items.join('\u0001');
+  }
+
+  /// Reloads the user's own bills from the Pod, replacing the in-memory data,
+  /// and reports whether the Pod copy differed from what was held in memory.
+  ///
+  /// Returns true if the reload changed the data (the Pod was updated by
+  /// another instance/app), false if the data was already up to date.
+  ///
+  /// Reusable "refresh from Pod" pattern: snapshot a signature, reload, compare.
+  /// Only the user's own bills are compared (shared sources load in the
+  /// background and are owned by other Pods).
+  Future<bool> refreshFromPod() async {
+    final before = _billsSignature();
+    await loadFromPod();
+    final after = _billsSignature();
+    return before != after;
   }
 
   /// Add one or more bills to a shared source and save once.

@@ -23,6 +23,7 @@ import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
 import 'package:billipod/screens/share_screen.dart';
 import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/widgets/pod_refresh_action.dart';
 
 class AppScaffold extends StatefulWidget {
   const AppScaffold({super.key});
@@ -68,12 +69,18 @@ class _AppScaffoldState extends State<AppScaffold> {
         text: aboutText,
         readmeUrl: 'https://gjwgit.github.io/billipod',
       ),
-      appBar: const SolidAppBarConfig(
+      appBar: SolidAppBarConfig(
         title: appName,
-        versionConfig: SolidVersionConfig(
+        versionConfig: const SolidVersionConfig(
           changelogUrl:
               'https://github.com/gjwgit/billipod/blob/dev/CHANGELOG.md',
         ),
+        actions: [
+          buildPodRefreshAction(
+            context: context,
+            onRefresh: context.read<AppProvider>().refreshFromPod,
+          ),
+        ],
       ),
       menu: [
         SolidMenuItem(
