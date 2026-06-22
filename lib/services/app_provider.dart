@@ -21,10 +21,31 @@ import 'package:billipod/models/tagged_bill.dart';
 import 'package:billipod/services/bill_sort.dart';
 import 'package:billipod/services/pod_service.dart';
 
+/// Phases of app startup for phase-aware busy feedback.
+enum StartupPhase { idle, unlocking, loading, ready }
+
 class AppProvider extends ChangeNotifier {
   List<Bill> _bills = [];
   bool _loading = false;
   String? _error;
+
+  // ── Startup phase ─────────────────────────────────────────────────────────
+
+  StartupPhase _startupPhase = StartupPhase.idle;
+
+  StartupPhase get startupPhase => _startupPhase;
+
+  bool get isStartingUp =>
+      _startupPhase == StartupPhase.unlocking ||
+      _startupPhase == StartupPhase.loading;
+
+  /// Single source of truth for "show a busy indicator, not content".
+  bool get busy => _loading || isStartingUp;
+
+  void setStartupPhase(StartupPhase phase) {
+    _startupPhase = phase;
+    notifyListeners();
+  }
 
   // ── Shared source state ───────────────────────────────────────────────────
 

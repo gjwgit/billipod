@@ -15,14 +15,14 @@ import 'package:solidpod/solidpod.dart';
 import 'package:solidui/solidui.dart';
 
 import 'package:billipod/constants/app.dart';
-import 'package:billipod/home.dart';
 import 'package:billipod/screens/all_screen.dart';
 import 'package:billipod/screens/expected_screen.dart';
 import 'package:billipod/screens/import_screen.dart';
 import 'package:billipod/screens/past_screen.dart';
 import 'package:billipod/screens/scheduled_screen.dart';
 import 'package:billipod/screens/share_screen.dart';
-import 'package:billipod/services/app_provider.dart';
+import 'package:billipod/services/app_provider.dart'
+    show AppProvider, StartupPhase;
 import 'package:billipod/widgets/pod_refresh_action.dart';
 
 class AppScaffold extends StatefulWidget {
@@ -42,6 +42,8 @@ class _AppScaffoldState extends State<AppScaffold> {
   }
 
   Future<void> _initKeys() async {
+    final provider = context.read<AppProvider>();
+    provider.setStartupPhase(StartupPhase.unlocking);
     try {
       final webId = await getWebId();
       if (webId == null || webId.isEmpty) return;
@@ -49,9 +51,12 @@ class _AppScaffoldState extends State<AppScaffold> {
       await getKeyFromUserIfRequired(context, widget);
       if (!mounted) return;
       setState(() => _isKeySaved = true);
-      await context.read<AppProvider>().loadFromPod();
+      provider.setStartupPhase(StartupPhase.loading);
+      await provider.loadFromPod();
     } on Exception catch (e) {
       debugPrint('[AppScaffold] key/load error: $e');
+    } finally {
+      provider.setStartupPhase(StartupPhase.ready);
     }
   }
 
@@ -83,11 +88,12 @@ class _AppScaffoldState extends State<AppScaffold> {
         ],
       ),
       menu: [
-        SolidMenuItem(
+        const SolidMenuItem(
           title: 'Home',
           icon: Icons.home,
-          tooltip: '**Home**\n\nWelcome page with an overview of BilliPod.',
-          child: Home(title: appTitle.split(' - ')[0]),
+          tooltip:
+              '**Home**\n\nEvery bill grouped by status: Scheduled, Expected and Past.',
+          child: AllScreen(),
         ),
         const SolidMenuItem(
           title: 'Schedule',
@@ -106,14 +112,6 @@ class _AppScaffoldState extends State<AppScaffold> {
           icon: Icons.check_circle_outline,
           tooltip: '**Past**\n\nBills that have been paid.',
           child: PastScreen(),
-        ),
-        const SolidMenuItem(
-          title: 'All Bills',
-          icon: Icons.list_alt_outlined,
-          tooltip:
-              '**All Bills**\n\nEvery bill grouped by status: '
-              'Scheduled, Expected and Past.',
-          child: AllScreen(),
         ),
         const SolidMenuItem(
           title: 'Share',

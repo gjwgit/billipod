@@ -36,8 +36,22 @@ const String appTitle = 'BilliPod - Manage Your Bills';
 /// info button). Supports basic Markdown.
 
 const String aboutText =
-    'BilliPod supports the management of your bills, whether that might be upcoming, scheduled, '
-    'or past bills.';
+    'BilliPod helps you track your bills — expected, scheduled, and paid — '
+    'with everything stored encrypted in your personal Solid Pod, so your '
+    'data stays under your control.\n\n'
+    'A common workflow is to add a regular bill scheduled for the next '
+    'payment. When you verify the payment within the app tap the **Duplicate** '
+    'button to place the next bill according to the **Frequency** in the '
+    '**Expected** list so that you can monitor it.\n\n'
+    '### Key features\n\n'
+    '- Scheduled, Expected and Past views of your bills\n'
+    '- Due dates, amounts, fees and payment methods\n'
+    '- Recurring and one-off bills\n'
+    '- PDF view of your bills for any date range\n'
+    '- Backup and restore all bills as JSON\n'
+    '- Share bills with other Pod owners\n'
+    '- Security key management for encrypted data\n'
+    '- Theme switching (light / dark / system)\n';
 
 const String appDirectory = 'billipod';
 const String billsFileName = 'bills.ttl';

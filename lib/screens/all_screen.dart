@@ -23,6 +23,7 @@ import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/bill_total_bar.dart';
 import 'package:billipod/widgets/shared_read_only_tile.dart';
 import 'package:billipod/widgets/source_toggle_bar.dart';
+import 'package:billipod/widgets/startup_overlay.dart';
 
 class AllScreen extends StatefulWidget {
   const AllScreen({super.key});
@@ -237,9 +238,10 @@ class _AllScreenState extends State<AllScreen> {
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final cs = Theme.of(context).colorScheme;
+    final phase = provider.startupPhase;
 
-    if (provider.loading) {
-      return const Center(child: CircularProgressIndicator());
+    if (provider.busy) {
+      return StartupOverlay(phase: phase, child: const SizedBox.expand());
     }
 
     final tagged = _filterTagged(provider.activeAllBills);
