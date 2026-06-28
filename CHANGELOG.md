@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ HOME -> BILLS [1.0.6 20260628 gjw]
 + ALL BILLS -> HOME. New ABOUT. BUSY animation [1.0.5 20260622 gjw]
 + Add REFRESH button [1.0.4 20260619 gjw]
 + HOME now using markdown [1.0.3 20260614 gjw]

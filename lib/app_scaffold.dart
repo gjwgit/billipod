@@ -1,6 +1,6 @@
 /// AppScaffold — SolidScaffold with nav for BillPod.
 ///
-// Time-stamp: <Sunday 2026-06-14 09:24:25 +1000 Graham Williams>
+// Time-stamp: <Sunday 2026-06-28 14:30:41 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -89,10 +89,10 @@ class _AppScaffoldState extends State<AppScaffold> {
       ),
       menu: [
         const SolidMenuItem(
-          title: 'Home',
+          title: 'Bills',
           icon: Icons.home,
           tooltip:
-              '**Home**\n\nEvery bill grouped by status: Scheduled, Expected and Past.',
+              '**Bills**\n\nEvery bill grouped by status: Scheduled, Expected and Past.',
           child: AllScreen(),
         ),
         const SolidMenuItem(
