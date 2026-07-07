@@ -147,7 +147,7 @@ class _BilliPodAppState extends State<BilliPodApp> {
         redirectUris: [
           'http://localhost:4400/redirect',
           'com.togaware.billipod://redirect',
-          'https://solidcommunity.au/apps/billipod/redirect.html',
+          'https://billipod.solidcommunity.au/redirect.html',
         ],
         child: const AppScaffold(),
       ),
