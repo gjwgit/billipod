@@ -143,9 +143,9 @@ class _BilliPodAppState extends State<BilliPodApp> {
         logo: const AssetImage('assets/images/app_icon.png'),
         link: 'https://github.com/gjwgit/billipod',
         clientId:
-            'https://solidcommunity.au/apps/billipod/client-profile.jsonld',
+            'https://billipod.solidcommunity.au/client-profile.jsonld',
         redirectUris: [
-          'http://localhost:4400/redirect',
+          'http://localhost:4400/redirect.html',
           'com.togaware.billipod://redirect',
           'https://billipod.solidcommunity.au/redirect.html',
         ],
