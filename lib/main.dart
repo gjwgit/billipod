@@ -143,7 +143,7 @@ class _BilliPodAppState extends State<BilliPodApp> {
         image: const AssetImage('assets/images/app_image.jpg'),
         logo: const AssetImage('assets/images/app_icon.png'),
         link: 'https://github.com/gjwgit/billipod',
-        clientId: 'https://dev.empwr.au/billipod/client-profile.jsonld',
+        clientId: 'https://gjwgit.github.io/billipod/client-profile.jsonld',
         redirectUris: kIsWeb
             ? ['${Uri.base.origin}/redirect.html']
             : const [
