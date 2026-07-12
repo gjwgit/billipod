@@ -30,6 +30,7 @@
 
 library;
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:provider/provider.dart';
@@ -142,13 +143,13 @@ class _BilliPodAppState extends State<BilliPodApp> {
         image: const AssetImage('assets/images/app_image.jpg'),
         logo: const AssetImage('assets/images/app_icon.png'),
         link: 'https://github.com/gjwgit/billipod',
-        clientId:
-            'https://solidcommunity.au/apps/billipod/client-profile.jsonld',
-        redirectUris: [
-          'http://localhost:4400/redirect',
-          'com.togaware.billipod://redirect',
-          'https://billipod.solidcommunity.au/redirect.html',
-        ],
+        clientId: 'https://gjwgit.github.io/billipod/client-profile.jsonld',
+        redirectUris: kIsWeb
+            ? ['${Uri.base.origin}/redirect.html']
+            : const [
+                'com.togaware.billipod://redirect',
+                'http://localhost:4400/redirect.html',
+              ],
         child: const AppScaffold(),
       ),
     );
