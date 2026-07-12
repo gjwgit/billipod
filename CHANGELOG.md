@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Updated oidc for chrome/web support [1.0.8 20260712 tonypioneer]
 + Update solidui/solidpod dependencies [1.0.7 20260703 gjw]
 + HOME -> BILLS [1.0.6 20260628 gjw]
 + ALL BILLS -> HOME. New ABOUT. BUSY animation [1.0.5 20260622 gjw]
