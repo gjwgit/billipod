@@ -65,7 +65,7 @@ AU](https://solidcommunity.au) repository:
   [dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
   [zip](https://solidcommunity.au/installers/billipod-macos.zip);
 + **Windows**
-  [inno](https://solidcommunity.au/installers/billipod-windows-inno.exe) or
+  [exe](https://solidcommunity.au/installers/billipod-windows-inno.exe) or
   [zip](https://solidcommunity.au/installers/billipod-windows.zip).
 
 [Installation
