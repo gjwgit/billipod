@@ -1,6 +1,6 @@
 /// ImportScreen — import from JSON and export to JSON and PDF.
 ///
-// Time-stamp: <Saturday 2026-07-18 10:13:59 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-07-18 10:17:15 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -93,7 +93,9 @@ class _ImportScreenState extends State<ImportScreen> {
             const Gap(8),
             Text(
               'Save a complete JSON backup of all your bills, or restore '
-              'everything from a previously saved backup file.',
+              'everything from a previously saved backup file. '
+              'Also note the encrypted backup option available through '
+              'your profile menu.',
               style: TextStyle(color: cs.onSurfaceVariant),
             ),
             if (_backupMessage != null) ...[
