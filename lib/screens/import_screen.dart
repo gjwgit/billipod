@@ -1,6 +1,6 @@
 /// ImportScreen — import from JSON and export to JSON and PDF.
 ///
-// Time-stamp: <Monday 2026-04-20 14:08:12 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-07-18 10:13:59 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -87,7 +87,7 @@ class _ImportScreenState extends State<ImportScreen> {
           children: [
             // ── Backup & Restore ────────────────────────────────────────
             Text(
-              'Backup & Restore',
+              'Export & Import',
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const Gap(8),
@@ -109,13 +109,13 @@ class _ImportScreenState extends State<ImportScreen> {
               children: [
                 MarkdownTooltip(
                   message:
-                      '**Export Backup**\n\n'
+                      '**Export JSON**\n\n'
                       'Save all $total bills to a BilliPod JSON backup file '
                       'on this device. Keep it somewhere safe so you can '
                       'restore everything later.',
                   child: FilledButton.icon(
                     icon: const Icon(Icons.download),
-                    label: const Text('Export Backup'),
+                    label: const Text('Export JSON'),
                     onPressed: _loading
                         ? null
                         : () => _exportJson(context, provider),
@@ -124,13 +124,13 @@ class _ImportScreenState extends State<ImportScreen> {
                 const Gap(12),
                 MarkdownTooltip(
                   message:
-                      '**Import Backup**\n\n'
+                      '**Import JSON**\n\n'
                       'Restore bills from a previously saved BilliPod JSON '
                       'backup file. Restored bills are merged with your '
                       'existing list.',
                   child: OutlinedButton.icon(
                     icon: const Icon(Icons.upload),
-                    label: const Text('Import Backup'),
+                    label: const Text('Import JSON'),
                     onPressed: _loading ? null : () => _importJson(context),
                   ),
                 ),

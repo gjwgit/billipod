@@ -1,6 +1,6 @@
 /// AppScaffold — SolidScaffold with nav for BillPod.
 ///
-// Time-stamp: <Sunday 2026-06-28 14:30:41 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-07-18 10:12:47 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -122,11 +122,11 @@ class _AppScaffoldState extends State<AppScaffold> {
           child: ShareScreen(),
         ),
         const SolidMenuItem(
-          title: 'Backup',
+          title: 'Export/Import',
           icon: Icons.save_alt,
           tooltip:
-              '**Backup**\n\n'
-              'Back up and restore all bills, or view bills as a PDF.',
+              '**Export/Import**\n\n'
+              'Export and import all bills as JSON or view as PDF.',
           child: ImportScreen(),
         ),
       ],

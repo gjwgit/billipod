@@ -1,6 +1,6 @@
 /// BillPod - app-wide constants.
 ///
-// Time-stamp: <Sunday 2026-06-14 08:49:32 +1000 Graham Williams>
+// Time-stamp: <Saturday 2026-07-18 10:14:20 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -48,7 +48,7 @@ const String aboutText =
     '- Due dates, amounts, fees and payment methods\n'
     '- Recurring and one-off bills\n'
     '- PDF view of your bills for any date range\n'
-    '- Backup and restore all bills as JSON\n'
+    '- Export and import all bills as JSON\n'
     '- Share bills with other Pod owners\n'
     '- Security key management for encrypted data\n'
     '- Theme switching (light / dark / system)\n';
