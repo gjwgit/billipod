@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Update to latest solidui with cached profile [1.0.10 20260719 gjw]
 + BACKUP -> Export [1.0.9 20260718 gjw]
 + Updated oidc for chrome/web support [1.0.8 20260712 tonypioneer]
 + Update solidui/solidpod dependencies [1.0.7 20260703 gjw]
