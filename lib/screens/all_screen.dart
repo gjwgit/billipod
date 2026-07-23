@@ -17,11 +17,11 @@ import 'package:provider/provider.dart';
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/models/tagged_bill.dart';
 import 'package:billipod/pages/bill_edit.dart';
+import 'package:billipod/screens/bill_screen_mixin.dart';
 import 'package:billipod/services/app_provider.dart';
 import 'package:billipod/services/export_service.dart';
 import 'package:billipod/widgets/bill_tile.dart';
 import 'package:billipod/widgets/bill_total_bar.dart';
-import 'package:billipod/widgets/shared_read_only_tile.dart';
 import 'package:billipod/widgets/source_toggle_bar.dart';
 import 'package:billipod/widgets/startup_overlay.dart';
 
@@ -32,10 +32,13 @@ class AllScreen extends StatefulWidget {
   State<AllScreen> createState() => _AllScreenState();
 }
 
-class _AllScreenState extends State<AllScreen> {
+class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
   final _search = TextEditingController();
   String _query = '';
   bool _loading = false;
+
+  @override
+  String get billQuery => _query;
 
   @override
   void dispose() {
@@ -43,18 +46,153 @@ class _AllScreenState extends State<AllScreen> {
     super.dispose();
   }
 
-  List<TaggedBill> _filterTagged(List<TaggedBill> tagged) {
-    if (_query.isEmpty) return tagged;
-    final q = _query.toLowerCase();
-    return tagged
-        .where(
-          (t) =>
-              t.bill.title.toLowerCase().contains(q) ||
-              (t.bill.note?.toLowerCase().contains(q) ?? false) ||
-              (t.bill.paymentMethod?.toLowerCase().contains(q) ?? false) ||
-              t.bill.amountStr.contains(q),
-        )
-        .toList();
+  // ── Status-move actions ──────────────────────────────────────────────────
+  //
+  // Each group's tiles carry the same action buttons as the dedicated
+  // Scheduled / Expected / Past screens. 20260724 gjw: added so the grouped
+  // BILLS listing offers the same per-bill functions, not just delete.
+
+  Future<void> _markPaid(
+    BuildContext context,
+    Bill bill,
+    AppProvider provider, {
+    String? sharedWebId,
+  }) async {
+    final paid = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Mark as paid?'),
+        content: Text('Confirm payment of "${bill.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Confirm'),
+          ),
+        ],
+      ),
+    );
+    if (paid == true && context.mounted) {
+      final updated = bill.copyWith(
+        status: BillStatus.past,
+        confirmedPaidDate: DateTime.now(),
+      );
+      if (sharedWebId != null) {
+        await saveSharedOrError(
+          context,
+          () => provider.updateSharedBill(sharedWebId, updated),
+        );
+      } else {
+        provider.updateBill(updated);
+        await provider.saveToPod();
+      }
+    }
+  }
+
+  /// Own-bill action buttons for the given group.
+  List<Widget> _ownActions(
+    BuildContext context,
+    AppProvider provider,
+    Bill bill,
+    String groupKey,
+  ) {
+    return switch (groupKey) {
+      'Scheduled' => [
+        duplicateAction(context, bill, provider),
+        MarkdownTooltip(
+          message:
+              '**Mark as Paid**\n\nConfirm the payment, record the date of the confirmation, and change this bill to be a Past bill.',
+          child: IconButton(
+            icon: const Icon(Icons.check_circle_outline, size: 18),
+            onPressed: () => _markPaid(context, bill, provider),
+          ),
+        ),
+        MarkdownTooltip(
+          message:
+              '**Move back to Expected**\n\nReturn this bill to the Expected list.',
+          child: IconButton(
+            icon: const Icon(Icons.upcoming_outlined, size: 18),
+            onPressed: () {
+              provider.moveToStatus(bill.id, BillStatus.future);
+              provider.saveToPod();
+            },
+          ),
+        ),
+      ],
+      'Expected' => [
+        duplicateAction(context, bill, provider),
+        MarkdownTooltip(
+          message:
+              '**Move to Scheduled**\n\nMark this bill as scheduled'
+              ' — payment has been arranged.',
+          child: IconButton(
+            icon: const Icon(Icons.schedule_send_outlined, size: 18),
+            onPressed: () {
+              provider.moveToStatus(bill.id, BillStatus.scheduled);
+              provider.saveToPod();
+            },
+          ),
+        ),
+      ],
+      _ => [duplicateAction(context, bill, provider)],
+    };
+  }
+
+  /// Shared-editable action buttons for the given group.
+  List<Widget> _sharedActions(
+    BuildContext context,
+    AppProvider provider,
+    TaggedBill t,
+    String groupKey,
+  ) {
+    return switch (groupKey) {
+      'Scheduled' => [
+        MarkdownTooltip(
+          message:
+              '**Mark as Paid**\n\nConfirm the payment, record the date of the confirmation, and change this bill to be a Past bill.',
+          child: IconButton(
+            icon: const Icon(Icons.check_circle_outline, size: 18),
+            onPressed: () =>
+                _markPaid(context, t.bill, provider, sharedWebId: t.ownerWebId),
+          ),
+        ),
+        MarkdownTooltip(
+          message:
+              '**Move back to Expected**\n\nReturn this bill to the Expected list.',
+          child: IconButton(
+            icon: const Icon(Icons.upcoming_outlined, size: 18),
+            onPressed: () => saveSharedOrError(
+              context,
+              () => provider.updateSharedBill(
+                t.ownerWebId!,
+                t.bill.copyWith(status: BillStatus.future),
+              ),
+            ),
+          ),
+        ),
+      ],
+      'Expected' => [
+        MarkdownTooltip(
+          message:
+              '**Move to Scheduled**\n\nMark this bill as scheduled'
+              ' — payment has been arranged.',
+          child: IconButton(
+            icon: const Icon(Icons.schedule_send_outlined, size: 18),
+            onPressed: () => saveSharedOrError(
+              context,
+              () => provider.updateSharedBill(
+                t.ownerWebId!,
+                t.bill.copyWith(status: BillStatus.scheduled),
+              ),
+            ),
+          ),
+        ),
+      ],
+      _ => const [],
+    };
   }
 
   Widget _tileFor(
@@ -71,91 +209,30 @@ class _AllScreenState extends State<AllScreen> {
 
     // Shared bill with write access — editable, saves back to their POD.
     if (!t.isOwn && t.canEdit) {
-      final cs = Theme.of(context).colorScheme;
-      return BillTile(
-        bill: t.bill,
+      return sharedEditableTile(
+        context,
+        t,
+        provider,
         outlineColor: outlineColor,
-        onTap: () async {
-          final updated = await showDialog<Bill>(
-            context: context,
-            barrierDismissible: false,
-            builder: (_) => BillEdit(bill: t.bill),
-          );
-          if (updated != null) {
-            final err = await provider.updateSharedBill(t.ownerWebId!, updated);
-            if (err != null && context.mounted) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('Save failed: $err')));
-            }
-          }
-        },
-        actions: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.only(left: 4),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Icon(
-                    Icons.person_outline,
-                    size: 11,
-                    color: cs.onSurfaceVariant,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    t.sourceName!,
-                    style: TextStyle(fontSize: 11, color: cs.onSurfaceVariant),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-        onDelete: () async {
-          final confirmed = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: const Text('Delete bill?'),
-              content: Text('"${t.bill.title}" will be removed.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
-          );
-          if (confirmed == true) {
-            final err = await provider.deleteSharedBill(
-              t.ownerWebId!,
-              t.bill.id,
-            );
-            if (err != null && context.mounted) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text('Delete failed: $err')));
-            }
-          }
-        },
+        additionalActions: _sharedActions(context, provider, t, groupKey),
       );
     }
 
     // Shared bill with read-only access.
-    if (!t.isOwn) {
-      return SharedReadOnlyTile(bill: t.bill, sourceName: t.sourceName!);
-    }
+    if (!t.isOwn) return sharedReadOnlyTile(t);
 
-    // Own bill — full editing.
+    // Own bill — full editing with the group's action buttons.
+    final bill = t.bill;
     return BillTile(
-      bill: t.bill,
+      bill: bill,
       outlineColor: outlineColor,
-      onTap: () => _editBill(context, provider, t.bill),
-      onDelete: () => _deleteBill(context, provider, t.bill),
+      onTap: () => editBill(context, bill, provider),
+      onDelete: () => confirmDelete(context, bill, provider),
+      onStar: () {
+        provider.updateBill(bill.copyWith(isStarred: !bill.isStarred));
+        provider.saveToPod();
+      },
+      actions: _ownActions(context, provider, bill, groupKey),
     );
   }
 
@@ -167,50 +244,6 @@ class _AllScreenState extends State<AllScreen> {
     );
     if (bill != null) {
       provider.addBill(bill);
-      await provider.saveToPod();
-    }
-  }
-
-  Future<void> _editBill(
-    BuildContext context,
-    AppProvider provider,
-    Bill bill,
-  ) async {
-    final updated = await showDialog<Bill>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => BillEdit(bill: bill),
-    );
-    if (updated != null) {
-      provider.updateBill(updated);
-      await provider.saveToPod();
-    }
-  }
-
-  Future<void> _deleteBill(
-    BuildContext context,
-    AppProvider provider,
-    Bill bill,
-  ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Delete bill?'),
-        content: Text('"${bill.title}" will be permanently removed.'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) {
-      provider.deleteBill(bill.id);
       await provider.saveToPod();
     }
   }
@@ -244,7 +277,7 @@ class _AllScreenState extends State<AllScreen> {
       return StartupOverlay(phase: phase, child: const SizedBox.expand());
     }
 
-    final tagged = _filterTagged(provider.activeAllBills);
+    final tagged = filterTagged(provider.activeAllBills);
     final all = tagged.map((t) => t.bill).toList();
 
     // Group by status label.
