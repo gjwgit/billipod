@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/screens/bill_screen_mixin.dart';
@@ -207,7 +208,10 @@ class _ExpectedScreenState extends State<ExpectedScreen>
                     provider.updateBill(
                       bill.copyWith(isStarred: !bill.isStarred),
                     );
-                    provider.saveToPod();
+                    SolidWriteFailures.watch(
+                      provider.saveToPod(),
+                      during: 'updating the star',
+                    );
                   },
                   actions: [
                     duplicateAction(context, bill, provider),
@@ -222,7 +226,10 @@ class _ExpectedScreenState extends State<ExpectedScreen>
                         ),
                         onPressed: () {
                           provider.moveToStatus(bill.id, BillStatus.scheduled);
-                          provider.saveToPod();
+                          SolidWriteFailures.watch(
+                            provider.saveToPod(),
+                            during: 'moving the bill to Scheduled',
+                          );
                         },
                       ),
                     ),

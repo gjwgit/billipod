@@ -155,7 +155,7 @@ class _BilliPodAppState extends State<BilliPodApp> {
                 'com.togaware.billipod://redirect',
                 'http://localhost:4400/redirect.html',
               ],
-        child: const AppScaffold(),
+        child: const SolidWriteFailureListener(child: AppScaffold()),
       ),
     );
   }

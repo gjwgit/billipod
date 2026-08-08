@@ -285,7 +285,13 @@ class _ImportScreenState extends State<ImportScreen> {
       for (final b in fresh) {
         provider.addBill(b);
       }
-      await provider.saveToPod();
+      final saveError = await provider.saveToPod();
+      if (saveError != null) {
+        // Do not claim success: the bills are in memory but not on the Pod.
+        _setBackupMessage('Import failed to save: $saveError', error: true);
+
+        return;
+      }
       _setBackupMessage(
         'Imported ${fresh.length} new bill${fresh.length == 1 ? '' : 's'} '
         '(${imported.length - fresh.length} skipped as duplicates).',

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/screens/bill_screen_mixin.dart';
@@ -181,7 +182,10 @@ class _PastScreenState extends State<PastScreen>
                     provider.updateBill(
                       bill.copyWith(isStarred: !bill.isStarred),
                     );
-                    provider.saveToPod();
+                    SolidWriteFailures.watch(
+                      provider.saveToPod(),
+                      during: 'updating the star',
+                    );
                   },
                   actions: [duplicateAction(context, bill, provider)],
                 );

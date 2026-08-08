@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/models/tagged_bill.dart';
@@ -128,7 +129,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         bill: bill,
         onSave: (updated) async {
           provider.updateBill(updated);
-          await provider.saveToPod();
+          SolidWriteFailures.reportIfFailed(
+            await provider.saveToPod(),
+            during: 'saving the bill',
+          );
         },
       ),
     );
@@ -168,7 +172,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         );
       } else {
         provider.deleteBill(bill.id);
-        await provider.saveToPod();
+        SolidWriteFailures.reportIfFailed(
+          await provider.saveToPod(),
+          during: 'deleting the bill',
+        );
       }
     }
   }
@@ -220,7 +227,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
       for (final b in newBills) {
         provider.addBill(b);
       }
-      await provider.saveToPod();
+      SolidWriteFailures.reportIfFailed(
+        await provider.saveToPod(),
+        during: 'adding the bills',
+      );
     }
   }
 
@@ -239,7 +249,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         ),
         onSave: (bill) async {
           provider.addBill(bill);
-          await provider.saveToPod();
+          SolidWriteFailures.reportIfFailed(
+            await provider.saveToPod(),
+            during: 'adding the bill',
+          );
         },
       ),
     );

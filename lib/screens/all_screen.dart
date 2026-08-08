@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:markdown_tooltip/markdown_tooltip.dart';
 import 'package:provider/provider.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:billipod/models/bill.dart';
 import 'package:billipod/models/tagged_bill.dart';
@@ -87,7 +88,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
         );
       } else {
         provider.updateBill(updated);
-        await provider.saveToPod();
+        SolidWriteFailures.reportIfFailed(
+          await provider.saveToPod(),
+          during: 'saving the bill',
+        );
       }
     }
   }
@@ -117,7 +121,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
             icon: const Icon(Icons.upcoming_outlined, size: 18),
             onPressed: () {
               provider.moveToStatus(bill.id, BillStatus.future);
-              provider.saveToPod();
+              SolidWriteFailures.watch(
+                provider.saveToPod(),
+                during: 'moving the bill to Expected',
+              );
             },
           ),
         ),
@@ -132,7 +139,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
             icon: const Icon(Icons.schedule_send_outlined, size: 18),
             onPressed: () {
               provider.moveToStatus(bill.id, BillStatus.scheduled);
-              provider.saveToPod();
+              SolidWriteFailures.watch(
+                provider.saveToPod(),
+                during: 'moving the bill to Scheduled',
+              );
             },
           ),
         ),
@@ -230,7 +240,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
       onDelete: () => confirmDelete(context, bill, provider),
       onStar: () {
         provider.updateBill(bill.copyWith(isStarred: !bill.isStarred));
-        provider.saveToPod();
+        SolidWriteFailures.watch(
+          provider.saveToPod(),
+          during: 'updating the star',
+        );
       },
       actions: _ownActions(context, provider, bill, groupKey),
     );
@@ -243,7 +256,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
       builder: (_) => BillEdit(
         onSave: (bill) async {
           provider.addBill(bill);
-          await provider.saveToPod();
+          SolidWriteFailures.reportIfFailed(
+            await provider.saveToPod(),
+            during: 'adding the bill',
+          );
         },
       ),
     );
