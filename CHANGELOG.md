@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Wait for in-flight Pod writes before closing [1.0.13 20260808 gjw]
 + Prompt to save unsaved bill on window close [1.0.12 20260808 gjw]
 + Add buttons to listing under BILLS screen [1.0.11 20260724 gjw]
 + Update to latest solidui with cached profile [1.0.10 20260719 gjw]

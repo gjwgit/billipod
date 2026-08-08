@@ -15,6 +15,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 
 import 'package:solidpod/solidpod.dart';
+import 'package:solidui/solidui.dart';
 
 import 'package:billipod/models/bill.dart';
 
@@ -55,7 +56,7 @@ class PodService {
     try {
       final json = jsonEncode(bills.map((b) => b.toJson()).toList());
       final ttl = _buildTtl(fileName, json);
-      await writePod(fileName, ttl, overwrite: true);
+      await SolidPendingWrites.track(writePod(fileName, ttl, overwrite: true));
       return null;
     } catch (e) {
       debugPrint('[PodService] saveBills error: $e');
@@ -106,7 +107,7 @@ class PodService {
       final fileName = Uri.parse(url).pathSegments.last;
       final json = jsonEncode(bills.map((b) => b.toJson()).toList());
       final ttl = _buildTtl(fileName, json);
-      await writeExternalPod(url, ttl, ownerWebId);
+      await SolidPendingWrites.track(writeExternalPod(url, ttl, ownerWebId));
       return null;
     } catch (e) {
       debugPrint('[PodService] saveBillsToUrl error ($url): $e');
