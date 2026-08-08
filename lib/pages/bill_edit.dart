@@ -12,21 +12,31 @@ import 'package:flutter/material.dart';
 
 import 'package:emacs_text_field/emacs_text_field.dart';
 import 'package:gap/gap.dart';
-import 'package:markdown_tooltip/markdown_tooltip.dart';
+import 'package:solidui/solidui.dart';
 
-import 'package:billipod/constants/app.dart';
 import 'package:billipod/models/bill.dart';
-import 'package:billipod/pages/bill_date_row.dart';
+import 'package:billipod/pages/edit_fields/bill_schedule_fields.dart';
 
 class BillEdit extends StatefulWidget {
   final Bill? bill;
-  const BillEdit({super.key, this.bill});
+
+  /// Called with the edited bill when the user saves. The caller is
+  /// responsible for adding/updating it in the provider and writing it to
+  /// the Pod — own bills and shared bills persist differently.
+  ///
+  /// Returns a future that completes when the Pod write is done. It MUST be
+  /// awaited by the caller's implementation: closing the app window waits on
+  /// this before quitting, so a fire-and-forget write would be killed
+  /// mid-flight and the bill silently lost.
+  final Future<void> Function(Bill)? onSave;
+
+  const BillEdit({super.key, this.bill, this.onSave});
 
   @override
   State<BillEdit> createState() => _BillEditState();
 }
 
-class _BillEditState extends State<BillEdit> {
+class _BillEditState extends State<BillEdit> with UnsavedChangesMixin {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _title;
   late final TextEditingController _amount;
@@ -159,6 +169,27 @@ class _BillEditState extends State<BillEdit> {
     isAutoPaid: _isAutoPaid,
   );
 
+  /// Set the scheduled date, promoting Expected → Scheduled automatically
+  /// when a scheduled date is set, and demoting Scheduled → Expected
+  /// automatically when the scheduled date is removed.
+  void _setScheduledDate(DateTime? d) => setState(() {
+    _scheduledDate = d;
+    if (d != null && _status == BillStatus.future) {
+      _status = BillStatus.scheduled;
+    } else if (d == null && _status == BillStatus.scheduled) {
+      _status = BillStatus.future;
+    }
+  });
+
+  /// Set the confirmed paid date. A confirmed payment date means the bill is
+  /// paid.
+  void _setConfirmedPaidDate(DateTime? d) => setState(() {
+    _confirmedPaidDate = d;
+    if (d != null && _status == BillStatus.scheduled) {
+      _status = BillStatus.past;
+    }
+  });
+
   Future<DateTime?> _pickDate(DateTime? initial) => showDatePicker(
     context: context,
     initialDate: initial ?? DateTime.now(),
@@ -166,291 +197,234 @@ class _BillEditState extends State<BillEdit> {
     lastDate: DateTime(2100),
   );
 
+  /// Hand the edited bill to the caller to persist.
+  ///
+  /// Awaited so a window close can wait for the Pod write to complete.
+  Future<void> _save() => widget.onSave?.call(_buildBill()) ?? Future.value();
+
+  /// Validate, save, and close the dialog.
+  Future<void> _saveAndClose() async {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
+    await _save();
+    if (mounted) Navigator.pop(context);
+  }
+
+  // The window-close prompt comes from UnsavedChangesMixin, which needs to
+  // know what counts as unsaved, whether it is valid to save, and how to save
+  // it. The mixin never pops the Navigator — the window is closing, not just
+  // this dialog.
+
+  @override
+  bool get hasUnsavedChanges => _hasChanges;
+
+  @override
+  bool get canSaveUnsavedChanges => _formKey.currentState?.validate() ?? false;
+
+  @override
+  Future<void> saveUnsavedChanges() => _save();
+
+  /// Close the editor, but if there are unsaved changes first ask the user
+  /// whether to save, discard, or keep editing.
+  Future<void> _confirmDiscard() async {
+    if (!_hasChanges) {
+      Navigator.pop(context);
+      return;
+    }
+    final action = await showUnsavedChangesDialog(context);
+    if (!mounted) return;
+    switch (action) {
+      case UnsavedChangesAction.save:
+        await _saveAndClose();
+      case UnsavedChangesAction.discard:
+        Navigator.pop(context);
+      case UnsavedChangesAction.keepEditing:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Dialog(
-      insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 540),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // ── Header ────────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
-              child: Row(
-                children: [
-                  Text(
-                    _isNew ? 'New Bill' : 'Edit Bill',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const Spacer(),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                ],
+    return PopScope(
+      // Intercept Escape / the system back button so we can warn about
+      // unsaved changes. canPop is false when there are changes; the
+      // onPopInvoked handler then runs our confirmation flow.
+      canPop: !_hasChanges,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        _confirmDiscard();
+      },
+      child: Dialog(
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 540),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // ── Header ────────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 8, 0),
+                child: Row(
+                  children: [
+                    Text(
+                      _isNew ? 'New Bill' : 'Edit Bill',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const Spacer(),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: _confirmDiscard,
+                    ),
+                  ],
+                ),
               ),
-            ),
-            // ── Form ──────────────────────────────────────────────────────
-            Flexible(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title
-                      TextFormField(
-                        controller: _title,
-                        autofocus: _isNew,
-                        decoration: const InputDecoration(
-                          labelText: 'Title',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        validator: (v) =>
-                            (v == null || v.trim().isEmpty) ? 'Required' : null,
-                      ),
-                      const Gap(12),
-                      // Amount
-                      TextFormField(
-                        controller: _amount,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Amount',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          prefixText: '\$ ',
-                        ),
-                      ),
-                      const Gap(12),
-                      // Transaction fee
-                      TextFormField(
-                        controller: _fee,
-                        keyboardType: const TextInputType.numberWithOptions(
-                          decimal: true,
-                        ),
-                        decoration: const InputDecoration(
-                          labelText: 'Transaction fee (optional)',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          prefixText: '\$ ',
-                        ),
-                      ),
-                      const Gap(12),
-                      // Frequency
-                      DropdownButtonFormField<BillFrequency>(
-                        initialValue: _frequency,
-                        decoration: const InputDecoration(
-                          labelText: 'Frequency',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        items: BillFrequency.values
-                            .map(
-                              (f) => DropdownMenuItem(
-                                value: f,
-                                child: Text(f.label),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) => setState(() => _frequency = v!),
-                      ),
-                      const Gap(12),
-                      // Status
-                      DropdownButtonFormField<BillStatus>(
-                        initialValue: _status,
-                        decoration: const InputDecoration(
-                          labelText: 'Status',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        items: BillStatus.values
-                            .map(
-                              (s) => DropdownMenuItem(
-                                value: s,
-                                child: Text(s.label),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (v) => setState(() => _status = v!),
-                      ),
-                      const Gap(12),
-                      // Notified date + method
-                      BillDateRow(
-                        label: 'Notified date',
-                        date: _notifiedDate,
-                        onPick: () async {
-                          final d = await _pickDate(_notifiedDate);
-                          if (d != null) setState(() => _notifiedDate = d);
-                        },
-                        onClear: () => setState(() => _notifiedDate = null),
-                      ),
-                      const Gap(8),
-                      DropdownButtonFormField<String?>(
-                        initialValue: _notificationMethod,
-                        decoration: const InputDecoration(
-                          labelText: 'Notification method',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                        ),
-                        items: [
-                          const DropdownMenuItem(value: null, child: Text('—')),
-                          ...notificationMethods.map(
-                            (m) => DropdownMenuItem(value: m, child: Text(m)),
+              // ── Form ──────────────────────────────────────────────────────
+              Flexible(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 8),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Title
+                        TextFormField(
+                          controller: _title,
+                          autofocus: _isNew,
+                          decoration: const InputDecoration(
+                            labelText: 'Title',
+                            border: OutlineInputBorder(),
+                            isDense: true,
                           ),
-                        ],
-                        onChanged: (v) =>
-                            setState(() => _notificationMethod = v),
-                      ),
-                      const Gap(12),
-                      // Payment method
-                      DropdownButtonFormField<String?>(
-                        initialValue: _paymentMethod,
-                        decoration: const InputDecoration(
-                          labelText: 'Payment method',
-                          border: OutlineInputBorder(),
-                          isDense: true,
+                          validator: (v) => (v == null || v.trim().isEmpty)
+                              ? 'Required'
+                              : null,
                         ),
-                        items: [
-                          const DropdownMenuItem(value: null, child: Text('—')),
-                          ...paymentMethods.map(
-                            (m) => DropdownMenuItem(value: m, child: Text(m)),
+                        const Gap(12),
+                        // Amount
+                        TextFormField(
+                          controller: _amount,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
                           ),
-                        ],
-                        onChanged: (v) => setState(() => _paymentMethod = v),
-                      ),
-                      const Gap(8),
-                      // Payment type checkboxes
-                      MarkdownTooltip(
-                        message: '''
-
-**Auto-paid**
-
-Check this if the payment is made automatically, for example
-by credit card direct debit or bank auto-payment.
-
-The bill will show an **Auto-paid** chip in the listing.
-
-''',
-                        child: CheckboxListTile(
-                          value: _isAutoPaid,
-                          onChanged: (v) =>
-                              setState(() => _isAutoPaid = v ?? false),
-                          title: const Text('Auto-paid'),
-                          subtitle: const Text(
-                            'Payment is made automatically (e.g. credit card direct debit).',
+                          decoration: const InputDecoration(
+                            labelText: 'Amount',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            prefixText: '\$ ',
                           ),
-                          controlAffinity: ListTileControlAffinity.leading,
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
                         ),
-                      ),
-                      const Gap(8),
-                      // Scheduled date
-                      BillDateRow(
-                        label: 'Scheduled date',
-                        date: _scheduledDate,
-                        onPick: () async {
-                          final d = await _pickDate(_scheduledDate);
-                          if (d != null) {
-                            setState(() {
-                              _scheduledDate = d;
-                              // Promote Expected → Scheduled automatically
-                              // when a scheduled date is set.
-                              if (_status == BillStatus.future) {
-                                _status = BillStatus.scheduled;
-                              }
-                            });
-                          }
-                        },
-                        onClear: () => setState(() {
-                          _scheduledDate = null;
-                          // Demote Scheduled → Expected automatically
-                          // when the scheduled date is removed.
-                          if (_status == BillStatus.scheduled) {
-                            _status = BillStatus.future;
-                          }
-                        }),
-                      ),
-                      const Gap(8),
-                      // Due date
-                      BillDateRow(
-                        label: 'Due date',
-                        date: _dueDate,
-                        onPick: () async {
-                          final d = await _pickDate(_dueDate);
-                          if (d != null) setState(() => _dueDate = d);
-                        },
-                        onClear: () => setState(() => _dueDate = null),
-                      ),
-                      const Gap(8),
-                      // Confirmed paid date
-                      BillDateRow(
-                        label: 'Confirmed paid date',
-                        date: _confirmedPaidDate,
-                        onPick: () async {
-                          final d = await _pickDate(_confirmedPaidDate);
-                          if (d != null) {
-                            setState(() {
-                              _confirmedPaidDate = d;
-                              // A confirmed payment date means the bill is paid.
-                              if (_status == BillStatus.scheduled) {
-                                _status = BillStatus.past;
-                              }
-                            });
-                          }
-                        },
-                        onClear: () =>
-                            setState(() => _confirmedPaidDate = null),
-                      ),
-                      const Gap(12),
-                      // Note
-                      EmacsTextField(
-                        controller: _note,
-                        minLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'Note',
-                          border: OutlineInputBorder(),
-                          isDense: true,
-                          alignLabelWithHint: true,
+                        const Gap(12),
+                        // Transaction fee
+                        TextFormField(
+                          controller: _fee,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Transaction fee (optional)',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            prefixText: '\$ ',
+                          ),
                         ),
-                      ),
-                      const Gap(4),
-                    ],
+                        const Gap(12),
+                        // Frequency
+                        DropdownButtonFormField<BillFrequency>(
+                          initialValue: _frequency,
+                          decoration: const InputDecoration(
+                            labelText: 'Frequency',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          items: BillFrequency.values
+                              .map(
+                                (f) => DropdownMenuItem(
+                                  value: f,
+                                  child: Text(f.label),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (v) => setState(() => _frequency = v!),
+                        ),
+                        const Gap(12),
+                        // Status
+                        DropdownButtonFormField<BillStatus>(
+                          initialValue: _status,
+                          decoration: const InputDecoration(
+                            labelText: 'Status',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                          ),
+                          items: BillStatus.values
+                              .map(
+                                (s) => DropdownMenuItem(
+                                  value: s,
+                                  child: Text(s.label),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (v) => setState(() => _status = v!),
+                        ),
+                        const Gap(12),
+                        // Dates, methods and auto-paid
+                        BillScheduleFields(
+                          notifiedDate: _notifiedDate,
+                          notificationMethod: _notificationMethod,
+                          paymentMethod: _paymentMethod,
+                          isAutoPaid: _isAutoPaid,
+                          scheduledDate: _scheduledDate,
+                          dueDate: _dueDate,
+                          confirmedPaidDate: _confirmedPaidDate,
+                          pickDate: _pickDate,
+                          onNotifiedDate: (d) =>
+                              setState(() => _notifiedDate = d),
+                          onNotificationMethod: (v) =>
+                              setState(() => _notificationMethod = v),
+                          onPaymentMethod: (v) =>
+                              setState(() => _paymentMethod = v),
+                          onAutoPaid: (v) => setState(() => _isAutoPaid = v),
+                          onScheduledDate: _setScheduledDate,
+                          onDueDate: (d) => setState(() => _dueDate = d),
+                          onConfirmedPaidDate: _setConfirmedPaidDate,
+                        ),
+                        const Gap(12),
+                        // Note
+                        EmacsTextField(
+                          controller: _note,
+                          minLines: 3,
+                          decoration: const InputDecoration(
+                            labelText: 'Note',
+                            border: OutlineInputBorder(),
+                            isDense: true,
+                            alignLabelWithHint: true,
+                          ),
+                        ),
+                        const Gap(4),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            // ── Actions ───────────────────────────────────────────────────
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('Cancel'),
-                  ),
-                  const Gap(8),
-                  FilledButton(
-                    onPressed: _hasChanges
-                        ? () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.pop(context, _buildBill());
-                            }
-                          }
-                        : null,
-                    child: Text(_isNew ? 'Add Bill' : 'Save'),
-                  ),
-                ],
+              // ── Actions ───────────────────────────────────────────────────
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: _confirmDiscard,
+                      child: const Text('Cancel'),
+                    ),
+                    const Gap(8),
+                    FilledButton(
+                      onPressed: _hasChanges ? _saveAndClose : null,
+                      child: Text(_isNew ? 'Add Bill' : 'Save'),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

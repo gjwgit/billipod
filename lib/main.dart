@@ -64,6 +64,11 @@ void main() async {
   if (isDesktop) {
     await windowManager.ensureInitialized();
 
+    // 20260808 gjw Route the window close button through the app so an editor
+    // with unsaved changes can prompt to save, discard, or keep editing.
+
+    await SolidWindowCloseGuard.enable();
+
     // 20260402 gjw For our desktop app we tune various window oriented
     // settings.
 

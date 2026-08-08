@@ -237,15 +237,16 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
   }
 
   Future<void> _addBill(BuildContext context, AppProvider provider) async {
-    final bill = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const BillEdit(),
+      builder: (_) => BillEdit(
+        onSave: (bill) async {
+          provider.addBill(bill);
+          await provider.saveToPod();
+        },
+      ),
     );
-    if (bill != null) {
-      provider.addBill(bill);
-      await provider.saveToPod();
-    }
   }
 
   Future<void> _exportPdf(BuildContext context, AppProvider provider) async {

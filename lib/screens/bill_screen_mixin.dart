@@ -97,18 +97,21 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
     TaggedBill t,
     AppProvider provider,
   ) async {
-    final updated = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => BillEdit(bill: t.bill),
+      builder: (_) => BillEdit(
+        bill: t.bill,
+        onSave: (updated) async {
+          if (!context.mounted) return;
+          await saveSharedOrError(
+            context,
+            () => provider.updateSharedBill(t.ownerWebId!, updated),
+            successMessage: "Changes saved to ${t.sourceName}'s POD.",
+          );
+        },
+      ),
     );
-    if (updated != null && context.mounted) {
-      await saveSharedOrError(
-        context,
-        () => provider.updateSharedBill(t.ownerWebId!, updated),
-        successMessage: "Changes saved to ${t.sourceName}'s POD.",
-      );
-    }
   }
 
   // ── Own-bill helpers ───────────────────────────────────────────────────────
@@ -118,15 +121,17 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
     Bill bill,
     AppProvider provider,
   ) async {
-    final updated = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => BillEdit(bill: bill),
+      builder: (_) => BillEdit(
+        bill: bill,
+        onSave: (updated) async {
+          provider.updateBill(updated);
+          await provider.saveToPod();
+        },
+      ),
     );
-    if (updated != null && context.mounted) {
-      provider.updateBill(updated);
-      await provider.saveToPod();
-    }
   }
 
   Future<void> confirmDelete(
@@ -224,7 +229,7 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
     AppProvider provider,
     BillStatus defaultStatus,
   ) async {
-    final bill = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => BillEdit(
@@ -232,12 +237,12 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
           title: billQuery.trim().isNotEmpty ? billQuery.trim() : 'New bill',
           status: defaultStatus,
         ),
+        onSave: (bill) async {
+          provider.addBill(bill);
+          await provider.saveToPod();
+        },
       ),
     );
-    if (bill != null && context.mounted) {
-      provider.addBill(bill);
-      await provider.saveToPod();
-    }
   }
 
   // ── Widget builders ────────────────────────────────────────────────────────

@@ -113,32 +113,35 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
   }
 
   Future<void> _addBill() async {
-    final bill = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => const BillEdit(),
+      builder: (_) => BillEdit(
+        onSave: (bill) async {
+          setState(() => _bills = [bill, ..._bills!]);
+          await _save();
+        },
+      ),
     );
-    if (bill != null) {
-      setState(() => _bills = [bill, ..._bills!]);
-      await _save();
-    }
   }
 
   Future<void> _editBill(Bill bill) async {
-    final updated = await showDialog<Bill>(
+    await showDialog<void>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => BillEdit(bill: bill),
+      builder: (_) => BillEdit(
+        bill: bill,
+        onSave: (updated) async {
+          setState(() {
+            _bills = [
+              for (final b in _bills!)
+                if (b.id == updated.id) updated else b,
+            ];
+          });
+          await _save();
+        },
+      ),
     );
-    if (updated != null) {
-      setState(() {
-        _bills = [
-          for (final b in _bills!)
-            if (b.id == updated.id) updated else b,
-        ];
-      });
-      await _save();
-    }
   }
 
   Future<void> _deleteBill(Bill bill) async {
