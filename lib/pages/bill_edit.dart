@@ -217,8 +217,14 @@ class _BillEditState extends State<BillEdit> with UnsavedChangesMixin {
   @override
   bool get hasUnsavedChanges => _hasChanges;
 
+  /// Title is the form's only required field, so this mirrors its validator
+  /// without calling [FormState.validate], which marks fields as a side
+  /// effect and has no business running from a getter. Kept honest by
+  /// `window_close_guard_test.dart`, which fails if the form ever gains a
+  /// validator this does not account for.
+
   @override
-  bool get canSaveUnsavedChanges => _formKey.currentState?.validate() ?? false;
+  bool get canSaveUnsavedChanges => _title.text.trim().isNotEmpty;
 
   @override
   Future<void> saveUnsavedChanges() => _save();

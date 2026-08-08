@@ -115,4 +115,49 @@ void main() {
     // No editor left registered, so nothing to resolve.
     expect(await SolidWindowCloseGuard.resolveAll(), isTrue);
   });
+
+  // canSaveUnsavedChanges mirrors the form's validators by hand rather than
+  // calling validate(), which mutates field state. These pin the two together:
+  // add a validator to any other field and the second test fails, flagging
+  // that the hand-written gate needs updating too.
+
+  testWidgets('a filled title is all the form requires', (tester) async {
+    await tester.pumpWidget(wrap(const BillEdit()));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'Rates');
+    await tester.pump();
+
+    final form = tester.state<FormState>(find.byType(Form));
+    expect(form.validate(), isTrue);
+  });
+
+  testWidgets('an empty title is the only thing that fails the form', (
+    tester,
+  ) async {
+    await tester.pumpWidget(wrap(const BillEdit()));
+    await tester.pumpAndSettle();
+
+    final form = tester.state<FormState>(find.byType(Form));
+    expect(form.validate(), isFalse);
+  });
+
+  testWidgets('window-close Save on an untitled bill keeps the editor open', (
+    tester,
+  ) async {
+    var saved = false;
+    await tester.pumpWidget(wrap(BillEdit(onSave: (b) async => saved = true)));
+    await tester.pumpAndSettle();
+    // Dirty but invalid: a note, no title.
+    await tester.enterText(find.byType(TextFormField).last, 'some note');
+    await tester.pump();
+
+    final future = SolidWindowCloseGuard.resolveAll();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    // Nothing saveable, so the close is aborted rather than losing the edit.
+    expect(await future, isFalse);
+    expect(saved, isFalse);
+  });
 }
