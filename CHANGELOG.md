@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Report a failed shared-bill save once, not twice [1.0.17 20260808 gjw]
 + Keep the window open when a save fails on close [1.0.16 20260808 gjw]
 + Stop the save check marking fields as a side effect [1.0.15 20260808 gjw]
 + Report failed bill saves instead of failing silently [1.0.14 20260808 gjw]

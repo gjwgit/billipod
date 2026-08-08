@@ -109,17 +109,28 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
       builder: (_) => BillEdit(
         bill: t.bill,
         onSave: (updated) async {
-          if (!context.mounted) return;
-          final saved = await saveSharedOrError(
-            context,
-            () => provider.updateSharedBill(t.ownerWebId!, updated),
-            successMessage: "Changes saved to ${t.sourceName}'s POD.",
-          );
-          // Thrown so BillEdit sees the failure and stays open with the work
-          // intact rather than closing over it.
-          if (!saved) {
-            throw Exception("Could not write to ${t.sourceName}'s POD.");
+          // Not via saveSharedOrError: it reports failure with a SnackBar, and
+          // BillEdit raises a modal for the same failure, so the user saw the
+          // one error twice. Thrown instead, so BillEdit alone reports it and
+          // stays open with the work intact.
+          final error = await provider.updateSharedBill(t.ownerWebId!, updated);
+          if (error != null) {
+            throw Exception(
+              "Could not write to ${t.sourceName}'s POD.\n\n"
+              '$error',
+            );
           }
+          if (!context.mounted) return;
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                "Changes saved to ${t.sourceName}'s POD.",
+                style: const TextStyle(color: Colors.white),
+              ),
+              backgroundColor: Colors.green.shade600,
+              duration: const Duration(seconds: 2),
+            ),
+          );
         },
       ),
     );
