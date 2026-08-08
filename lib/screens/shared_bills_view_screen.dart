@@ -80,37 +80,45 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
     });
   }
 
-  Future<void> _save() async {
-    if (_bills == null) return;
+  /// Writes the current bills to the owner's Pod, returning the failure
+  /// message or null when the write landed.
+  ///
+  /// The failure is returned rather than shown here so a caller that must
+  /// react to it — BillEdit, which has to stay open over unsaved work — can
+  /// see it. Callers with nothing waiting on them show [_showSaveError].
+  Future<String?> _save() async {
+    if (_bills == null) return null;
     final err = await PodService.saveBillsToUrl(
       widget.fileUrl,
       widget.ownerWebId,
       _bills!,
     );
-    if (!mounted) return;
-    if (err != null) {
-      await showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-          title: const Text('Save failed'),
-          content: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Text(err),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
-      );
-    } else {
+    if (!mounted) return err;
+    if (err == null) {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Saved to their POD.')));
     }
+
+    return err;
   }
+
+  Future<void> _showSaveError(String err) => showDialog<void>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text('Save failed'),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: Text(err),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
+  );
 
   Future<void> _addBill() async {
     await showDialog<void>(
@@ -119,7 +127,10 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
       builder: (_) => BillEdit(
         onSave: (bill) async {
           setState(() => _bills = [bill, ..._bills!]);
-          await _save();
+          // Thrown rather than shown here: BillEdit must see the failure so
+          // it stays open with the work intact, and it does the reporting.
+          final err = await _save();
+          if (err != null) throw Exception(err);
         },
       ),
     );
@@ -138,7 +149,10 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
                 if (b.id == updated.id) updated else b,
             ];
           });
-          await _save();
+          // Thrown rather than shown here: BillEdit must see the failure so
+          // it stays open with the work intact, and it does the reporting.
+          final err = await _save();
+          if (err != null) throw Exception(err);
         },
       ),
     );
@@ -164,7 +178,8 @@ class _SharedBillsViewScreenState extends State<SharedBillsViewScreen> {
     );
     if (confirmed == true) {
       setState(() => _bills = _bills!.where((b) => b.id != bill.id).toList());
-      await _save();
+      final err = await _save();
+      if (err != null && mounted) await _showSaveError(err);
     }
   }
 

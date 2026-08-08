@@ -107,6 +107,73 @@ void main() {
     expect(written, isTrue);
   });
 
+  // Regression: saveUnsavedChanges used to return Future<void>, so the guard
+  // assumed a save that completed had landed. A failed Pod write closed the
+  // window anyway and the bill was lost despite the user tapping Save.
+  testWidgets('a failed save aborts the close and keeps the bill', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      wrap(BillEdit(onSave: (b) async => throw Exception('pod unreachable'))),
+    );
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'New title');
+    await tester.pump();
+
+    // Save via the window-close prompt.
+    final future = SolidWindowCloseGuard.resolveAll();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Save'));
+    await tester.pumpAndSettle();
+
+    // The write failed, so the close must be aborted — resolving true here
+    // would destroy the window over the top of the unsaved bill.
+    expect(await future, isFalse);
+    // The editor is still open with the unsaved title intact.
+    expect(find.text('New title'), findsOneWidget);
+
+    // Still dirty, so a second close attempt has to prompt again rather than
+    // discard silently.
+    final second = SolidWindowCloseGuard.resolveAll();
+    await tester.pumpAndSettle();
+    expect(find.text('Unsaved changes'), findsOneWidget);
+
+    await tester.tap(find.text('Discard'));
+    await tester.pumpAndSettle();
+    expect(await second, isTrue);
+  });
+
+  // A failed save from the Add/Save button must leave the dialog open too, so
+  // the user can retry rather than lose the bill to a dialog that popped
+  // anyway. Opened as a real dialog route so the pop under test is real.
+  testWidgets('a failed save leaves the editor open', (tester) async {
+    await tester.pumpWidget(
+      wrap(
+        Builder(
+          builder: (context) => TextButton(
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => BillEdit(
+                onSave: (b) async => throw Exception('pod unreachable'),
+              ),
+            ),
+            child: const Text('Open'),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('Open'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField).first, 'New title');
+    await tester.pump();
+
+    await tester.tap(find.text('Add Bill'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(BillEdit), findsOneWidget);
+    expect(find.text('New title'), findsOneWidget);
+  });
+
   testWidgets('editor unregisters its resolver on dispose', (tester) async {
     await tester.pumpWidget(wrap(const BillEdit()));
     await tester.pumpAndSettle();

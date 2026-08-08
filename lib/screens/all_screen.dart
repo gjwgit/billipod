@@ -256,10 +256,10 @@ class _AllScreenState extends State<AllScreen> with BillScreenMixin<AllScreen> {
       builder: (_) => BillEdit(
         onSave: (bill) async {
           provider.addBill(bill);
-          SolidWriteFailures.reportIfFailed(
-            await provider.saveToPod(),
-            during: 'adding the bill',
-          );
+          // Thrown rather than reported here: BillEdit must see the failure so
+          // it stays open with the work intact, and it does the reporting.
+          final error = await provider.saveToPod();
+          if (error != null) throw Exception(error);
         },
       ),
     );

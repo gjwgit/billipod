@@ -68,13 +68,16 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
   // ── Shared-bill helpers ────────────────────────────────────────────────────
 
   /// Runs [action]; shows a snackbar on failure or, optionally, on success.
-  Future<void> saveSharedOrError(
+  ///
+  /// Returns whether the write landed, so a caller that must not carry on
+  /// over a failure — an editor about to close on unsaved work — can tell.
+  Future<bool> saveSharedOrError(
     BuildContext context,
     Future<String?> Function() action, {
     String? successMessage,
   }) async {
     final err = await action();
-    if (!context.mounted) return;
+    if (!context.mounted) return err == null;
     if (err != null) {
       ScaffoldMessenger.of(
         context,
@@ -91,6 +94,8 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         ),
       );
     }
+
+    return err == null;
   }
 
   Future<void> editSharedBill(
@@ -105,11 +110,16 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         bill: t.bill,
         onSave: (updated) async {
           if (!context.mounted) return;
-          await saveSharedOrError(
+          final saved = await saveSharedOrError(
             context,
             () => provider.updateSharedBill(t.ownerWebId!, updated),
             successMessage: "Changes saved to ${t.sourceName}'s POD.",
           );
+          // Thrown so BillEdit sees the failure and stays open with the work
+          // intact rather than closing over it.
+          if (!saved) {
+            throw Exception("Could not write to ${t.sourceName}'s POD.");
+          }
         },
       ),
     );
@@ -129,10 +139,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         bill: bill,
         onSave: (updated) async {
           provider.updateBill(updated);
-          SolidWriteFailures.reportIfFailed(
-            await provider.saveToPod(),
-            during: 'saving the bill',
-          );
+          // Thrown rather than reported here: BillEdit must see the failure so
+          // it stays open with the work intact, and it does the reporting.
+          final error = await provider.saveToPod();
+          if (error != null) throw Exception(error);
         },
       ),
     );
@@ -249,10 +259,10 @@ mixin BillScreenMixin<T extends StatefulWidget> on State<T> {
         ),
         onSave: (bill) async {
           provider.addBill(bill);
-          SolidWriteFailures.reportIfFailed(
-            await provider.saveToPod(),
-            during: 'adding the bill',
-          );
+          // Thrown rather than reported here: BillEdit must see the failure so
+          // it stays open with the work intact, and it does the reporting.
+          final error = await provider.saveToPod();
+          if (error != null) throw Exception(error);
         },
       ),
     );

@@ -28,6 +28,10 @@ class BillEdit extends StatefulWidget {
   /// awaited by the caller's implementation: closing the app window waits on
   /// this before quitting, so a fire-and-forget write would be killed
   /// mid-flight and the bill silently lost.
+  ///
+  /// A failed write MUST throw rather than report and swallow: the editor
+  /// stays open on a failure, so closing over the top of unsaved work is
+  /// only avoided when the failure reaches it.
   final Future<void> Function(Bill)? onSave;
 
   const BillEdit({super.key, this.bill, this.onSave});
@@ -197,15 +201,29 @@ class _BillEditState extends State<BillEdit> with UnsavedChangesMixin {
     lastDate: DateTime(2100),
   );
 
-  /// Hand the edited bill to the caller to persist.
+  /// Hand the edited bill to the caller to persist, and report whether the
+  /// write actually reached the Pod.
   ///
   /// Awaited so a window close can wait for the Pod write to complete.
-  Future<void> _save() => widget.onSave?.call(_buildBill()) ?? Future.value();
+  Future<bool> _save() async {
+    try {
+      await widget.onSave?.call(_buildBill());
+
+      return true;
+    } catch (e) {
+      SolidWriteFailures.report('Failed saving the bill.\n\n$e');
+
+      return false;
+    }
+  }
 
   /// Validate, save, and close the dialog.
+  ///
+  /// Only closes once the write has landed: popping over a failed write loses
+  /// the bill the user asked to keep.
   Future<void> _saveAndClose() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-    await _save();
+    if (!await _save()) return;
     if (mounted) Navigator.pop(context);
   }
 
@@ -227,7 +245,7 @@ class _BillEditState extends State<BillEdit> with UnsavedChangesMixin {
   bool get canSaveUnsavedChanges => _title.text.trim().isNotEmpty;
 
   @override
-  Future<void> saveUnsavedChanges() => _save();
+  Future<bool> saveUnsavedChanges() => _save();
 
   /// Close the editor, but if there are unsaved changes first ask the user
   /// whether to save, discard, or keep editing.
