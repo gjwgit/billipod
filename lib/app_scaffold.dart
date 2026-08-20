@@ -1,6 +1,6 @@
 /// AppScaffold — SolidScaffold with nav for BillPod.
 ///
-// Time-stamp: <Friday 2026-07-24 09:41:34 +1000 Graham Williams>
+// Time-stamp: <Friday 2026-08-21 08:52:46 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -98,13 +98,14 @@ class _AppScaffoldState extends State<AppScaffold> {
         const SolidMenuItem(
           title: 'Scheduled',
           icon: Icons.schedule_send_outlined,
-          tooltip: '**Scheduled**\n\nPayments that have been scheduled.',
+          tooltip:
+              '**Scheduled**\n\nPayments that have been notified and scheduled.',
           child: ScheduledScreen(),
         ),
         const SolidMenuItem(
           title: 'Expected',
           icon: Icons.upcoming_outlined,
-          tooltip: '**Expected**\n\nBills expected but not yet scheduled.',
+          tooltip: '**Expected**\n\nBills expected but not yet notified.',
           child: ExpectedScreen(),
         ),
         const SolidMenuItem(

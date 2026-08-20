@@ -1,6 +1,6 @@
 /// BillPod - app-wide constants.
 ///
-// Time-stamp: <Saturday 2026-07-18 10:14:20 +1000 Graham Williams>
+// Time-stamp: <Friday 2026-08-21 08:54:58 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -35,23 +35,27 @@ const String appTitle = 'BilliPod - Manage Your Bills';
 /// Text shown in the SolidScaffold About dialog (accessed via the appbar
 /// info button). Supports basic Markdown.
 
-const String aboutText =
-    'BilliPod helps you track your bills — expected, scheduled, and paid — '
-    'with everything stored encrypted in your personal Solid Pod, so your '
-    'data stays under your control.\n\n'
-    'A common workflow is to add a regular bill scheduled for the next '
-    'payment. When you verify the payment within the app tap the **Duplicate** '
-    'button to place the next bill according to the **Frequency** in the '
-    '**Expected** list so that you can monitor it.\n\n'
-    '### Key features\n\n'
-    '- Scheduled, Expected and Past views of your bills\n'
-    '- Due dates, amounts, fees and payment methods\n'
-    '- Recurring and one-off bills\n'
-    '- PDF view of your bills for any date range\n'
-    '- Export and import all bills as JSON\n'
-    '- Share bills with other Pod owners\n'
-    '- Security key management for encrypted data\n'
-    '- Theme switching (light / dark / system)\n';
+const String aboutText = ''' BilliPod helps you track your bills — expected,
+scheduled, and paid — with everything stored encrypted in your personal Solid
+Pod, so your data stays private, secure, and under your control.
+
+A common workflow is to create bills as expected bills. Once I have a
+notification of the bill payment, often by email, then tap the **Duplicate**
+button (if it is a regular bill) and then move it to **Scheduled**.  The
+**Duplicate** button will create the next **Expected** bill according to the
+**Frequency**.
+
+### Key features
+
+- Scheduled, Expected and Past views of your bills
+- Due dates, amounts, fees and payment methods
+- Recurring and one-off bills
+- PDF view of your bills for any date range
+- Export and import all bills as JSON
+- Share bills with other Pod owners
+- Security key management for encrypted data
+- Theme switching (light / dark / system)
+''';
 
 const String appDirectory = 'billipod';
 const String billsFileName = 'bills.ttl';
