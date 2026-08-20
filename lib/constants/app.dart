@@ -1,6 +1,6 @@
 /// BillPod - app-wide constants.
 ///
-// Time-stamp: <Friday 2026-08-21 08:54:58 +1000 Graham Williams>
+// Time-stamp: <Friday 2026-08-21 09:08:43 +1000 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -39,8 +39,8 @@ const String aboutText = ''' BilliPod helps you track your bills — expected,
 scheduled, and paid — with everything stored encrypted in your personal Solid
 Pod, so your data stays private, secure, and under your control.
 
-A common workflow is to create bills as expected bills. Once I have a
-notification of the bill payment, often by email, then tap the **Duplicate**
+A common workflow is to create new bills as **Expected** bills. Once a
+notification of the bill is recieved, often by email, tap the **Duplicate**
 button (if it is a regular bill) and then move it to **Scheduled**.  The
 **Duplicate** button will create the next **Expected** bill according to the
 **Frequency**.
