@@ -288,7 +288,7 @@ class ExportService {
               children: [
                 pw.Text(
                   title,
-                  style: pw.TextStyle(
+                  style: const pw.TextStyle(
                     fontSize: 20,
                     fontWeight: pw.FontWeight.bold,
                   ),
