@@ -110,22 +110,30 @@ class ExportService {
         return (error: null, savePath: null);
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save PDF',
         fileName: pdfName,
         type: FileType.custom,
         allowedExtensions: ['pdf'],
+        bytes: built,
       );
-      if (savePath == null) {
+      if (savedUri == null) {
         return (error: null, savePath: null); // user cancelled
       }
-      await File(savePath).writeAsBytes(built);
-      return (error: null, savePath: savePath);
+      return (error: null, savePath: _displayPath(savedUri));
     } catch (e, st) {
       debugPrint('[ExportService] exportPdf error: $e\n$st');
       return (error: e.toString(), savePath: null);
     }
   }
+
+  /// The path to show the user for a [uri] returned by the file picker.
+  ///
+  /// file_picker writes the bytes itself and hands back a URI, whose scheme
+  /// varies by platform. A `file:` URI is converted back to a native path;
+  /// anything else (`content:` on Android, `blob:` on the web) is shown as is.
+  static String _displayPath(Uri uri) =>
+      uri.scheme == 'file' ? uri.toFilePath() : uri.toString();
 
   /// Open a previously-saved PDF in the system viewer. Returns an error
   /// string on failure, or null on success.
@@ -154,15 +162,15 @@ class ExportService {
         );
         return null;
       }
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save PDF',
         fileName: defaultName,
         type: FileType.custom,
         allowedExtensions: ['pdf'],
+        bytes: Uint8List.fromList(bytes),
       );
-      if (savePath == null) return null;
-      await File(savePath).writeAsBytes(bytes);
-      return savePath;
+      if (savedUri == null) return null;
+      return _displayPath(savedUri);
     } catch (e, st) {
       debugPrint('[Save PDF] error: $e\n$st');
       return 'error:Save failed: $e';

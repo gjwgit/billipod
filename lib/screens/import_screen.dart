@@ -9,7 +9,6 @@
 library;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -250,23 +249,16 @@ class _ImportScreenState extends State<ImportScreen> {
     });
 
     try {
-      final result = await FilePicker.pickFiles(
+      final file = await FilePicker.pickFile(
         dialogTitle: 'Select BilliPod JSON backup',
         type: FileType.any,
-        withData: true,
       );
-      if (result == null || result.files.isEmpty) {
+      if (file == null) {
         setState(() => _loading = false);
         return;
       }
 
-      final file = result.files.first;
-      final bytes = file.bytes;
-      if (bytes == null) {
-        _setBackupMessage('Could not read file.', error: true);
-        setState(() => _loading = false);
-        return;
-      }
+      final bytes = await file.readAsBytes();
 
       final List<dynamic> raw = jsonDecode(utf8.decode(bytes));
       final imported = raw
@@ -328,15 +320,18 @@ class _ImportScreenState extends State<ImportScreen> {
         return;
       }
 
-      final savePath = await FilePicker.saveFile(
+      final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save JSON backup',
         fileName: fileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
+        bytes: bytes,
       );
-      if (savePath != null) {
-        await File(savePath).writeAsBytes(bytes);
-        _setBackupMessage('Saved to $savePath');
+      if (savedUri != null) {
+        _setBackupMessage(
+          'Saved to '
+          '${savedUri.scheme == 'file' ? savedUri.toFilePath() : savedUri}',
+        );
       }
     } catch (e, st) {
       debugPrint('[Export JSON] error: $e\n$st');
@@ -357,7 +352,7 @@ class _ImportScreenState extends State<ImportScreen> {
       _PdfScope.past => provider.pastBills,
     };
     if (_rangeFrom == null && _rangeTo == null) return base;
-    // Normalize bounds: From at start of day, To at end of day, so a bill
+    // Normalise bounds: From at start of day, To at end of day, so a bill
     // dated on the boundary is included regardless of its time-of-day.
     final from = _rangeFrom == null
         ? null

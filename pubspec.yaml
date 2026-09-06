@@ -20,21 +20,17 @@ dependencies:
 
   emacs_text_field: ^0.1.0
   gap: ^3.0.1
-  file_picker: ^11.0.2
+  file_picker: ^12.2.0
   intl: ^0.20.2
   markdown_tooltip: ^0.0.10
   open_filex: ^4.7.0
   pdf: ^3.11.1
   printing: ^5.13.1
   provider: ^6.1.5
-  solidpod: ^1.0.13
-  solidui: ^1.0.30
+  solidpod: ^1.0.20
+  solidui: ^1.0.39
   uuid: ^4.5.3
   window_manager: ^0.5.1
-
-# TEMPORARY local override to verify against unreleased solidui 1.0.30.
-# Remove once solidui 1.0.30 is published to pub.dev.
-
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.3
