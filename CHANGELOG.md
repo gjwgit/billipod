@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Updated android configuration [1.0.19 20260911 gjw]
 + Updated file picker [1.0.18 20260910 tonypioneer]
 + Report a failed shared-bill save once, not twice [1.0.17 20260808 gjw]
 + Keep the window open when a save fails on close [1.0.16 20260808 gjw]

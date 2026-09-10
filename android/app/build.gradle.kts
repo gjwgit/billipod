@@ -23,8 +23,11 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        // oidcRedirectScheme is required by oidc_android, which declares no
+        // default for it, so the manifest merger fails without it.
         manifestPlaceholders.putAll(mapOf(
-            "appAuthRedirectScheme" to "com.togaware.billipod"
+            "appAuthRedirectScheme" to "com.togaware.billipod",
+            "oidcRedirectScheme" to "com.togaware.billipod"
         ))
     }
 
