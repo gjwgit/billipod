@@ -27,7 +27,7 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.1
   provider: ^6.1.5
-  solidpod: ^1.0.21
+  solidpod: ^1.0.22
   solidui: ^1.0.39
   uuid: ^4.5.3
   window_manager: ^0.5.1
