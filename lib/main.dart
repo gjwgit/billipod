@@ -1,6 +1,6 @@
 /// BillPod — bill management with Solid Pod storage.
 ///
-// Time-stamp: <Sunday 2026-05-31 06:27:00 +1000 Graham Williams>
+// Time-stamp: <Sunday 2026-10-11 15:31:51 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -141,7 +141,6 @@ class _BilliPodAppState extends State<BilliPodApp> {
       ),
       themeMode: solidThemeNotifier.themeMode,
       home: SolidLogin(
-        required: false,
         appDirectory: appDirectory,
         title: appTitle.replaceAll(' - ', '\n'),
         image: const AssetImage('assets/images/app_image.jpg'),

@@ -1,6 +1,6 @@
 /// AppScaffold — SolidScaffold with nav for BillPod.
 ///
-// Time-stamp: <Friday 2026-08-21 08:52:46 +1000 Graham Williams>
+// Time-stamp: <Sunday 2026-10-11 15:31:10 +1100 Graham Williams>
 ///
 /// Copyright (C) 2026, Togaware Pty Ltd
 ///
@@ -48,9 +48,24 @@ class _AppScaffoldState extends State<AppScaffold> {
       final webId = await getWebId();
       if (webId == null || webId.isEmpty) return;
       if (!mounted) return;
-      await getKeyFromUserIfRequired(context, widget);
+      // 20261002 gjw Cancel on the security key prompt is not an error, and
+      // must not be treated as success.
+      //
+      // getKeyFromUserIfRequired returns false when the prompt was dismissed
+      // (solidui 1.3.0 widened it from void for exactly this). Before that,
+      // _isKeySaved was set true unconditionally, so the status bar claimed a
+      // cached key that was not there, and the Pod was then read with no key
+      // to decrypt it — "You must first set the security key!", once per
+      // file.
+      //
+      // Returning here leaves the user in the app with the prompt dismissed,
+      // which is what Cancel should mean. The key can still be entered from
+      // the status bar.
+
+      final hasKey = await getKeyFromUserIfRequired(context, widget);
       if (!mounted) return;
-      setState(() => _isKeySaved = true);
+      setState(() => _isKeySaved = hasKey);
+      if (!hasKey) return;
       provider.setStartupPhase(StartupPhase.loading);
       await provider.loadFromPod();
     } on Exception catch (e) {
@@ -72,7 +87,7 @@ class _AppScaffoldState extends State<AppScaffold> {
         applicationIcon: Icon(Icons.receipt_long, size: 64),
         applicationLegalese: '© 2026 Togaware Pty Ltd',
         text: aboutText,
-        readmeUrl: 'https://gjwgit.github.io/billipod',
+        docsUrl: 'https://gjwgit.github.io/billipod',
       ),
       appBar: SolidAppBarConfig(
         title: appName,

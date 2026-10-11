@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.0 Secure key management
 
++ Bump solidui 1.5.5 [1.0.23 20261011 gjw]
 + Update to solidui 1.0.43 [1.0.22 20260914 gjw]
 + Update to solidpod 1.0.22 and solidui 1.0.41 [1.0.21 20260914 gjw]
 + Remember the window size between sessions [1.0.20 20260913 gjw]
