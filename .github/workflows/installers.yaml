@@ -42,7 +42,7 @@ on:
       - installers
 
 env:
-  APP: name
+  APP: billipod
   RELEASE: dev
   # 20260925 gjw media_kit/media_kit_video add two Linux build
   # dependencies. volume_controller (pulled in by media_kit_video) does
