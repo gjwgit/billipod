@@ -51,7 +51,11 @@ env:
   # unless libasound2-dev is present. media_kit itself links against
   # libmpv, so libmpv-dev is needed too - otherwise the build gets past
   # ALSA and then fails looking for mpv.
-  LINUX_PKGS:
+  #
+  # 20261011 gjw billipod needs libsecret-1-dev and libjsoncpp-dev for
+  # flutter_secure_storage_linux, which otherwise fails in CMake with
+  # "The following required packages were not found: libsecret-1".
+  LINUX_PKGS: libsecret-1-dev libjsoncpp-dev
   MACOS_APP_RELEASE_UNSIGNED_PATH: build/macos/Build/Products/Release-unsigned
   MACOS_APP_RELEASE_STAGING_PATH: build/macos/Build/Products/Release-staging
   MACOS_APP_RELEASE_DEV_PATH: build/macos/Build/Products/Release-dev
