@@ -323,8 +323,6 @@ class _ImportScreenState extends State<ImportScreen> {
       final savedUri = await FilePicker.saveFile(
         dialogTitle: 'Save JSON backup',
         fileName: fileName,
-        type: FileType.custom,
-        allowedExtensions: ['json'],
         bytes: bytes,
       );
       if (savedUri != null) {

@@ -164,6 +164,14 @@ class BillTile extends StatelessWidget {
                                 cs.surfaceContainerHighest,
                                 cs.onSurfaceVariant,
                               ),
+                            if (bill.notificationMethod != null)
+                              _chip(
+                                context,
+                                Icons.mark_email_unread_outlined,
+                                bill.notificationMethod!,
+                                cs.surfaceContainerHighest,
+                                cs.onSurfaceVariant,
+                              ),
                             if (bill.scheduledDate != null)
                               _chip(
                                 context,
