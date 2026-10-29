@@ -38,6 +38,7 @@ Code](https://claude.com/product/claude-code).
 
 ## 1.1 Review and Fine Tune
 
++ Update solidui 1.5.15 solidpod 1.1.2 [1.1.1 20261030 gjw]
 + Show the notification method after the notified date [1.1.0 20261027 gjw]
 
 ## 1.0 Secure key management
