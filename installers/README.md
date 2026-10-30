@@ -1,6 +1,6 @@
 <!-- markdownlint-disable MD013 -->
 
-# Billi Pod Installers
+# BilliPod Installers
 
 Flutter supports multiple platform targets. Flutter based apps can run
 native on Android, iOS, Linux, MacOS, and Windows, as well as directly
@@ -17,11 +17,13 @@ Run the app online: [**web**](https://billipod.solidcommunity.au).
 Download the latest version:
 
 + **Android**
-  [aab](https://solidcommunity.au/installers/billipod.aab) or
-  [apk](https://solidcommunity.au/installers/billipod.apk);
+  [apk](https://solidcommunity.au/installers/billipod.apk) or
+  [aab](https://solidcommunity.au/installers/billipod.aab);
+
 + **GNU/Linux**
   [deb](https://solidcommunity.au/installers/billipod_amd64.deb) or
   [snap](https://solidcommunity.au/installers/billipod_amd64.snap) or
+  [flatpak](https://solidcommunity.au/installers/billipod_amd64.flatpak) or
   [zip](https://solidcommunity.au/installers/billipod-linux.zip);
 + **macOS**
   [dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
@@ -67,6 +69,19 @@ and install:
 ```bash
 wget https://solidcommunity.au/installers/billipod_amd64.snap -O billipod_amd64.snap
 sudo snap install --dangerous billipod_amd64.snap
+```
+
+### Linux Flatpak Install
+
+Download
+[billipod_amd64.flatpak](https://solidcommunity.au/installers/billipod_amd64.flatpak)
+and install for yourself. The GNOME runtime it needs is fetched from
+Flathub if it is not already installed:
+
+```bash
+wget https://solidcommunity.au/installers/billipod_amd64.flatpak -O billipod_amd64.flatpak
+flatpak install --user billipod_amd64.flatpak
+flatpak run com.togaware.billipod
 ```
 
 ### Linux Zip Install
@@ -128,7 +143,7 @@ app. The app should run without the warning next time.
 ## Web -- No Installation Required
 
 No installer is required for a browser based experience of
-Billipod. Simply visit
+BilliPod. Simply visit
 [https://billipod.solidcommunity.au](https://billipod.solidcommunity.au).
 
 Also, your Web browser will provide an option in its menus to install

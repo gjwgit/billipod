@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- AppStream metadata: what GNOME Software, KDE Discover and Flathub show
+     for the app. From the gjwgit/fluttertmpl Copier template, with the
+     summary and description from .copier-answers.yml. @VERSION@ and
+     @DATE@ are filled in from pubspec.yaml when the Flatpak is built. -->
+<component type="desktop-application">
+  <id>com.togaware.billipod</id>
+  <name>BilliPod</name>
+  <summary>Manage bills with private storage in your Solid Pod</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <developer id="com.togaware">
+    <name>Togaware</name>
+  </developer>
+  <url type="homepage">https://github.com/gjwgit/billipod</url>
+  <url type="bugtracker">https://github.com/gjwgit/billipod/issues</url>
+  <launchable type="desktop-id">com.togaware.billipod.desktop</launchable>
+
+  <description>
+    <p>
+      BilliPod collects together your regular bill payments, to track
+      their scheduling and record their payment.
+    </p>
+    <p>
+      All bills are stored, encrypted, in your personal online data store
+      (Pod) within a Data Vault hosted by your Solid Server of choice.
+    </p>
+  </description>
+
+  <categories>
+    <category>Utility</category>
+    <category>Finance</category>
+  </categories>
+
+  <keywords>
+    <keyword>bills</keyword>
+    <keyword>payments</keyword>
+    <keyword>finance</keyword>
+    <keyword>solid</keyword>
+    <keyword>pod</keyword>
+  </keywords>
+
+  <content_rating type="oars-1.1"/>
+
+  <releases>
+    <release version="@VERSION@" date="@DATE@"/>
+  </releases>
+</component>

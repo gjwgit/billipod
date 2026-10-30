@@ -1,0 +1,42 @@
+# Changes here will be overwritten by Copier. Change a value with
+# `copier update --data key=value` or by editing it here and running
+# `copier update`.
+_commit: v0.7.0
+_src_path: gh:gjwgit/fluttertmpl
+kind: app
+android: true
+app: billipod
+owner: gjwgit
+copyright: 2026, Togaware Pty Ltd
+publisher: Togaware Pty Ltd
+name: BilliPod
+summary: Manage bills with private storage in your Solid Pod
+comment: Manage bills with private storage in your Solid Pod
+categories:
+- Utility
+- Finance
+keywords:
+- bills
+- payments
+- finance
+- solid
+- pod
+build: {}
+deb:
+  section: utils
+snap: {}
+flatpak:
+  icon: installers/icon_square.png
+windows:
+  appid: 6622fba4-e35b-4431-8160-23be335c88ea
+install:
+  folder: /var/www/html/web/installers/
+  host: solidcommunity.au
+  prod: true
+  url: https://solidcommunity.au/installers/
+description: |
+  BilliPod collects together your regular bill payments, to track
+  their scheduling and record their payment.
+
+  All bills are stored, encrypted, in your personal online data store
+  (Pod) within a Data Vault hosted by your Solid Server of choice.

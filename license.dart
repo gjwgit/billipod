@@ -1,4 +1,4 @@
-/// Privacy-First Bluelink app for Hyundai
+/// Manage bills with private storage in your Solid Pod
 ///
 // Time-stamp: <Monday 2026-09-21 17:03:18 +1000 Graham Williams>
 ///

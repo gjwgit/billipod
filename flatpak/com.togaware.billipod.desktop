@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=BilliPod
+Comment=Manage bills with private storage in your Solid Pod
+Exec=billipod
+Icon=com.togaware.billipod
+Terminal=false
+Type=Application
+Categories=Utility;Finance;
+Keywords=bills;payments;finance;solid;pod;
