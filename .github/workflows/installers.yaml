@@ -1,9 +1,9 @@
 name: Build Installers
 
-# From the gjwgit/fluttertmpl Copier template. The jobs are in the
-# template's reusable installers.yaml, pinned here to the template
-# version this app was last updated to, so `make update` moves both
-# together.
+# 20261030 gjw Build installers using the gjwgit/fluttertmpl Copier
+# template. The jobs are in the template's reusable installers.yaml,
+# pinned here to the template version this app was last updated to, so
+# `make update` moves both together.
 #
 # The name and the push trigger stay here: installers/update.sh and `make
 # ginfo` find the runs by the "Build Installers" name, and the jobs test

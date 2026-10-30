@@ -1,6 +1,6 @@
 # BilliPod
 
-> Bill Management with Secure and Private Solid Pod Storage
+> Privacy-First Bill Management
 
 BilliPod helps you keep on top of your bills — what's expected, what's
 scheduled, and what's been paid — with all data stored privately in

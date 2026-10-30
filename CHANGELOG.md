@@ -1,26 +1,12 @@
-# Billi Pod Change Log
+# BilliPod Change Log
 
 Noted here are the high level changes for the app.  Each update
-includes a short user-oriented description.
+includes a short user-oriented description, version number, date, and
+developer.
 
-You can run the app in your
-[**browser**](https://billipod.solidcommunity.au) or else download and
-install locally the latest version from the [Solid Community
-AU](https://solidcommunity.au) or directly:
-
-+ **Android** as
-[aab](https://solidcommunity.au/installers/billipod.aab) or
-[apk](https://solidcommunity.au/installers/billipod.apk);
-+ **GNU/Linux** as
-[deb](https://solidcommunity.au/installers/billipod_amd64.deb) or
-[snap](https://solidcommunity.au/installers/billipod_amd64.snap) or
-[zip](https://solidcommunity.au/installers/billipod-linux.zip);
-+ **macOS** as
-[dmg](https://solidcommunity.au/installers/billipod-macos.dmg) or
-[zip](https://solidcommunity.au/installers/billipod-macos.zip);
-+ **Windows** as
-[exe](https://solidcommunity.au/installers/billipod-windows-inno.exe)
-or [zip](https://solidcommunity.au/installers/billipod-windows.zip).
+See the [Install
+Guide](https://gjwgit.github.io/billipod/INSTALL.html) for
+installation instructions on any platform.
 
 Contributions are welcome. Visit
 [github](https://github.com/gjwgit/billipod) to submit an issue or, even
@@ -32,9 +18,12 @@ We make this project available for free so if you appreciate the app
 then please show some ❤️ and tap on the star at
 [GitHub](https://github.com/gjwgit/billipod) to support our work.
 
-This app has been pair programmed by [Graham
-Williams](https://togaware.com/Graham.Williams.html) and [Claude
-Code](https://claude.com/product/claude-code).
+This app is implemented by [Graham
+Williams](https://togaware.com/Graham.Williams.html).
+
+## 1.2 Migrate to using copier for template management
+
++ Initial migration to copier [1.2.0 20261030 gjw]
 
 ## 1.1 Review and Fine Tune
 
